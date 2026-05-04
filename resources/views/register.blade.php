@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Login')
+@section('title', 'Register')
 
 @section('content')
 <style>
@@ -100,12 +100,6 @@
         margin-bottom: 16px;
     }
 
-    .alert-success {
-        background: #f0fdf4;
-        color: #15803d;
-        border: 1px solid #bbf7d0;
-    }
-
     .alert-error {
         background: #fef2f2;
         color: #991b1b;
@@ -131,33 +125,27 @@
     .auth-footer a:hover {
         color: var(--primary-hover);
     }
-
-    .divider {
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 12px;
-        margin: 16px 0;
-    }
 </style>
 
 <div class="auth-container">
     <div class="auth-box">
         <div class="auth-header">
-            <h1>Welcome Back</h1>
-            <p>Sign in to your VapeVault account</p>
+            <h1>Create Account</h1>
+            <p>Join VapeVault and start shopping today</p>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+        @foreach ($errors->all() as $error)
+            <div class="alert alert-error">{{ $error }}</div>
+        @endforeach
 
-        @if(session('error'))
-            <div class="alert alert-error">{{ session('error') }}</div>
-        @endif
-
-        <form method="POST" action="/login">
+        <form method="POST" action="/register">
             @csrf
             
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="John Doe" required>
+            </div>
+
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="email" placeholder="your@email.com" required>
@@ -165,15 +153,14 @@
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
+                <input type="password" name="password" placeholder="Create a strong password" required>
             </div>
 
-            <button type="submit" class="auth-submit">Sign In</button>
+            <button type="submit" class="auth-submit">Create Account</button>
         </form>
 
         <div class="auth-footer">
-            <p>Don't have an account? <a href="/register">Create one</a></p>
-            <p><a href="/">Back to Home</a></p>
+            <p>Already have an account? <a href="/login">Sign In</a></p>
         </div>
     </div>
 </div>
