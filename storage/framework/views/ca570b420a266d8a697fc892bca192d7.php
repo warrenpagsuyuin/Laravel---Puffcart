@@ -1,6 +1,6 @@
 
 
-<?php $__env->startSection('title', 'Login'); ?>
+<?php $__env->startSection('title', 'Register'); ?>
 
 <?php $__env->startSection('content'); ?>
 <style>
@@ -100,12 +100,6 @@
         margin-bottom: 16px;
     }
 
-    .alert-success {
-        background: #f0fdf4;
-        color: #15803d;
-        border: 1px solid #bbf7d0;
-    }
-
     .alert-error {
         background: #fef2f2;
         color: #991b1b;
@@ -131,33 +125,27 @@
     .auth-footer a:hover {
         color: var(--primary-hover);
     }
-
-    .divider {
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 12px;
-        margin: 16px 0;
-    }
 </style>
 
 <div class="auth-container">
     <div class="auth-box">
         <div class="auth-header">
-            <h1>Welcome Back</h1>
-            <p>Sign in to your VapeVault account</p>
+            <h1>Create Account</h1>
+            <p>Join VapeVault and start shopping today</p>
         </div>
 
-        <?php if(session('success')): ?>
-            <div class="alert alert-success"><?php echo e(session('success')); ?></div>
-        <?php endif; ?>
+        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <div class="alert alert-error"><?php echo e($error); ?></div>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-        <?php if(session('error')): ?>
-            <div class="alert alert-error"><?php echo e(session('error')); ?></div>
-        <?php endif; ?>
-
-        <form method="POST" action="/login">
+        <form method="POST" action="/register">
             <?php echo csrf_field(); ?>
             
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="John Doe" required>
+            </div>
+
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="email" placeholder="your@email.com" required>
@@ -165,17 +153,16 @@
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
+                <input type="password" name="password" placeholder="Create a strong password" required>
             </div>
 
-            <button type="submit" class="auth-submit">Sign In</button>
+            <button type="submit" class="auth-submit">Create Account</button>
         </form>
 
         <div class="auth-footer">
-            <p>Don't have an account? <a href="/register">Create one</a></p>
-            <p><a href="/">Back to Home</a></p>
+            <p>Already have an account? <a href="/login">Sign In</a></p>
         </div>
     </div>
 </div>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\PLPASIG\Downloads\puffcart-laravel\puffcart\resources\views/login.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\PLPASIG\Downloads\puffcart-laravel\puffcart\resources\views/register.blade.php ENDPATH**/ ?>
