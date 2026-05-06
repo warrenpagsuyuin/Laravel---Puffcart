@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('mfa_codes', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->string('code'); // Hashed 6-digit code
+            $table->boolean('used')->default(false);
+            $table->timestamp('expires_at');
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->index('expires_at');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('mfa_codes');
+    }
+};

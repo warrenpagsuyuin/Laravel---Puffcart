@@ -3,11 +3,20 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\User;
+use App\Services\AuthenticationService;
 use Illuminate\Http\Request;
 
 class AdminUserController extends Controller
 {
+    protected AuthenticationService $authService;
+
+    public function __construct(AuthenticationService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function index(Request $request)
     {
         $users = User::where('role', 'customer')
@@ -34,7 +43,7 @@ class AdminUserController extends Controller
         return view('admin.user-show', compact('user'));
     }
 
-    public function approve(User $user)
+    public function approve(User $user, Request $request)
     {
         $user->update([
             'verification_status' => 'approved',
@@ -43,10 +52,18 @@ class AdminUserController extends Controller
             'is_active' => true,
         ]);
 
+        AuditLog::log(
+            'user_approved',
+            "Customer {$user->email} approved",
+            auth()->id(),
+            $request->ip(),
+            $request->userAgent()
+        );
+
         return back()->with('success', 'Customer approved.');
     }
 
-    public function reject(User $user)
+    public function reject(User $user, Request $request)
     {
         $user->update([
             'verification_status' => 'rejected',
@@ -54,6 +71,22 @@ class AdminUserController extends Controller
             'age_verified' => false,
         ]);
 
+        AuditLog::log(
+            'user_rejected',
+            "Customer {$user->email} rejected",
+            auth()->id(),
+            $request->ip(),
+            $request->userAgent()
+        );
+
         return back()->with('success', 'Customer verification rejected.');
     }
+
+    public function unlock(User $user, Request $request)
+    {
+        $this->authService->unlockAccount($user, auth()->user(), $request->ip(), $request->userAgent());
+
+        return back()->with('success', 'Customer account unlocked.');
+    }
 }
+

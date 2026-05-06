@@ -2,6 +2,7 @@
 
 use App\Events\ChatbotMessage;
 use App\Events\TestNotification;
+use App\Http\Controllers\Admin\AdminAuditLogController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminMLInsightController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminVerificationController;
+use App\Http\Controllers\PaymentController;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -30,17 +32,21 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+})->name('privacy-policy');
+
 Route::get('/shop', function () {
     $products = Product::query()
         ->when(\Illuminate\Support\Facades\Schema::hasColumn('products', 'is_active'), fn ($query) => $query->where('is_active', true))
-        ->get();
+        ->paginate(12);
 
     return view('shop', compact('products'));
 })->name('shop');
 
-Route::get('/product', function () {
-    return view('product');
-})->name('product');
+Route::get('/product/{product}', function (Product $product) {
+    return view('product', compact('product'));
+})->name('product.show');
 
 Route::get('/cart', function () {
     return view('cart');
@@ -75,7 +81,7 @@ Route::post('/chatbot/send', function (Request $request) {
     } elseif (str_contains($message, 'delivery') || str_contains($message, 'shipping')) {
         $reply = 'We offer same-day delivery in Metro Manila. Shipping time may vary depending on your location.';
     } elseif (str_contains($message, 'payment') || str_contains($message, 'pay')) {
-        $reply = 'We accept GCash, Maya, card payments, bank transfer, and Cash on Delivery when available.';
+        $reply = 'We accept secure PayMongo payments via GCash, Maya, credit cards, and bank transfers.';
     } elseif (str_contains($message, 'product') || str_contains($message, 'vape') || str_contains($message, 'device')) {
         $reply = 'We offer vape devices, e-liquids, coils, pods, and accessories from trusted brands.';
     } elseif (str_contains($message, 'tracking') || str_contains($message, 'track')) {
@@ -127,7 +133,7 @@ Route::post('/register', function (Request $request) {
         'password' => [
             'required',
             'confirmed',
-            Password::min(10)->mixedCase()->numbers()->symbols(),
+            Password::min(8)->mixedCase()->numbers()->symbols(),
         ],
         'age_confirmed' => 'accepted',
         'privacy_consent' => 'accepted',
@@ -233,6 +239,27 @@ Route::post('/logout', function (Request $request) {
 
 /*
 |--------------------------------------------------------------------------
+| Payment Routes (PayMongo)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('payment')->name('payment.')->group(function () {
+    Route::post('checkout/{order}', [PaymentController::class, 'initiateCheckout'])
+        ->middleware('auth')
+        ->name('checkout');
+    Route::get('success/{order}', [PaymentController::class, 'paymentSuccess'])
+        ->middleware('auth')
+        ->name('success');
+    Route::get('cancel/{order}', [PaymentController::class, 'paymentCancel'])
+        ->middleware('auth')
+        ->name('cancel');
+    Route::post('webhook', [PaymentController::class, 'webhook'])
+        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+        ->name('webhook');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Admin Routes
 |--------------------------------------------------------------------------
 */
@@ -241,6 +268,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
+
+    // MFA Routes
+    Route::get('/mfa', [AdminAuthController::class, 'showMFA'])->name('mfa.show');
+    Route::post('/mfa/verify', [AdminAuthController::class, 'verifyMFA'])->name('mfa.verify');
+
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('admin')->group(function () {
@@ -260,12 +292,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
         Route::post('/users/{user}/approve', [AdminUserController::class, 'approve'])->name('users.approve');
         Route::post('/users/{user}/reject', [AdminUserController::class, 'reject'])->name('users.reject');
+        Route::post('/users/{user}/unlock', [AdminUserController::class, 'unlock'])->name('users.unlock');
 
         Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
         Route::post('/verifications/{user}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
         Route::post('/verifications/{user}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
 
+        Route::get('/audit-logs', [AdminAuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('/audit-logs/{auditLog}', [AdminAuditLogController::class, 'show'])->name('audit-logs.show');
+
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
         Route::get('/ml-insights', [AdminMLInsightController::class, 'index'])->name('ml-insights.index');
     });
 });
+

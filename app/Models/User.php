@@ -27,6 +27,9 @@ class User extends Authenticatable
         'is_active',
         'failed_login_attempts',
         'last_failed_login_at',
+        'mfa_enabled',
+        'locked_until',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -42,6 +45,9 @@ class User extends Authenticatable
         'verification_reviewed_at' => 'datetime',
         'is_active' => 'boolean',
         'last_failed_login_at' => 'datetime',
+        'mfa_enabled' => 'boolean',
+        'locked_until' => 'datetime',
+        'email_verified_at' => 'datetime',
     ];
 
     public function orders()
@@ -54,8 +60,33 @@ class User extends Authenticatable
         return $this->hasMany(CartItem::class);
     }
 
+    public function mfaCodes()
+    {
+        return $this->hasMany(MFACode::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Check if account is locked
+     */
+    public function isLocked(): bool
+    {
+        return $this->locked_until && now()->lessThan($this->locked_until);
+    }
+
+    /**
+     * Unlock the account
+     */
+    public function unlock(): void
+    {
+        $this->update([
+            'failed_login_attempts' => 0,
+            'last_failed_login_at' => null,
+            'locked_until' => null,
+        ]);
     }
 }
