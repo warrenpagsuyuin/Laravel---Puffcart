@@ -1,4 +1,4 @@
-# ⚡ PuffCart — A Laravel-Powered E-Commerce System for Vape Products
+# ⚡ Puffcart — A Laravel-Powered E-Commerce System for Vape Products
 
 > **CS 402 — Open Source Programming With Framework (Laravel)**
 > Pamantasan ng Lungsod ng Pasig (PLP)
@@ -20,7 +20,7 @@
 
 ## 📌 Project Overview
 
-**PuffCart** is a full-featured, cyberpunk-themed e-commerce web platform built with the **Laravel 11** PHP framework for *CloudPuffs Vape Shop*. It replaces manual order-taking and social media messaging with a centralized digital platform for managing products, orders, inventory, payments, and sales analytics.
+**Puffcart** is a full-featured, cyberpunk-themed e-commerce web platform built with the **Laravel 11** PHP framework for *CloudPuffs Vape Shop*. It replaces manual order-taking and social media messaging with a centralized digital platform for managing products, orders, inventory, payments, and sales analytics.
 
 ---
 
@@ -260,4 +260,4 @@ This project is created for academic purposes at **Pamantasan ng Lungsod ng Pasi
 
 ---
 
-*Built with ⚡ by the PuffCart Team — CS 402, PLP*
+*Built with ⚡ by the Puffcart Team — CS 402, PLP*

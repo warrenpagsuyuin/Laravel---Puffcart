@@ -233,7 +233,7 @@
 </style>
 
 <div class="nav">
-    <div class="logo">VapeVault</div>
+    <div class="logo">Puffcart</div>
     <div class="nav-links">
         <a href="{{ url('/') }}">Home</a>
         <a href="{{ url('/shop') }}">Shop</a>

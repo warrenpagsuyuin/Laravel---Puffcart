@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Verification — PuffCart</title>
+    <title>Age Verification — Puffcart</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css'])
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css'])
+    @endif
 </head>
 <body class="bg-[#04050d] font-mono min-h-screen flex items-center justify-center"
       style="background-image:linear-gradient(#00ffe708 1px,transparent 1px),linear-gradient(90deg,#00ffe708 1px,transparent 1px);background-size:32px 32px">
@@ -31,7 +33,7 @@
             AGE VERIFICATION
         </div>
         <p class="text-[11px] text-[#5a8fa8] leading-relaxed mb-1">
-            PuffCart sells tobacco and nicotine products.
+            Puffcart sells tobacco and nicotine products.
         </p>
         <p class="text-[11px] text-[#5a8fa8] leading-relaxed mb-5">
             You must be <span class="text-[#00ffe7] font-bold">18 years or older</span> to enter this site.

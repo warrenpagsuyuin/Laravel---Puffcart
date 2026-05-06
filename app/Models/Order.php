@@ -47,11 +47,11 @@ class Order extends Model
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {
-            'completed'        => 'cyan',
-            'processing', 'packed', 'out_for_delivery' => 'blue',
-            'pending'          => 'yellow',
-            'cancelled'        => 'pink',
-            default            => 'gray',
+            'delivered', 'completed' => 'green',
+            'processing', 'shipped', 'packed', 'out_for_delivery' => 'blue',
+            'pending' => 'yellow',
+            'cancelled' => 'red',
+            default => 'gray',
         };
     }
 
@@ -59,7 +59,7 @@ class Order extends Model
     {
         return match ($this->status) {
             'out_for_delivery' => 'Out for Delivery',
-            default            => ucfirst(str_replace('_', ' ', $this->status)),
+            default => ucfirst(str_replace('_', ' ', $this->status)),
         };
     }
 }

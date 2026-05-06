@@ -1,6 +1,6 @@
 {
     "name": "puffcart/puffcart",
-    "description": "PuffCart: A Laravel-Powered E-Commerce System for Vape Products",
+    "description": "Puffcart: A Laravel-Powered E-Commerce System for Vape Products",
     "keywords": ["laravel", "ecommerce", "vape", "php"],
     "license": "MIT",
     "type": "project",

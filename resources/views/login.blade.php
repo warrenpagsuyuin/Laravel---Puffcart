@@ -144,7 +144,7 @@
     <div class="auth-box">
         <div class="auth-header">
             <h1>Welcome Back</h1>
-            <p>Sign in to your VapeVault account</p>
+            <p>Sign in to your Puffcart account</p>
         </div>
 
         @if(session('success'))
@@ -155,12 +155,20 @@
             <div class="alert alert-error">{{ session('error') }}</div>
         @endif
 
-        <form method="POST" action="/login">
+        @if($errors->any())
+            <div class="alert alert-error">
+                @foreach($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('login') }}">
             @csrf
             
             <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" name="email" placeholder="your@email.com" required>
+                <label>Username or Email Address</label>
+                <input type="text" name="login" value="{{ old('login') }}" placeholder="admin or your@email.com" required>
             </div>
 
             <div class="form-group">

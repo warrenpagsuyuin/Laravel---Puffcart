@@ -104,6 +104,7 @@
     .btn-primary:hover {
         background: var(--primary-hover);
         box-shadow: var(--shadow-md);
+        color: white;
     }
 
     .btn-secondary {
@@ -402,7 +403,8 @@
         margin-bottom: 16px;
     }
 
-    .footer p, .footer a {
+    .footer p,
+    .footer a {
         color: var(--text-secondary);
         display: block;
         margin-bottom: 10px;
@@ -423,27 +425,200 @@
         text-align: center;
     }
 
+    .chatbot-widget {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        width: 350px;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+        overflow: hidden;
+        z-index: 9999;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .chatbot-header {
+        background: var(--primary);
+        color: white;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+    }
+
+    .chatbot-header span {
+        font-size: 14px;
+    }
+
+    .chatbot-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .chatbot-body {
+        height: 320px;
+        padding: 14px;
+        overflow-y: auto;
+        background: #f8fafc;
+    }
+
+    .chatbot-message {
+        margin-bottom: 10px;
+        max-width: 85%;
+        padding: 10px 12px;
+        border-radius: 14px;
+        font-size: 13px;
+        line-height: 1.4;
+        word-wrap: break-word;
+    }
+
+    .chatbot-message.bot {
+        background: #ffffff;
+        color: #333;
+        border: 1px solid #e5e7eb;
+        margin-right: auto;
+    }
+
+    .chatbot-message.user {
+        background: var(--primary);
+        color: white;
+        margin-left: auto;
+    }
+
+    .chatbot-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 10px 12px;
+        background: white;
+        border-top: 1px solid var(--border);
+    }
+
+    .chatbot-suggestions button {
+        font-size: 11px;
+        background: var(--primary-light);
+        color: var(--primary);
+        border: none;
+        border-radius: 999px;
+        padding: 6px 10px;
+        cursor: pointer;
+    }
+
+    .chatbot-footer {
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+        border-top: 1px solid var(--border);
+        background: white;
+    }
+
+    .chatbot-footer input {
+        flex: 1;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .chatbot-footer button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .chatbot-widget.closed .chatbot-body,
+    .chatbot-widget.closed .chatbot-footer,
+    .chatbot-widget.closed .chatbot-suggestions {
+        display: none;
+    }
+
     @media (max-width: 1200px) {
-        .products-grid, .categories-grid {
+        .products-grid,
+        .categories-grid {
             grid-template-columns: repeat(2, 1fr);
         }
     }
 
     @media (max-width: 768px) {
+        .nav {
+            padding: 16px 20px;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nav-links {
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
         .hero {
             grid-template-columns: 1fr;
+            padding: 60px 20px;
+            gap: 40px;
+        }
+
+        .hero-content h1 {
+            font-size: 38px;
+        }
+
+        .hero-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .categories-grid,
+        .products-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section {
+            padding: 50px 20px;
+        }
+
+        .products-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .banner {
+            margin: 30px 20px;
+            padding: 32px 24px;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .footer {
             grid-template-columns: 1fr;
+            padding: 50px 20px;
+        }
+
+        .chatbot-widget {
+            width: calc(100% - 32px);
+            right: 16px;
+            bottom: 16px;
         }
     }
 </style>
 
 <div class="site">
-
     <nav class="nav">
-        <div class="logo">VapeVault</div>
+        <div class="logo">Puffcart</div>
+
         <div class="nav-links">
             <a href="/">Home</a>
             <a href="/shop">Shop</a>
@@ -455,10 +630,11 @@
     <section class="hero">
         <div class="hero-content">
             <div class="tagline">Premium Vaping Products</div>
+
             <h1>Your Trusted Vape Shop Online</h1>
 
             <p>
-                Discover 200+ authentic devices, premium e-liquids, coils, and accessories from top brands worldwide. 
+                Discover 200+ authentic devices, premium e-liquids, coils, and accessories from top brands worldwide.
                 Same-day delivery available in Metro Manila. Secure checkout with multiple payment options.
             </p>
 
@@ -472,10 +648,12 @@
                     <span class="stat-value">200+</span>
                     <span class="stat-label">Products</span>
                 </div>
+
                 <div class="stat-item">
                     <span class="stat-value">1,250+</span>
                     <span class="stat-label">Customers</span>
                 </div>
+
                 <div class="stat-item">
                     <span class="stat-value">4.9★</span>
                     <span class="stat-label">Rating</span>
@@ -492,6 +670,7 @@
     <section class="section">
         <div class="section-label">Shop Categories</div>
         <h2 class="section-title">Browse by Type</h2>
+        <p class="section-desc">Find the products you need by category.</p>
 
         <div class="categories-grid">
             <div class="category-card">
@@ -525,7 +704,9 @@
             <div>
                 <div class="section-label">Top Picks</div>
                 <h2 class="section-title">Featured Products</h2>
+                <p class="section-desc">Popular items from Puffcart customers.</p>
             </div>
+
             <a href="/shop">View All Products →</a>
         </div>
 
@@ -535,6 +716,7 @@
                     <span class="product-badge">New</span>
                     💨
                 </div>
+
                 <div class="product-body">
                     <div class="product-category">Pod System</div>
                     <h3>XROS 4 Mini</h3>
@@ -549,6 +731,7 @@
                     <span class="product-badge" style="background: #ff6b6b;">Hot</span>
                     💨
                 </div>
+
                 <div class="product-body">
                     <div class="product-category">E-Liquid</div>
                     <h3>Lava Flow</h3>
@@ -563,6 +746,7 @@
                     <span class="product-badge" style="background: #ffa500;">Sale</span>
                     💨
                 </div>
+
                 <div class="product-body">
                     <div class="product-category">Box Mod</div>
                     <h3>DRAG S Pro</h3>
@@ -577,6 +761,7 @@
                     <span class="product-badge">New</span>
                     💨
                 </div>
+
                 <div class="product-body">
                     <div class="product-category">Pod Mod</div>
                     <h3>Caliburn A3S</h3>
@@ -591,14 +776,18 @@
     <div class="banner">
         <div>
             <h2>Ready to Order?</h2>
-            <p>Fast, secure checkout with GCash, Maya, Card, Bank Transfer, or Cash on Delivery. Same-day delivery in Metro Manila.</p>
+            <p>
+                Fast, secure checkout with GCash, Maya, Card, Bank Transfer, or Cash on Delivery.
+                Same-day delivery in Metro Manila.
+            </p>
         </div>
+
         <a href="/shop" class="banner-btn">Shop Now</a>
     </div>
 
     <footer class="footer">
         <div>
-            <h3>VapeVault</h3>
+            <h3>Puffcart</h3>
             <p>Your trusted online vape destination offering premium products from top brands worldwide.</p>
             <p style="margin-top: 16px;">Quality products. Fast delivery. Secure payments.</p>
         </div>
@@ -629,9 +818,119 @@
     </footer>
 
     <div class="footer-bottom">
-        © 2026 VapeVault — CloudPuffs Shop. All rights reserved.
+        © 2026 Puffcart — CloudPuffs Shop. All rights reserved.
+    </div>
+</div>
+
+<div class="chatbot-widget" id="chatbotWidget">
+    <div class="chatbot-header">
+        <span>Puffcart Assistant</span>
+        <button type="button" class="chatbot-toggle" id="chatbotToggle">−</button>
     </div>
 
+    <div class="chatbot-body" id="chatbotMessages">
+        <div class="chatbot-message bot">
+            Hi! I'm Puffcart Assistant. Ask me about delivery, payment, products, tracking, age verification, returns, or support.
+        </div>
+    </div>
+
+    <div class="chatbot-suggestions">
+        <button type="button" data-question="What payment methods do you accept?">Payment</button>
+        <button type="button" data-question="How does delivery work?">Delivery</button>
+        <button type="button" data-question="How can I track my order?">Tracking</button>
+        <button type="button" data-question="Do I need age verification?">Age verification</button>
+    </div>
+
+    <form class="chatbot-footer" id="chatbotForm">
+        <input type="text" id="chatbotInput" placeholder="Ask about Puffcart..." autocomplete="off">
+        <button type="submit">Send</button>
+    </form>
 </div>
+
+<script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+        const widget = document.getElementById('chatbotWidget');
+        const toggle = document.getElementById('chatbotToggle');
+        const form = document.getElementById('chatbotForm');
+        const input = document.getElementById('chatbotInput');
+        const messages = document.getElementById('chatbotMessages');
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+
+        if (!csrfMeta) {
+            console.error('CSRF meta tag is missing from layouts/app.blade.php');
+            return;
+        }
+
+        const csrfToken = csrfMeta.getAttribute('content');
+
+        function addMessage(message, sender) {
+            const bubble = document.createElement('div');
+            bubble.classList.add('chatbot-message', sender);
+            bubble.textContent = message;
+
+            messages.appendChild(bubble);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        async function sendMessage(message) {
+            const cleanMessage = message.trim();
+
+            if (!cleanMessage) {
+                return;
+            }
+
+            addMessage(cleanMessage, 'user');
+            input.value = '';
+
+            try {
+                const response = await fetch('/chatbot/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: cleanMessage,
+                    }),
+                });
+
+                if (!response.ok) {
+                    addMessage('Sorry, the assistant could not process that message.', 'bot');
+                }
+            } catch (error) {
+                addMessage('Sorry, I could not connect to the assistant right now.', 'bot');
+                console.error(error);
+            }
+        }
+
+        toggle.addEventListener('click', () => {
+            widget.classList.toggle('closed');
+            toggle.textContent = widget.classList.contains('closed') ? '+' : '−';
+        });
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            sendMessage(input.value);
+        });
+
+        document.querySelectorAll('.chatbot-suggestions button').forEach((button) => {
+            button.addEventListener('click', () => {
+                sendMessage(button.dataset.question);
+            });
+        });
+
+        if (window.Echo) {
+            window.Echo.channel('puffcart-chatbot')
+                .listen('.chatbot.message', (event) => {
+                    addMessage(event.message, event.sender || 'bot');
+                });
+
+            console.log('Chatbot WebSocket connected');
+        } else {
+            console.error('window.Echo is not loaded. Check resources/js/app.js, resources/js/echo.js, and layouts/app.blade.php.');
+        }
+    });
+</script>
 
 @endsection

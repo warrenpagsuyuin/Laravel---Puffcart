@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') - VapeVault</title>
+
+    {{-- Needed for chatbot POST request --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>@yield('title', 'Home') - Puffcart</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
+
     <style>
         * {
             margin: 0;
@@ -12,16 +22,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background-color: #ffffff;
-            color: #1a1a1a;
-            line-height: 1.6;
-        }
-
-        /* Color System */
         :root {
-            --primary: #0066ff; /* Electric Blue */
+            --primary: #0066ff;
             --primary-light: #e6f0ff;
             --primary-hover: #0052cc;
             --text-primary: #1a1a1a;
@@ -37,17 +39,44 @@
             --radius-lg: 12px;
         }
 
-        /* Base Styles */
-        h1, h2, h3, h4, h5, h6 {
+        html,
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-weight: 600;
             color: var(--text-primary);
         }
 
-        h1 { font-size: 36px; line-height: 1.2; }
-        h2 { font-size: 28px; line-height: 1.3; }
-        h3 { font-size: 20px; line-height: 1.4; }
-        h4 { font-size: 16px; line-height: 1.5; }
+        h1 {
+            font-size: 36px;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 28px;
+            line-height: 1.3;
+        }
+
+        h3 {
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        h4 {
+            font-size: 16px;
+            line-height: 1.5;
+        }
 
         p {
             color: var(--text-secondary);
@@ -63,7 +92,8 @@
             color: var(--primary-hover);
         }
 
-        button, .btn {
+        button,
+        .btn {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-weight: 500;
             transition: all 0.2s ease;
@@ -72,7 +102,9 @@
             border: none;
         }
 
-        input, textarea, select {
+        input,
+        textarea,
+        select {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             border-radius: var(--radius);
             border: 1px solid var(--border);
@@ -80,7 +112,9 @@
             transition: all 0.2s ease;
         }
 
-        input:focus, textarea:focus, select:focus {
+        input:focus,
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);

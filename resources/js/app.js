@@ -1,5 +1,12 @@
-// Laravel app.js
-import { createApp } from 'vue'
+import './echo';
 
-// Initialize app if needed
-console.log('App initialized')
+import { createApp } from 'vue';
+
+const appElement = document.getElementById('app');
+
+if (appElement) {
+    createApp({}).mount('#app');
+}
+
+console.log('App initialized');
+console.log('Echo loaded:', window.Echo);

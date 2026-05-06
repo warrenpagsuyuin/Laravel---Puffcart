@@ -68,7 +68,7 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
-        return redirect()->route('home')->with('success', 'Welcome to PuffCart!');
+        return redirect()->route('home')->with('success', 'Welcome to Puffcart!');
     }
 
     public function logout(Request $request)

@@ -15,7 +15,7 @@
             <h1 style="margin:18px 0 8px;font-size:32px;">Create Account</h1>
 
             <p class="muted" style="margin:0;">
-                Register for VapeVault / CloudPuffs. Valid ID upload and privacy consent are required.
+                Register for Puffcart / CloudPuffs. Valid ID upload and privacy consent are required.
             </p>
         </div>
 
@@ -87,7 +87,7 @@
             <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:24px;">
                 <input type="checkbox" name="privacy_consent" value="1" required style="width:auto;margin-top:4px;">
                 <span>
-                    I consent to VapeVault / CloudPuffs collecting and reviewing my uploaded ID
+                    I consent to Puffcart / CloudPuffs collecting and reviewing my uploaded ID
                     for age verification, fraud prevention, and account security.
                 </span>
             </label>

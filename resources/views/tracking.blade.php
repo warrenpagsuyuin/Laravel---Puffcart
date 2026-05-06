@@ -179,7 +179,7 @@
 </style>
 
 <div class="nav">
-    <div class="logo">VapeVault</div>
+    <div class="logo">Puffcart</div>
     <div class="nav-links">
         <a href="/">Home</a>
         <a href="/shop">Shop</a>
