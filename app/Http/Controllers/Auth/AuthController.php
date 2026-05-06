@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -24,51 +29,98 @@ class AuthController extends Controller
 
     public function showLogin()
     {
-        return view('auth.login');
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            return auth()->user()->isAdmin()
+        if (Auth::check()) {
+            return auth()->user()->role === 'admin'
                 ? redirect()->route('admin.dashboard')
-                : redirect()->intended(route('home'));
+                : redirect()->route('profile');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials.'])->onlyInput('email');
+        return view('login');
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $credentials = $request->validated();
+        $key = Str::lower($credentials['login']) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+
+            return back()->with('error', "Too many login attempts. Try again in {$seconds} seconds.");
+        }
+
+        $query = User::where('email', $credentials['login']);
+
+        if (Schema::hasColumn('users', 'username')) {
+            $query->orWhere('username', $credentials['login']);
+        }
+
+        $user = $query->first();
+
+        if (
+            $user &&
+            Hash::check($credentials['password'], $user->password) &&
+            (!Schema::hasColumn('users', 'is_active') || $user->is_active)
+        ) {
+            Auth::login($user, $request->boolean('remember'));
+            RateLimiter::clear($key);
+            $request->session()->regenerate();
+
+            return $user->role === 'admin'
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('profile');
+        }
+
+        RateLimiter::hit($key, 300);
+
+        return back()
+            ->with('error', 'Invalid username/email or password.')
+            ->onlyInput('login');
     }
 
     public function showRegister()
     {
-        return view('auth.register');
+        $captchaA = rand(1, 9);
+        $captchaB = rand(1, 9);
+
+        session([
+            'captcha_answer' => $captchaA + $captchaB,
+            'captcha_question' => "{$captchaA} + {$captchaB}",
+        ]);
+
+        return view('register');
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
-            'phone'    => 'nullable|string|max:20',
+        $data = $request->validated();
+
+        if ((int) $data['captcha'] !== (int) session('captcha_answer')) {
+            return back()
+                ->withErrors(['captcha' => 'Captcha answer is incorrect.'])
+                ->withInput();
+        }
+
+        $idPath = $request->file('valid_id')->store('valid-ids', 'public');
+
+        User::create([
+            'name' => $data['name'],
+            'username' => $data['username'] ?? null,
+            'email' => $data['email'],
+            'date_of_birth' => $data['date_of_birth'],
+            'valid_id_path' => $idPath,
+            'age_verified' => false,
+            'age_confirmed' => true,
+            'privacy_consent' => true,
+            'verification_status' => 'pending',
+            'role' => 'customer',
+            'is_active' => true,
+            'password' => Hash::make($data['password']),
         ]);
 
-        $user = User::create([
-            'name'         => $request->name,
-            'email'        => $request->email,
-            'password'     => Hash::make($request->password),
-            'phone'        => $request->phone,
-            'age_verified' => true,
-            'role'         => 'customer',
-        ]);
-
-        Auth::login($user);
-        return redirect()->route('home')->with('success', 'Welcome to Puffcart!');
+        return redirect()
+            ->route('login')
+            ->with('success', 'Account created. Your ID is pending verification.');
     }
 
     public function logout(Request $request)

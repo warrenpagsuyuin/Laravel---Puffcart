@@ -12,7 +12,7 @@
                 <input name="search" value="{{ request('search') }}" placeholder="Search order or customer" style="width:240px;">
                 <select name="status" style="width:160px;">
                     <option value="">All statuses</option>
-                    @foreach(['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as $status)
+                    @foreach(['pending', 'processing', 'packed', 'out_for_delivery', 'completed', 'cancelled'] as $status)
                         <option value="{{ $status }}" @selected(request('status') === $status)>{{ ucfirst($status) }}</option>
                     @endforeach
                 </select>

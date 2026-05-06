@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProductRequest;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class AdminProductController extends Controller
 {
@@ -31,11 +33,7 @@ class AdminProductController extends Controller
             ->withQueryString();
 
         $editingProduct = null;
-        $categories = Product::select('category')
-            ->whereNotNull('category')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        $categories = $this->categories();
 
         return view('admin.products', compact('products', 'editingProduct', 'categories'));
     }
@@ -44,22 +42,19 @@ class AdminProductController extends Controller
     {
         $products = Product::latest()->paginate(12);
         $editingProduct = $product;
-        $categories = Product::select('category')
-            ->whereNotNull('category')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        $categories = $this->categories();
 
         return view('admin.products', compact('products', 'editingProduct', 'categories'));
     }
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $data = $this->validatedData($request);
+        $data = $this->prepareData($request);
         $data['reorder_level'] = $data['reorder_level'] ?? 5;
         $data['badge'] = $data['badge'] ?? 'none';
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = true;
+        $data['slug'] = $this->uniqueSlug($data['name']);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
@@ -70,13 +65,14 @@ class AdminProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Product added.');
     }
 
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $data = $this->validatedData($request, $product);
+        $data = $this->prepareData($request);
         $data['reorder_level'] = $data['reorder_level'] ?? 5;
         $data['badge'] = $data['badge'] ?? 'none';
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active'] = $request->boolean('is_active', true);
+        $data['slug'] = $this->uniqueSlug($data['name'], $product);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
@@ -100,25 +96,78 @@ class AdminProductController extends Controller
         return back()->with('success', 'Product deleted.');
     }
 
-    private function validatedData(Request $request, ?Product $product = null): array
+    private function prepareData(ProductRequest $request): array
     {
-        return $request->validate([
-            'name' => 'required|string|max:255',
-            'sku' => [
-                'nullable',
-                'string',
-                'max:100',
-                Rule::unique('products', 'sku')->ignore($product),
-            ],
-            'category' => 'nullable|string|max:120',
-            'brand' => 'nullable|string|max:120',
-            'price' => 'required|numeric|min:0',
-            'original_price' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'reorder_level' => 'nullable|integer|min:0',
-            'badge' => 'nullable|in:none,new,hot,sale',
-            'description' => 'nullable|string|max:3000',
-            'image' => 'nullable|image|max:2048',
-        ]);
+        $data = $request->validated();
+        $category = $this->resolveCategory($data);
+
+        if ($category) {
+            $data['category_id'] = $category->id;
+            $data['category'] = $category->name;
+        }
+
+        if (array_key_exists('tags', $data)) {
+            $data['tags'] = collect(explode(',', (string) $data['tags']))
+                ->map(fn ($tag) => trim($tag))
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        return $data;
+    }
+
+    private function resolveCategory(array $data): ?Category
+    {
+        if (!Schema::hasTable('categories')) {
+            return null;
+        }
+
+        if (!empty($data['category_id'])) {
+            return Category::find($data['category_id']);
+        }
+
+        $name = trim((string) ($data['category'] ?? ''));
+
+        if ($name === '') {
+            return null;
+        }
+
+        return Category::firstOrCreate(
+            ['slug' => Str::slug($name)],
+            ['name' => $name, 'is_active' => true]
+        );
+    }
+
+    private function uniqueSlug(string $name, ?Product $product = null): string
+    {
+        $base = Str::slug($name) ?: 'product';
+        $slug = $base;
+        $suffix = 2;
+
+        while (
+            Product::where('slug', $slug)
+                ->when($product, fn ($query) => $query->where('id', '!=', $product->id))
+                ->exists()
+        ) {
+            $slug = "{$base}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
+    }
+
+    private function categories()
+    {
+        if (Schema::hasTable('categories')) {
+            return Category::active()->orderBy('name')->get();
+        }
+
+        return Product::select('category')
+            ->whereNotNull('category')
+            ->distinct()
+            ->orderBy('category')
+            ->get()
+            ->map(fn (Product $product) => (object) ['id' => null, 'name' => $product->category]);
     }
 }

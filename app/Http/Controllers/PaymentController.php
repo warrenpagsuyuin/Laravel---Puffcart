@@ -16,7 +16,6 @@ class PaymentController extends Controller
     public function __construct(PayMongoService $payMongoService)
     {
         $this->payMongoService = $payMongoService;
-        $this->middleware('auth');
     }
 
     /**
@@ -74,7 +73,8 @@ class PaymentController extends Controller
                     'payment_status' => 'pending',
                     'amount' => $order->total,
                     'currency' => 'PHP',
-                    'method' => 'paymongo',
+                    'method' => $order->payment_method,
+                    'payment_method' => 'paymongo',
                 ]
             );
 

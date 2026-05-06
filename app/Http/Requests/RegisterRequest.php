@@ -23,16 +23,15 @@ class RegisterRequest extends FormRequest
             'password' => [
                 'required',
                 'confirmed',
-                Password::min(8)
+                Password::min(10)
                     ->mixedCase()
                     ->numbers()
-                    ->symbols()
-                    ->uncompromised(),
+                    ->symbols(),
             ],
             'password_confirmation' => 'required|same:password',
             'age_confirmed' => 'required|accepted',
             'privacy_consent' => 'required|accepted',
-            'recaptcha_token' => 'nullable|string',
+            'captcha' => 'required|numeric',
         ];
     }
 
@@ -40,7 +39,6 @@ class RegisterRequest extends FormRequest
     {
         return [
             'date_of_birth.before_or_equal' => 'You must be at least 18 years old to register.',
-            'password.uncompromised' => 'This password has been compromised in a data breach. Please choose a different password.',
             'valid_id.required' => 'A valid ID is required for age verification.',
             'age_confirmed.accepted' => 'You must confirm your age to register.',
             'privacy_consent.accepted' => 'You must accept the privacy policy to register.',

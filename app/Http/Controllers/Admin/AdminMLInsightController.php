@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CustomerEvent;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AdminMLInsightController extends Controller
@@ -65,6 +67,8 @@ class AdminMLInsightController extends Controller
         ];
 
         $customerBehavior = $this->customerBehavior();
+        $popularCategories = $this->popularCategories();
+        $popularSearches = $this->popularSearches();
         $riskAlerts = $this->riskAlerts();
         $recommendations = $this->recommendations($restockRecommendations, $slowMovingProducts, $riskAlerts);
 
@@ -75,6 +79,8 @@ class AdminMLInsightController extends Controller
             'restockRecommendations',
             'salesTrend',
             'customerBehavior',
+            'popularCategories',
+            'popularSearches',
             'riskAlerts',
             'recommendations'
         ));
@@ -169,7 +175,46 @@ class AdminMLInsightController extends Controller
             'customers' => $customerCount,
             'repeat_customers' => $repeatCustomers,
             'average_orders' => $customerCount > 0 ? round($orderCount / $customerCount, 2) : 0,
+            'product_views_30_days' => Schema::hasTable('customer_events')
+                ? CustomerEvent::where('event_type', CustomerEvent::PRODUCT_VIEWED)->where('created_at', '>=', now()->subDays(30))->count()
+                : 0,
+            'cart_adds_30_days' => Schema::hasTable('customer_events')
+                ? CustomerEvent::where('event_type', CustomerEvent::CART_ADDED)->where('created_at', '>=', now()->subDays(30))->count()
+                : 0,
+            'searches_30_days' => Schema::hasTable('customer_events')
+                ? CustomerEvent::where('event_type', CustomerEvent::SEARCHED)->where('created_at', '>=', now()->subDays(30))->count()
+                : 0,
         ];
+    }
+
+    private function popularCategories()
+    {
+        if (!Schema::hasTable('order_items')) {
+            return collect();
+        }
+
+        return DB::table('order_items')
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->selectRaw('COALESCE(products.category, "Uncategorized") as category, SUM(order_items.quantity) as units_sold')
+            ->groupBy('products.category')
+            ->orderByDesc('units_sold')
+            ->limit(5)
+            ->get();
+    }
+
+    private function popularSearches()
+    {
+        if (!Schema::hasTable('customer_events')) {
+            return collect();
+        }
+
+        return CustomerEvent::where('event_type', CustomerEvent::SEARCHED)
+            ->whereNotNull('search_query')
+            ->selectRaw('search_query, COUNT(*) as total')
+            ->groupBy('search_query')
+            ->orderByDesc('total')
+            ->limit(8)
+            ->get();
     }
 
     private function recommendations($restockRecommendations, $slowMovingProducts, $riskAlerts): array

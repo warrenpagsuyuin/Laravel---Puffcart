@@ -3,227 +3,275 @@
 @section('title', 'Shop')
 
 @section('content')
-
 <style>
-    body {
-        background: #ffffff;
-    }
-
-    .nav {
+    .store-nav {
+        align-items: center;
         background: var(--bg-white);
         border-bottom: 1px solid var(--border);
-        padding: 16px 40px;
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        padding: 16px 40px;
     }
 
     .logo {
-        font-family: 'Poppins', sans-serif;
         color: var(--primary);
+        font-family: 'Poppins', sans-serif;
         font-size: 18px;
         font-weight: 700;
-        letter-spacing: -0.5px;
     }
 
     .nav-links {
         display: flex;
-        gap: 32px;
+        flex-wrap: wrap;
+        gap: 22px;
     }
 
-    .nav a {
+    .nav-links a {
         color: var(--text-secondary);
         font-size: 14px;
-        font-weight: 500;
-        transition: color 0.2s ease;
+        font-weight: 600;
     }
 
-    .nav a:hover {
-        color: var(--primary);
-    }
-
-    .shop-container {
+    .shop-shell {
         display: grid;
-        grid-template-columns: 220px 1fr;
-        min-height: calc(100vh - 58px);
+        grid-template-columns: 280px minmax(0, 1fr);
+        min-height: calc(100vh - 65px);
     }
 
-    .sidebar {
+    .filters {
         background: var(--bg-light);
         border-right: 1px solid var(--border);
-        padding: 32px 24px;
-    }
-
-    .sidebar h3 {
-        color: var(--text-primary);
-        font-size: 13px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 16px;
+        padding: 28px 24px;
     }
 
     .filter-group {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 24px;
-    }
-
-    .filter-group:last-child {
-        margin-bottom: 0;
-    }
-
-    .filter-option {
-        display: flex;
-        align-items: center;
+        display: grid;
         gap: 8px;
-        cursor: pointer;
+        margin-bottom: 18px;
     }
 
-    .filter-option input {
-        cursor: pointer;
-    }
-
-    .filter-option label {
-        margin: 0;
-        color: var(--text-secondary);
-        font-size: 13px;
-        cursor: pointer;
-        flex: 1;
-    }
-
-    .main-content {
-        padding: 40px;
-        overflow-y: auto;
-    }
-
-    .content-header {
-        margin-bottom: 40px;
-    }
-
-    .content-header h1 {
-        font-size: 32px;
+    .filter-group label {
         color: var(--text-primary);
-        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
     }
 
-    .content-header p {
+    .filter-actions {
+        display: grid;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .shop-main {
+        padding: 36px 40px;
+    }
+
+    .shop-heading {
+        align-items: end;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .shop-heading h1 {
+        font-size: 32px;
+        margin-bottom: 6px;
+    }
+
+    .muted {
         color: var(--text-muted);
+        font-size: 14px;
     }
 
     .products-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
+        gap: 20px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .product-card {
         background: var(--bg-white);
         border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        overflow: hidden;
-        transition: all 0.3s ease;
+        border-radius: var(--radius);
         display: flex;
         flex-direction: column;
+        min-height: 100%;
+        overflow: hidden;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .product-card:hover {
         border-color: var(--primary);
         box-shadow: var(--shadow-md);
-        transform: translateY(-4px);
     }
 
-    .product-image {
-        background: var(--bg-light);
-        height: 220px;
-        display: flex;
+    .product-media {
         align-items: center;
+        aspect-ratio: 4 / 3;
+        background: var(--bg-light);
+        display: flex;
         justify-content: center;
-        font-size: 64px;
-        border-bottom: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .product-media img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .product-placeholder {
+        color: var(--primary);
+        font-family: 'Poppins', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
     }
 
     .product-body {
-        padding: 20px;
+        display: grid;
         flex: 1;
-        display: flex;
-        flex-direction: column;
+        gap: 10px;
+        padding: 18px;
     }
 
-    .product-category {
-        font-size: 12px;
+    .product-meta {
         color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        font-weight: 500;
-        margin-bottom: 8px;
-    }
-
-    .product-card h3 {
-        font-size: 16px;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-    }
-
-    .product-brand {
-        font-size: 13px;
-        color: var(--text-secondary);
-        margin-bottom: 12px;
-    }
-
-    .product-price {
-        font-size: 20px;
+        font-size: 12px;
         font-weight: 700;
-        color: var(--primary);
-        margin-bottom: 16px;
-        flex: 1;
+        letter-spacing: 0;
+        text-transform: uppercase;
     }
 
-    .product-btn {
-        display: block;
+    .product-title {
+        color: var(--text-primary);
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .price-row {
+        align-items: baseline;
+        display: flex;
+        gap: 8px;
+    }
+
+    .price {
+        color: var(--primary);
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .old-price {
+        color: var(--text-muted);
+        font-size: 13px;
+        text-decoration: line-through;
+    }
+
+    .stock {
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+    .card-actions {
+        display: grid;
+        gap: 8px;
+        margin-top: auto;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        align-items: center;
+        border-radius: var(--radius);
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 700;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 14px;
         text-align: center;
-        padding: 10px 16px;
+    }
+
+    .btn-primary {
         background: var(--primary);
         color: white;
-        border: none;
-        border-radius: var(--radius);
-        font-weight: 600;
-        font-size: 13px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s ease;
     }
 
-    .product-btn:hover {
+    .btn-primary:hover {
         background: var(--primary-hover);
-        box-shadow: var(--shadow-md);
+        color: white;
     }
 
-    .empty-state {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 60px 20px;
-        color: var(--text-muted);
+    .btn-secondary {
+        background: var(--bg-white);
+        border: 1px solid var(--border);
+        color: var(--text-primary);
     }
 
-    @media (max-width: 1200px) {
+    .btn-secondary:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .notice {
+        border-radius: var(--radius);
+        font-size: 14px;
+        margin-bottom: 16px;
+        padding: 12px 14px;
+    }
+
+    .notice-success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
+    }
+
+    .notice-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    .recommendations {
+        border-top: 1px solid var(--border);
+        margin-top: 38px;
+        padding-top: 28px;
+    }
+
+    .pagination {
+        margin-top: 24px;
+    }
+
+    @media (max-width: 1100px) {
         .products-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
 
-    @media (max-width: 768px) {
-        .shop-container {
+    @media (max-width: 760px) {
+        .store-nav {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px 20px;
+        }
+
+        .shop-shell {
             grid-template-columns: 1fr;
         }
 
-        .sidebar {
-            display: none;
+        .filters {
+            border-right: 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .main-content {
-            padding: 24px;
+        .shop-main {
+            padding: 26px 20px;
+        }
+
+        .shop-heading {
+            align-items: flex-start;
+            flex-direction: column;
         }
 
         .products-grid {
@@ -232,68 +280,172 @@
     }
 </style>
 
-<div class="nav">
-    <div class="logo">Puffcart</div>
+<nav class="store-nav">
+    <a class="logo" href="{{ route('home') }}">Puffcart</a>
     <div class="nav-links">
-        <a href="{{ url('/') }}">Home</a>
-        <a href="{{ url('/shop') }}">Shop</a>
-        <a href="{{ url('/cart') }}">Cart</a>
-        <a href="{{ url('/login') }}">Login</a>
-        <a href="{{ url('/tracking') }}">Tracking</a>
+        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('shop') }}">Shop</a>
+        <a href="{{ route('cart') }}">Cart</a>
+        <a href="{{ route('tracking') }}">Tracking</a>
+        @auth
+            <a href="{{ route('profile') }}">Profile</a>
+        @else
+            <a href="{{ route('login') }}">Login</a>
+        @endauth
     </div>
-</div>
+</nav>
 
-<div class="shop-container">
+<div class="shop-shell">
+    <aside class="filters">
+        <form method="GET" action="{{ route('shop') }}">
+            <div class="filter-group">
+                <label for="search">Search</label>
+                <input id="search" name="search" value="{{ request('search') }}" placeholder="Product, brand, flavor">
+            </div>
 
-    <div class="sidebar">
-        <h3>Filters</h3>
+            <div class="filter-group">
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    <option value="">All categories</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-        <div class="filter-group">
-            <div class="filter-option">
-                <input type="checkbox" id="filter1" checked>
-                <label for="filter1">Devices</label>
+            <div class="filter-group">
+                <label for="brand">Brand</label>
+                <select id="brand" name="brand">
+                    <option value="">All brands</option>
+                    @foreach($brands as $brand)
+                        <option value="{{ $brand }}" @selected(request('brand') === $brand)>{{ $brand }}</option>
+                    @endforeach
+                </select>
             </div>
-            <div class="filter-option">
-                <input type="checkbox" id="filter2">
-                <label for="filter2">E-Liquids</label>
-            </div>
-            <div class="filter-option">
-                <input type="checkbox" id="filter3">
-                <label for="filter3">Coils & Pods</label>
-            </div>
-            <div class="filter-option">
-                <input type="checkbox" id="filter4">
-                <label for="filter4">Accessories</label>
-            </div>
-        </div>
-    </div>
 
-    <div class="main-content">
-        <div class="content-header">
-            <h1>All Products</h1>
-            <p>Discover our premium vaping collection</p>
+            <div class="filter-group">
+                <label for="min_price">Min Price</label>
+                <input id="min_price" type="number" min="0" step="0.01" name="min_price" value="{{ request('min_price') }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="max_price">Max Price</label>
+                <input id="max_price" type="number" min="0" step="0.01" name="max_price" value="{{ request('max_price') }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="sort">Sort</label>
+                <select id="sort" name="sort">
+                    <option value="recommended" @selected(request('sort', 'recommended') === 'recommended')>Recommended</option>
+                    <option value="popular" @selected(request('sort') === 'popular')>Popular</option>
+                    <option value="rating" @selected(request('sort') === 'rating')>Top rated</option>
+                    <option value="price_asc" @selected(request('sort') === 'price_asc')>Price low to high</option>
+                    <option value="price_desc" @selected(request('sort') === 'price_desc')>Price high to low</option>
+                    <option value="newest" @selected(request('sort') === 'newest')>Newest</option>
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn-primary" type="submit">Apply</button>
+                <a class="btn-secondary" href="{{ route('shop') }}">Reset</a>
+            </div>
+        </form>
+    </aside>
+
+    <main class="shop-main">
+        @if(session('success'))
+            <div class="notice notice-success">{{ session('success') }}</div>
+        @endif
+
+        @if(session('error'))
+            <div class="notice notice-error">{{ session('error') }}</div>
+        @endif
+
+        <div class="shop-heading">
+            <div>
+                <h1>Shop Products</h1>
+                <div class="muted">{{ number_format($products->total()) }} item(s) available</div>
+            </div>
         </div>
 
         <div class="products-grid">
             @forelse($products as $product)
-                <div class="product-card">
-                    <div class="product-image">💨</div>
+                <article class="product-card">
+                    <a class="product-media" href="{{ route('product.show', $product) }}">
+                        @if($product->image_url)
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                        @else
+                            <span class="product-placeholder">PC</span>
+                        @endif
+                    </a>
+
                     <div class="product-body">
-                        <div class="product-category">{{ $product->category }}</div>
-                        <h3>{{ $product->name }}</h3>
-                        <div class="product-brand">{{ $product->brand }}</div>
-                        <div class="product-price">₱{{ number_format($product->price, 2) }}</div>
-                        <a href="{{ url('/product') }}" class="product-btn">View Product</a>
+                        <div class="product-meta">{{ $product->category_name }}{{ $product->brand ? ' / ' . $product->brand : '' }}</div>
+                        <a class="product-title" href="{{ route('product.show', $product) }}">{{ $product->name }}</a>
+                        <div class="price-row">
+                            <span class="price">PHP {{ number_format($product->price, 2) }}</span>
+                            @if($product->original_price && $product->original_price > $product->price)
+                                <span class="old-price">PHP {{ number_format($product->original_price, 2) }}</span>
+                            @endif
+                        </div>
+                        <div class="stock">{{ $product->stock > 0 ? $product->stock . ' in stock' : 'Out of stock' }}</div>
+
+                        <div class="card-actions">
+                            <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
+                            @auth
+                                <form method="POST" action="{{ route('cart.add') }}">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button class="btn-primary" type="submit" @disabled($product->stock < 1)>Add to Cart</button>
+                                </form>
+                            @else
+                                <a class="btn-primary" href="{{ route('login') }}">Login to Buy</a>
+                            @endauth
+                        </div>
                     </div>
-                </div>
+                </article>
             @empty
-                <div class="empty-state">
-                    <p>No products found. Please check back soon!</p>
-                </div>
+                <p class="muted">No products match your filters.</p>
             @endforelse
         </div>
-    </div>
 
+        <div class="pagination">
+            {{ $products->links() }}
+        </div>
+
+        @if($recommendedProducts->isNotEmpty())
+            <section class="recommendations">
+                <div class="shop-heading">
+                    <div>
+                        <h2>Recommended Picks</h2>
+                        <div class="muted">Based on product demand and your store activity.</div>
+                    </div>
+                </div>
+
+                <div class="products-grid">
+                    @foreach($recommendedProducts as $product)
+                        <article class="product-card">
+                            <a class="product-media" href="{{ route('product.show', $product) }}">
+                                @if($product->image_url)
+                                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                                @else
+                                    <span class="product-placeholder">PC</span>
+                                @endif
+                            </a>
+                            <div class="product-body">
+                                <div class="product-meta">{{ $product->category_name }}</div>
+                                <a class="product-title" href="{{ route('product.show', $product) }}">{{ $product->name }}</a>
+                                <div class="price">PHP {{ number_format($product->price, 2) }}</div>
+                                <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    </main>
 </div>
-
 @endsection

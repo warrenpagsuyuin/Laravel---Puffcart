@@ -25,17 +25,11 @@ class MFACode extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Check if the code is still valid and unused
-     */
     public function isValid(): bool
     {
         return !$this->used && now()->lessThan($this->expires_at);
     }
 
-    /**
-     * Mark code as used
-     */
     public function markAsUsed(): void
     {
         $this->update(['used' => true]);

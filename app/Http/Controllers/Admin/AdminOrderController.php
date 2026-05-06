@@ -42,7 +42,7 @@ class AdminOrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $data = $request->validate([
-            'status' => 'required|in:pending,processing,shipped,delivered,cancelled',
+            'status' => 'required|in:pending,processing,packed,out_for_delivery,completed,cancelled',
             'message' => 'nullable|string|max:1000',
         ]);
 
@@ -57,9 +57,10 @@ class AdminOrderController extends Controller
             ]);
         }
 
-        if ($data['status'] === 'delivered' && $order->payment) {
+        if ($data['status'] === 'completed' && $order->payment) {
             $order->payment->update([
                 'status' => 'paid',
+                'payment_status' => 'paid',
                 'paid_at' => $order->payment->paid_at ?? now(),
             ]);
         }
@@ -71,8 +72,9 @@ class AdminOrderController extends Controller
     {
         return match ($status) {
             'processing' => 'Order is being prepared.',
-            'shipped' => 'Order has been shipped.',
-            'delivered' => 'Order has been delivered.',
+            'packed' => 'Order has been packed and is ready for pickup.',
+            'out_for_delivery' => 'Order is out for delivery.',
+            'completed' => 'Order has been completed.',
             'cancelled' => 'Order has been cancelled.',
             default => 'Order is pending confirmation.',
         };

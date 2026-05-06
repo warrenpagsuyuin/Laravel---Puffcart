@@ -32,13 +32,22 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="category">Category</label>
-                    <input id="category" name="category" list="category-list" value="{{ old('category', $editingProduct?->category) }}">
-                    <datalist id="category-list">
+                    <label for="category_id">Category</label>
+                    <select id="category_id" name="category_id">
+                        <option value="">Select existing category</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category }}"></option>
+                            @if($category->id)
+                                <option value="{{ $category->id }}" @selected((string) old('category_id', $editingProduct?->category_id) === (string) $category->id)>
+                                    {{ $category->name }}
+                                </option>
+                            @endif
                         @endforeach
-                    </datalist>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">New Category</label>
+                    <input id="category" name="category" value="{{ old('category', $editingProduct?->category_name) }}" placeholder="Use when category is not listed">
                 </div>
 
                 <div class="form-group">
@@ -78,6 +87,11 @@
                 <div class="form-group">
                     <label for="image">Product Image</label>
                     <input id="image" type="file" name="image" accept="image/*">
+                </div>
+
+                <div class="form-group full">
+                    <label for="tags">Tags</label>
+                    <input id="tags" name="tags" value="{{ old('tags', $editingProduct?->tags ? implode(', ', $editingProduct->tags) : '') }}" placeholder="pod, refillable, menthol">
                 </div>
 
                 <div class="form-group full">
@@ -137,7 +151,7 @@
                                 <strong>{{ $product->name }}</strong>
                                 <div class="muted">{{ $product->sku ?: 'No SKU' }}</div>
                             </td>
-                            <td>{{ $product->category ?: 'Uncategorized' }}</td>
+                            <td>{{ $product->category_name }}</td>
                             <td>{{ $product->brand ?: 'No brand' }}</td>
                             <td>₱{{ number_format($product->price, 2) }}</td>
                             <td>

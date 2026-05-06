@@ -57,7 +57,7 @@
                 <div class="form-group">
                     <label for="status">Status</label>
                     <select id="status" name="status" required>
-                        @foreach(['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as $status)
+                        @foreach(['pending', 'processing', 'packed', 'out_for_delivery', 'completed', 'cancelled'] as $status)
                             <option value="{{ $status }}" @selected($order->status === $status)>{{ ucfirst($status) }}</option>
                         @endforeach
                     </select>

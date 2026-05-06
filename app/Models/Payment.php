@@ -40,7 +40,6 @@ class Payment extends Model
      */
     public function isPaid(): bool
     {
-        return $this->payment_status === 'paid' || $this->status === 'completed';
+        return $this->payment_status === 'paid' || $this->status === 'paid';
     }
 }
-

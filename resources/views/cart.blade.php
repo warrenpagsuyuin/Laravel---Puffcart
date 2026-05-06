@@ -4,244 +4,278 @@
 
 @section('content')
 <style>
-    body {
-        background: #ffffff;
-    }
-
-    .nav {
+    .store-nav {
+        align-items: center;
         background: var(--bg-white);
         border-bottom: 1px solid var(--border);
-        padding: 16px 40px;
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        padding: 16px 40px;
     }
 
     .logo {
-        font-family: 'Poppins', sans-serif;
         color: var(--primary);
+        font-family: 'Poppins', sans-serif;
         font-size: 18px;
         font-weight: 700;
-        letter-spacing: -0.5px;
     }
 
     .nav-links {
         display: flex;
-        gap: 32px;
+        flex-wrap: wrap;
+        gap: 22px;
     }
 
-    .nav a {
+    .nav-links a {
         color: var(--text-secondary);
         font-size: 14px;
-        font-weight: 500;
-        transition: color 0.2s ease;
+        font-weight: 600;
     }
 
-    .nav a:hover {
-        color: var(--primary);
-    }
-
-    .cart-container {
-        max-width: 1200px;
+    .cart-shell {
         margin: 0 auto;
-        padding: 60px 20px;
-    }
-
-    .cart-header {
-        margin-bottom: 40px;
-    }
-
-    .cart-header h1 {
-        font-size: 32px;
-        color: var(--text-primary);
-        margin-bottom: 8px;
+        max-width: 1120px;
+        padding: 40px 20px 64px;
     }
 
     .cart-layout {
         display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 40px;
+        gap: 28px;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        align-items: start;
     }
 
-    .cart-items {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .cart-item {
+    .cart-list,
+    .summary {
         background: var(--bg-white);
         border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
+        border-radius: var(--radius);
+    }
+
+    .cart-list {
+        display: grid;
+    }
+
+    .cart-row {
         align-items: center;
-        transition: all 0.2s ease;
+        border-bottom: 1px solid var(--border);
+        display: grid;
+        gap: 16px;
+        grid-template-columns: minmax(0, 1fr) 150px 110px;
+        padding: 18px;
     }
 
-    .cart-item:hover {
-        border-color: var(--primary);
-        box-shadow: var(--shadow-sm);
+    .cart-row:last-child {
+        border-bottom: 0;
     }
 
-    .item-info h3 {
-        margin-bottom: 8px;
+    .item-name {
         color: var(--text-primary);
+        font-weight: 800;
     }
 
-    .item-meta {
+    .muted {
         color: var(--text-muted);
         font-size: 13px;
     }
 
-    .item-price {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--primary);
+    .quantity-form {
+        display: flex;
+        gap: 8px;
     }
 
-    .order-summary {
-        background: var(--bg-white);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 24px;
-        height: fit-content;
-        box-shadow: var(--shadow-sm);
+    .quantity-form input {
+        width: 72px;
     }
 
-    .order-summary h2 {
-        font-size: 18px;
-        margin-bottom: 20px;
-        color: var(--text-primary);
+    .summary {
+        display: grid;
+        gap: 14px;
+        padding: 22px;
+        position: sticky;
+        top: 20px;
     }
 
     .summary-row {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 12px;
-        font-size: 14px;
-        color: var(--text-secondary);
+        gap: 18px;
     }
 
-    .summary-divider {
-        height: 1px;
-        background: var(--border);
-        margin: 16px 0;
-    }
-
-    .summary-total {
-        display: flex;
-        justify-content: space-between;
-        font-size: 18px;
-        font-weight: 700;
+    .summary-row strong {
         color: var(--text-primary);
     }
 
-    .summary-total .amount {
-        color: var(--primary);
+    .total-row {
+        border-top: 1px solid var(--border);
+        font-size: 18px;
+        font-weight: 800;
+        padding-top: 14px;
     }
 
-    .checkout-btn {
-        width: 100%;
-        padding: 12px 20px;
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        align-items: center;
+        border-radius: var(--radius);
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 800;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 13px;
+    }
+
+    .btn-primary {
         background: var(--primary);
         color: white;
-        border: none;
-        border-radius: var(--radius);
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        margin-top: 20px;
     }
 
-    .checkout-btn:hover {
+    .btn-primary:hover {
         background: var(--primary-hover);
-        box-shadow: var(--shadow-md);
+        color: white;
     }
 
-    .continue-shopping {
-        display: inline-block;
-        padding: 8px 16px;
-        color: var(--primary);
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 500;
-        margin-top: 12px;
+    .btn-secondary {
+        background: var(--bg-white);
+        border: 1px solid var(--border);
+        color: var(--text-primary);
     }
 
-    .continue-shopping:hover {
-        color: var(--primary-hover);
+    .btn-danger {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
     }
 
-    @media (max-width: 768px) {
-        .cart-layout {
+    .notice {
+        border-radius: var(--radius);
+        font-size: 14px;
+        margin-bottom: 18px;
+        padding: 12px 14px;
+    }
+
+    .notice-success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
+    }
+
+    .notice-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    .empty {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 36px;
+        text-align: center;
+    }
+
+    @media (max-width: 840px) {
+        .store-nav {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px 20px;
+        }
+
+        .cart-layout,
+        .cart-row {
             grid-template-columns: 1fr;
         }
 
-        .order-summary {
-            order: -1;
+        .summary {
+            position: static;
         }
     }
 </style>
 
-<div class="nav">
-    <div class="logo">Puffcart</div>
+<nav class="store-nav">
+    <a class="logo" href="{{ route('home') }}">Puffcart</a>
     <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/shop">Shop</a>
-        <a href="/tracking">Tracking</a>
+        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('shop') }}">Shop</a>
+        <a href="{{ route('tracking') }}">Tracking</a>
+        <a href="{{ route('profile') }}">Profile</a>
     </div>
-</div>
+</nav>
 
-<div class="cart-container">
-    <div class="cart-header">
-        <h1>Shopping Cart</h1>
-    </div>
+<main class="cart-shell">
+    @if(session('success'))
+        <div class="notice notice-success">{{ session('success') }}</div>
+    @endif
 
-    <div class="cart-layout">
-        <div class="cart-items">
-            <div class="cart-item">
-                <div class="item-info">
-                    <h3>XROS 4 Mini</h3>
-                    <div class="item-meta">Quantity: 1</div>
-                </div>
-                <div class="item-price">₱1,299.00</div>
-            </div>
+    @if(session('error'))
+        <div class="notice notice-error">{{ session('error') }}</div>
+    @endif
 
-            <div class="cart-item">
-                <div class="item-info">
-                    <h3>Lava Flow</h3>
-                    <div class="item-meta">Quantity: 2</div>
-                </div>
-                <div class="item-price">₱900.00</div>
-            </div>
+    @if($errors->any())
+        <div class="notice notice-error">
+            @foreach($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
         </div>
+    @endif
 
-        <div class="order-summary">
-            <h2>Order Summary</h2>
+    <h1>Shopping Cart</h1>
 
-            <div class="summary-row">
-                <span>Subtotal</span>
-                <span>₱2,199.00</span>
-            </div>
-
-            <div class="summary-row">
-                <span>Shipping</span>
-                <span style="color: var(--primary); font-weight: 600;">FREE</span>
-            </div>
-
-            <div class="summary-divider"></div>
-
-            <div class="summary-total">
-                <span>Total</span>
-                <span class="amount">₱2,199.00</span>
-            </div>
-
-            <a href="/tracking" class="checkout-btn">Proceed to Checkout</a>
-            <a href="/shop" class="continue-shopping">Continue Shopping</a>
+    @if($items->isEmpty())
+        <div class="empty">
+            <h2>Your cart is empty</h2>
+            <p class="muted">Add products from the shop to start an order.</p>
+            <a class="btn-primary" href="{{ route('shop') }}">Shop Products</a>
         </div>
-    </div>
-</div>
+    @else
+        <div class="cart-layout">
+            <section class="cart-list">
+                @foreach($items as $item)
+                    <div class="cart-row">
+                        <div>
+                            <a class="item-name" href="{{ route('product.show', $item->product) }}">{{ $item->product->name }}</a>
+                            <div class="muted">{{ $item->product->category_name }} / PHP {{ number_format($item->product->price, 2) }}</div>
+                            <div class="muted">{{ $item->product->stock }} in stock</div>
+                        </div>
+
+                        <form class="quantity-form" method="POST" action="{{ route('cart.update', $item) }}">
+                            @csrf
+                            @method('PATCH')
+                            <input type="number" name="quantity" min="1" max="{{ max(1, $item->product->stock) }}" value="{{ $item->quantity }}">
+                            <button class="btn-secondary" type="submit">Update</button>
+                        </form>
+
+                        <div>
+                            <strong>PHP {{ number_format($item->subtotal, 2) }}</strong>
+                            <form method="POST" action="{{ route('cart.remove', $item) }}" style="margin-top:8px;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn-danger" type="submit">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </section>
+
+            <aside class="summary">
+                <h2>Order Summary</h2>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <strong>PHP {{ number_format($subtotal, 2) }}</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery</span>
+                    <strong>{{ $deliveryFee > 0 ? 'PHP ' . number_format($deliveryFee, 2) : 'Free' }}</strong>
+                </div>
+                <div class="summary-row total-row">
+                    <span>Total</span>
+                    <strong>PHP {{ number_format($total, 2) }}</strong>
+                </div>
+                <a class="btn-primary" href="{{ route('checkout') }}">Checkout</a>
+                <a class="btn-secondary" href="{{ route('shop') }}">Continue Shopping</a>
+            </aside>
+        </div>
+    @endif
+</main>
 @endsection

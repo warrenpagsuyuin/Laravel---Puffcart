@@ -1,195 +1,377 @@
 @extends('layouts.app')
 
-@section('title', 'Product')
+@section('title', $product->name)
 
 @section('content')
 <style>
-    body {
-        background: #ffffff;
-    }
-
-    .nav {
+    .store-nav {
+        align-items: center;
         background: var(--bg-white);
         border-bottom: 1px solid var(--border);
-        padding: 16px 40px;
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        padding: 16px 40px;
     }
 
     .logo {
-        font-family: 'Poppins', sans-serif;
         color: var(--primary);
+        font-family: 'Poppins', sans-serif;
         font-size: 18px;
         font-weight: 700;
-        letter-spacing: -0.5px;
     }
 
     .nav-links {
         display: flex;
-        gap: 32px;
+        flex-wrap: wrap;
+        gap: 22px;
     }
 
-    .nav a {
+    .nav-links a {
         color: var(--text-secondary);
         font-size: 14px;
-        font-weight: 500;
-        transition: color 0.2s ease;
+        font-weight: 600;
     }
 
-    .nav a:hover {
-        color: var(--primary);
-    }
-
-    .product-container {
-        max-width: 1200px;
+    .product-shell {
         margin: 0 auto;
-        padding: 60px 20px;
+        max-width: 1180px;
+        padding: 40px 20px 64px;
     }
 
-    .product-layout {
+    .detail-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 60px;
-        align-items: center;
+        gap: 44px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: start;
     }
 
-    .product-image {
+    .product-media {
+        align-items: center;
+        aspect-ratio: 1 / 1;
         background: var(--bg-light);
         border: 1px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 60px;
+        border-radius: var(--radius);
         display: flex;
-        align-items: center;
         justify-content: center;
-        min-height: 400px;
+        overflow: hidden;
     }
 
-    .product-emoji {
-        font-size: 120px;
+    .product-media img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
     }
 
-    .product-details h1 {
-        font-size: 32px;
-        color: var(--text-primary);
-        margin-bottom: 8px;
+    .product-placeholder {
+        color: var(--primary);
+        font-family: 'Poppins', sans-serif;
+        font-size: 72px;
+        font-weight: 800;
     }
 
-    .product-meta {
+    .eyebrow {
         color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+
+    .product-title {
+        font-size: 36px;
+        line-height: 1.15;
+        margin-bottom: 12px;
+    }
+
+    .rating {
+        color: var(--text-secondary);
         font-size: 14px;
         margin-bottom: 24px;
     }
 
-    .product-price {
-        font-size: 32px;
-        font-weight: 700;
+    .price-row {
+        align-items: baseline;
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .price {
         color: var(--primary);
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .old-price {
+        color: var(--text-muted);
+        text-decoration: line-through;
+    }
+
+    .description {
+        color: var(--text-secondary);
+        line-height: 1.8;
         margin-bottom: 24px;
     }
 
-    .product-description {
-        color: var(--text-secondary);
-        font-size: 15px;
-        line-height: 1.8;
-        margin-bottom: 32px;
+    .muted {
+        color: var(--text-muted);
+        font-size: 14px;
     }
 
-    .product-actions {
-        display: flex;
+    .facts {
+        border-bottom: 1px solid var(--border);
+        border-top: 1px solid var(--border);
+        display: grid;
         gap: 12px;
-        margin-top: 32px;
+        margin-bottom: 24px;
+        padding: 18px 0;
+    }
+
+    .fact-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        font-size: 14px;
+    }
+
+    .fact-row span:first-child {
+        color: var(--text-muted);
+        font-weight: 700;
+    }
+
+    .fact-row span:last-child {
+        color: var(--text-primary);
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .purchase-form {
+        display: grid;
+        gap: 12px;
+        max-width: 360px;
+    }
+
+    .quantity-row {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 110px minmax(0, 1fr);
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        align-items: center;
+        border-radius: var(--radius);
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 800;
+        justify-content: center;
+        min-height: 44px;
+        padding: 11px 16px;
     }
 
     .btn-primary {
-        flex: 1;
-        padding: 12px 20px;
         background: var(--primary);
         color: white;
-        border: none;
-        border-radius: var(--radius);
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.2s ease;
     }
 
     .btn-primary:hover {
         background: var(--primary-hover);
-        box-shadow: var(--shadow-md);
+        color: white;
     }
 
     .btn-secondary {
-        flex: 1;
-        padding: 12px 20px;
-        background: var(--bg-light);
-        color: var(--primary);
+        background: var(--bg-white);
         border: 1px solid var(--border);
-        border-radius: var(--radius);
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.2s ease;
+        color: var(--text-primary);
     }
 
     .btn-secondary:hover {
         border-color: var(--primary);
-        background: var(--primary-light);
+        color: var(--primary);
     }
 
-    @media (max-width: 768px) {
-        .product-layout {
-            grid-template-columns: 1fr;
-            gap: 40px;
+    .notice {
+        border-radius: var(--radius);
+        font-size: 14px;
+        margin-bottom: 18px;
+        padding: 12px 14px;
+    }
+
+    .notice-success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #15803d;
+    }
+
+    .notice-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    .section {
+        border-top: 1px solid var(--border);
+        margin-top: 44px;
+        padding-top: 30px;
+    }
+
+    .cards {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .mini-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+    }
+
+    .mini-card strong {
+        color: var(--text-primary);
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .mini-card span {
+        color: var(--primary);
+        font-weight: 800;
+    }
+
+    @media (max-width: 860px) {
+        .store-nav {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 14px;
+            padding: 16px 20px;
         }
 
-        .product-actions {
-            flex-direction: column;
+        .detail-grid,
+        .cards {
+            grid-template-columns: 1fr;
+        }
+
+        .product-title {
+            font-size: 30px;
         }
     }
 </style>
 
-<div class="nav">
-    <div class="logo">Puffcart</div>
+<nav class="store-nav">
+    <a class="logo" href="{{ route('home') }}">Puffcart</a>
     <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/shop">Shop</a>
-        <a href="/cart">Cart</a>
-        <a href="/login">Login</a>
+        <a href="{{ route('home') }}">Home</a>
+        <a href="{{ route('shop') }}">Shop</a>
+        <a href="{{ route('cart') }}">Cart</a>
+        <a href="{{ route('tracking') }}">Tracking</a>
+        @auth
+            <a href="{{ route('profile') }}">Profile</a>
+        @else
+            <a href="{{ route('login') }}">Login</a>
+        @endauth
     </div>
-</div>
+</nav>
 
-<div class="product-container">
-    <div class="product-layout">
-        <div class="product-image">
-            <div class="product-emoji">💨</div>
+<main class="product-shell">
+    @if(session('success'))
+        <div class="notice notice-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="notice notice-error">{{ session('error') }}</div>
+    @endif
+
+    @if($errors->any())
+        <div class="notice notice-error">
+            @foreach($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
+        </div>
+    @endif
+
+    <div class="detail-grid">
+        <div class="product-media">
+            @if($product->image_url)
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+            @else
+                <span class="product-placeholder">PC</span>
+            @endif
         </div>
 
-        <div class="product-details">
-            <h1>XROS 4 Mini</h1>
-            <div class="product-meta">Pod System · Vaporesso</div>
-            
-            <div class="product-price">₱1,299.00</div>
+        <section>
+            <div class="eyebrow">{{ $product->category_name }}{{ $product->brand ? ' / ' . $product->brand : '' }}</div>
+            <h1 class="product-title">{{ $product->name }}</h1>
+            <div class="rating">Rated {{ number_format((float) $product->rating, 1) }} / 5</div>
 
-            <div class="product-description">
-                Experience superior vaping with the Vaporesso XROS 4 Mini. Featuring a compact and ergonomic design, advanced chipset technology, and an innovative pod system. Delivers smooth vapor production with exceptional flavor clarity.
+            <div class="price-row">
+                <div class="price">PHP {{ number_format($product->price, 2) }}</div>
+                @if($product->original_price && $product->original_price > $product->price)
+                    <div class="old-price">PHP {{ number_format($product->original_price, 2) }}</div>
+                @endif
             </div>
 
-            <div style="background: var(--bg-light); border-radius: var(--radius); padding: 16px; margin-bottom: 24px;">
-                <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">Key Features</div>
-                <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary); font-size: 14px;">
-                    <li>1000mAh Battery Capacity</li>
-                    <li>Fast Charging Technology</li>
-                    <li>Long Coil Lifespan</li>
-                    <li>Enhanced Flavor Delivery</li>
-                </ul>
+            <p class="description">{{ $product->description ?: 'No product description is available yet.' }}</p>
+
+            <div class="facts">
+                <div class="fact-row">
+                    <span>SKU</span>
+                    <span>{{ $product->sku ?: 'N/A' }}</span>
+                </div>
+                <div class="fact-row">
+                    <span>Stock</span>
+                    <span>{{ $product->stock > 0 ? $product->stock . ' available' : 'Out of stock' }}</span>
+                </div>
+                <div class="fact-row">
+                    <span>Demand</span>
+                    <span>{{ number_format((int) ($product->sales_count ?? 0)) }} sold</span>
+                </div>
             </div>
 
-            <div class="product-actions">
-                <a href="/cart" class="btn-primary">Add to Cart</a>
-                <a href="/shop" class="btn-secondary">Back to Shop</a>
-            </div>
-        </div>
+            @auth
+                <form class="purchase-form" method="POST" action="{{ route('cart.add') }}">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <div class="quantity-row">
+                        <input type="number" name="quantity" min="1" max="{{ max(1, $product->stock) }}" value="1" @disabled($product->stock < 1)>
+                        <button class="btn-primary" type="submit" @disabled($product->stock < 1)>Add to Cart</button>
+                    </div>
+                    <a class="btn-secondary" href="{{ route('shop') }}">Back to Shop</a>
+                </form>
+            @else
+                <div class="purchase-form">
+                    <a class="btn-primary" href="{{ route('login') }}">Login to Buy</a>
+                    <a class="btn-secondary" href="{{ route('shop') }}">Back to Shop</a>
+                </div>
+            @endauth
+        </section>
     </div>
-</div>
+
+    @if($related->isNotEmpty())
+        <section class="section">
+            <h2>Related Products</h2>
+            <div class="cards">
+                @foreach($related as $item)
+                    <a class="mini-card" href="{{ route('product.show', $item) }}">
+                        <strong>{{ $item->name }}</strong>
+                        <div class="muted">{{ $item->category_name }}</div>
+                        <span>PHP {{ number_format($item->price, 2) }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    <section class="section">
+        <h2>Reviews</h2>
+        @forelse($product->reviews as $review)
+            <div class="mini-card" style="margin-top:12px;">
+                <strong>{{ $review->user?->name ?? 'Customer' }} / {{ $review->rating }} out of 5</strong>
+                <div class="muted">{{ $review->comment }}</div>
+            </div>
+        @empty
+            <p class="muted">No reviews yet.</p>
+        @endforelse
+    </section>
+</main>
 @endsection

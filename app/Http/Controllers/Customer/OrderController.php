@@ -3,97 +3,66 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Order, OrderItem, OrderTracking, Payment, CartItem};
+use App\Http\Requests\CheckoutRequest;
+use App\Models\Order;
+use App\Services\CheckoutService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function checkout()
+    public function checkout(Request $request, CheckoutService $checkoutService)
     {
-        $items = auth()->user()->cartItems()->with('product')->get();
-        if ($items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        $summary = $checkoutService->preview(auth()->user(), $request->get('promo_code'));
+
+        if ($summary['items']->isEmpty()) {
+            return redirect()->route('cart')->with('error', 'Your cart is empty.');
         }
-        $subtotal    = $items->sum(fn($i) => $i->product->price * $i->quantity);
-        $deliveryFee = $subtotal >= 500 ? 0 : 50;
-        return view('customer.checkout', compact('items', 'subtotal', 'deliveryFee'));
+
+        return view('checkout', $summary);
     }
 
-    public function placeOrder(Request $request)
+    public function placeOrder(CheckoutRequest $request, CheckoutService $checkoutService)
     {
-        $request->validate([
-            'delivery_address' => 'required|string',
-            'delivery_phone'   => 'required|string',
-            'payment_method'   => 'required|in:gcash,maya,cod,bank_transfer',
-        ]);
+        $order = $checkoutService->placeOrder(auth()->user(), $request->validated(), $request);
 
-        DB::transaction(function () use ($request) {
-            $items       = auth()->user()->cartItems()->with('product')->get();
-            $subtotal    = $items->sum(fn($i) => $i->product->price * $i->quantity);
-            $deliveryFee = $subtotal >= 500 ? 0 : 50;
-            $total       = $subtotal + $deliveryFee;
-
-            $order = Order::create([
-                'user_id'          => auth()->id(),
-                'subtotal'         => $subtotal,
-                'delivery_fee'     => $deliveryFee,
-                'total'            => $total,
-                'delivery_address' => $request->delivery_address,
-                'delivery_phone'   => $request->delivery_phone,
-                'payment_method'   => $request->payment_method,
-                'notes'            => $request->notes,
-            ]);
-
-            foreach ($items as $item) {
-                OrderItem::create([
-                    'order_id'     => $order->id,
-                    'product_id'   => $item->product_id,
-                    'product_name' => $item->product->name,
-                    'price'        => $item->product->price,
-                    'quantity'     => $item->quantity,
-                    'subtotal'     => $item->product->price * $item->quantity,
-                ]);
-                $item->product->decrement('stock', $item->quantity);
-            }
-
-            Payment::create([
-                'order_id' => $order->id,
-                'method'   => $request->payment_method,
-                'amount'   => $total,
-                'status'   => $request->payment_method === 'cod' ? 'pending' : 'pending',
-            ]);
-
-            OrderTracking::create([
-                'order_id'    => $order->id,
-                'status'      => 'pending',
-                'message'     => 'Order placed successfully. Awaiting confirmation.',
-                'occurred_at' => now(),
-            ]);
-
-            CartItem::where('user_id', auth()->id())->delete();
-        });
-
-        return redirect()->route('orders.index')->with('success', 'Order placed successfully!');
+        return redirect()
+            ->route('orders.show', $order)
+            ->with('success', 'Order placed successfully.');
     }
 
     public function index()
     {
         $orders = auth()->user()->orders()->with('items', 'payment')->latest()->paginate(10);
-        return view('customer.orders', compact('orders'));
+
+        return view('orders.index', compact('orders'));
     }
 
     public function show(Order $order)
     {
-        $this->authorize('view', $order);
+        abort_unless($order->user_id === auth()->id(), 403);
+
         $order->load('items.product', 'payment', 'tracking');
-        return view('customer.order-detail', compact('order'));
+
+        return view('orders.show', compact('order'));
     }
 
     public function track(Order $order)
     {
-        $this->authorize('view', $order);
+        abort_unless($order->user_id === auth()->id(), 403);
+
         $order->load('items', 'payment', 'tracking');
-        return view('customer.order-track', compact('order'));
+
+        return view('orders.track', compact('order'));
+    }
+
+    public function trackingIndex()
+    {
+        $orders = auth()->user()
+            ->orders()
+            ->with('payment')
+            ->latest()
+            ->paginate(10);
+
+        return view('tracking', compact('orders'));
     }
 }

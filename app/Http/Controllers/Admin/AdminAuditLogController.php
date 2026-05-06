@@ -8,11 +8,6 @@ use Illuminate\Http\Request;
 
 class AdminAuditLogController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('admin');
-    }
-
     public function index(Request $request)
     {
         $query = AuditLog::with('user');

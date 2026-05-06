@@ -35,6 +35,21 @@
         </div>
     </div>
 
+    <div class="grid grid-3" style="margin-top:16px;">
+        <div class="stat-card">
+            <div class="stat-label">Product Views Last 30 Days</div>
+            <div class="stat-value">{{ number_format($customerBehavior['product_views_30_days']) }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Cart Adds Last 30 Days</div>
+            <div class="stat-value">{{ number_format($customerBehavior['cart_adds_30_days']) }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Searches Last 30 Days</div>
+            <div class="stat-value">{{ number_format($customerBehavior['searches_30_days']) }}</div>
+        </div>
+    </div>
+
     <div class="grid grid-2" style="margin-top:16px;">
         <section class="panel">
             <div class="section-title">
@@ -194,6 +209,66 @@
                                 <td>{{ $alert['detail'] }}</td>
                             </tr>
                         @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-title">
+                <h2>Popular Categories</h2>
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Units Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($popularCategories as $category)
+                            <tr>
+                                <td><strong>{{ $category->category }}</strong></td>
+                                <td>{{ number_format($category->units_sold) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2" class="muted">No category sales yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:16px;">
+        <section class="panel">
+            <div class="section-title">
+                <h2>Popular Searches</h2>
+            </div>
+
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Search</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($popularSearches as $search)
+                            <tr>
+                                <td><strong>{{ $search->search_query }}</strong></td>
+                                <td>{{ number_format($search->total) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2" class="muted">No search behavior recorded yet.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
