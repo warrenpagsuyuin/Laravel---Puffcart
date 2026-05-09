@@ -18,6 +18,10 @@ class OrderController extends Controller
             return redirect()->route('cart')->with('error', 'Your cart is empty.');
         }
 
+        if (!empty($summary['stock_errors'])) {
+            return redirect()->route('cart')->with('error', $summary['stock_errors'][0]);
+        }
+
         return view('checkout', $summary);
     }
 
@@ -32,7 +36,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = auth()->user()->orders()->with('items', 'payment')->latest()->paginate(10);
+        $orders = auth()->user()->orders()->with('items.flavor', 'items.batteryColor', 'payment')->latest()->paginate(10);
 
         return view('orders.index', compact('orders'));
     }
@@ -41,7 +45,7 @@ class OrderController extends Controller
     {
         abort_unless($order->user_id === auth()->id(), 403);
 
-        $order->load('items.product', 'payment', 'tracking');
+        $order->load('items.product', 'items.flavor', 'items.batteryColor', 'payment', 'tracking');
 
         return view('orders.show', compact('order'));
     }
@@ -50,7 +54,7 @@ class OrderController extends Controller
     {
         abort_unless($order->user_id === auth()->id(), 403);
 
-        $order->load('items', 'payment', 'tracking');
+        $order->load('items.flavor', 'items.batteryColor', 'payment', 'tracking');
 
         return view('orders.track', compact('order'));
     }

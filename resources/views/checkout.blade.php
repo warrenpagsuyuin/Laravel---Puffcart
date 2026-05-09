@@ -202,6 +202,16 @@
                     <div>
                         <strong>{{ $item->product->name }}</strong>
                         <div class="muted">Qty {{ $item->quantity }}</div>
+                        <div class="muted">Type: {{ $item->product_type_label }}</div>
+                        @if($item->flavor_label)
+                            <div class="muted">Flavor: {{ $item->flavor_label }}</div>
+                        @endif
+                        @if($item->battery_color_label)
+                            <div class="muted">Battery Color: {{ $item->battery_color_label }}</div>
+                        @endif
+                        @if($item->bundle_description)
+                            <div class="muted">{{ $item->bundle_description }}</div>
+                        @endif
                     </div>
                     <strong>PHP {{ number_format($item->subtotal, 2) }}</strong>
                 </div>

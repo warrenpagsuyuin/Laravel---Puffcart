@@ -13,6 +13,7 @@ class ProductSearchService
     {
         $query = Product::query()
             ->active()
+            ->with('availableFlavorOptions', 'availableColorOptions')
             ->when(Schema::hasColumn('products', 'category_id'), fn ($query) => $query->with('category'))
             ->when(Schema::hasTable('order_items'), fn ($query) => $query->withSum('orderItems as units_sold', 'quantity'));
 
@@ -60,20 +61,42 @@ class ProductSearchService
                     ->orWhere('brand', 'like', $contains)
                     ->orWhere('category', 'like', $contains)
                     ->orWhere('description', 'like', $contains);
+
+                foreach (['product_type', 'flavor', 'bundle_pods', 'bundle_battery'] as $column) {
+                    if (Schema::hasColumn('products', $column)) {
+                        $query->orWhere($column, 'like', $contains);
+                    }
+                }
+
+                if (Schema::hasTable('product_flavors')) {
+                    $query->orWhereHas('flavors', fn ($flavorQuery) => $flavorQuery->where('name', 'like', $contains));
+                }
             });
 
+            $scoreSql = '(CASE WHEN name = ? THEN 100 ELSE 0 END
+                + CASE WHEN name LIKE ? THEN 70 ELSE 0 END
+                + CASE WHEN brand LIKE ? THEN 30 ELSE 0 END
+                + CASE WHEN category LIKE ? THEN 25 ELSE 0 END';
+            $scoreBindings = [$search, $startsWith, $contains, $contains];
+
+            if (Schema::hasColumn('products', 'flavor')) {
+                $scoreSql .= ' + CASE WHEN flavor LIKE ? THEN 25 ELSE 0 END';
+                $scoreBindings[] = $contains;
+            }
+
+            if (Schema::hasColumn('products', 'product_type')) {
+                $scoreSql .= ' + CASE WHEN product_type LIKE ? THEN 20 ELSE 0 END';
+                $scoreBindings[] = $contains;
+            }
+
+            $scoreSql .= ' + CASE WHEN description LIKE ? THEN 10 ELSE 0 END
+                + CASE WHEN stock > 0 THEN 10 ELSE 0 END
+                + COALESCE(sales_count, 0) * 2
+                + COALESCE(rating, 0) * 5) AS search_score';
+            $scoreBindings[] = $contains;
+
             $query->select('products.*')
-                ->selectRaw(
-                    '(CASE WHEN name = ? THEN 100 ELSE 0 END
-                    + CASE WHEN name LIKE ? THEN 70 ELSE 0 END
-                    + CASE WHEN brand LIKE ? THEN 30 ELSE 0 END
-                    + CASE WHEN category LIKE ? THEN 25 ELSE 0 END
-                    + CASE WHEN description LIKE ? THEN 10 ELSE 0 END
-                    + CASE WHEN stock > 0 THEN 10 ELSE 0 END
-                    + COALESCE(sales_count, 0) * 2
-                    + COALESCE(rating, 0) * 5) AS search_score',
-                    [$search, $startsWith, $contains, $contains, $contains]
-                )
+                ->selectRaw($scoreSql, $scoreBindings)
                 ->orderByDesc('search_score');
         } else {
             $sort = $request->get('sort', 'recommended');

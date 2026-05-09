@@ -14,6 +14,7 @@ class ProductRecommendationService
     {
         return $this->rankProducts(
             Product::active()
+                ->with('availableFlavorOptions', 'availableColorOptions')
                 ->where('id', '!=', $product->id)
                 ->get(),
             $user,
@@ -35,6 +36,7 @@ class ProductRecommendationService
 
         $referenceProducts = Product::whereIn('id', $seenProductIds)->get();
         $candidateProducts = Product::active()
+            ->with('availableFlavorOptions', 'availableColorOptions')
             ->whereNotIn('id', $seenProductIds)
             ->get();
 
@@ -45,6 +47,7 @@ class ProductRecommendationService
     public function trending(int $limit = 8): Collection
     {
         return Product::active()
+            ->with('availableFlavorOptions', 'availableColorOptions')
             ->orderByDesc(Schema::hasColumn('products', 'sales_count') ? 'sales_count' : 'stock')
             ->orderByDesc('rating')
             ->orderByDesc('is_featured')

@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\OrderTracking;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\ProductFlavor;
 use App\Models\PromoCode;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class CheckoutService
 
     public function preview(User $user, ?string $promoCode = null): array
     {
-        $items = $user->cartItems()->with('product')->get();
+        $items = $user->cartItems()->with('product', 'flavor', 'batteryColor')->get();
         $subtotal = $items->sum(fn (CartItem $item) => (float) $item->product->price * $item->quantity);
         $deliveryFee = $subtotal >= 500 || $subtotal <= 0 ? 0 : 50;
         $promo = $this->resolvePromoCode($promoCode);
@@ -36,6 +37,7 @@ class CheckoutService
             'discount' => round($discount, 2),
             'total' => round(max(0, $subtotal + $deliveryFee - $discount), 2),
             'promo' => $promo,
+            'stock_errors' => $this->stockErrors($items),
         ];
     }
 
@@ -43,6 +45,7 @@ class CheckoutService
     {
         return DB::transaction(function () use ($user, $data, $request) {
             $cartItems = CartItem::where('user_id', $user->id)
+                ->with('flavor', 'batteryColor')
                 ->lockForUpdate()
                 ->get();
 
@@ -57,7 +60,19 @@ class CheckoutService
                 ->get()
                 ->keyBy('id');
 
+            $optionIds = $cartItems->pluck('product_flavor_id')
+                ->merge($cartItems->pluck('battery_color_id'))
+                ->filter()
+                ->unique();
+            $flavors = ProductFlavor::whereIn('id', $optionIds)
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
             $subtotal = 0;
+            $lines = collect();
+            $requiredByFlavor = [];
+            $requiredByProduct = [];
 
             foreach ($cartItems as $item) {
                 $product = $products->get($item->product_id);
@@ -68,13 +83,70 @@ class CheckoutService
                     ]);
                 }
 
-                if ($product->stock < $item->quantity) {
+                $flavor = $flavors->get($item->product_flavor_id);
+                $isBattery = ($item->product_type ?: $product->product_type) === Product::TYPE_BATTERY;
+                $isBundle = ($item->product_type ?: $product->product_type) === Product::TYPE_BUNDLE;
+
+                if (!$flavor || $flavor->product_id !== $product->id || !$flavor->is_active) {
                     throw ValidationException::withMessages([
-                        'cart' => "{$product->name} only has {$product->stock} item(s) left.",
+                        'cart' => "{$product->name} is no longer available in the selected option.",
                     ]);
                 }
 
-                $subtotal += (float) $product->price * $item->quantity;
+                if ($isBattery && $flavor->option_type !== ProductFlavor::TYPE_COLOR) {
+                    throw ValidationException::withMessages([
+                        'cart' => "{$product->name} is no longer available in the selected battery color.",
+                    ]);
+                }
+
+                if (!$isBattery && $flavor->option_type !== ProductFlavor::TYPE_FLAVOR) {
+                    throw ValidationException::withMessages([
+                        'cart' => "{$product->name} is no longer available in the selected flavor.",
+                    ]);
+                }
+
+                $batteryColor = null;
+
+                if ($isBundle) {
+                    $batteryColor = $flavors->get($item->battery_color_id);
+
+                    if (!$batteryColor || $batteryColor->product_id !== $product->id || !$batteryColor->is_active || $batteryColor->option_type !== ProductFlavor::TYPE_COLOR) {
+                        throw ValidationException::withMessages([
+                            'cart' => "{$product->name} is no longer available in the selected battery color.",
+                        ]);
+                    }
+
+                    $requiredByFlavor[$batteryColor->id] = ($requiredByFlavor[$batteryColor->id] ?? 0) + $item->quantity;
+                }
+
+                $requiredByFlavor[$flavor->id] = ($requiredByFlavor[$flavor->id] ?? 0) + $item->quantity;
+                $requiredByProduct[$product->id] = ($requiredByProduct[$product->id] ?? 0) + $item->quantity;
+                $lineSubtotal = (float) $product->price * $item->quantity;
+                $subtotal += $lineSubtotal;
+
+                $lines->push([
+                    'item' => $item,
+                    'product' => $product,
+                    'flavor' => $flavor,
+                    'battery_color' => $batteryColor,
+                    'subtotal' => $lineSubtotal,
+                ]);
+            }
+
+            foreach ($requiredByFlavor as $flavorId => $requiredQuantity) {
+                $flavor = $flavors->get($flavorId);
+
+                if (!$flavor || $flavor->stock < $requiredQuantity) {
+                    $product = $products->get($flavor?->product_id);
+                    $name = $product?->name ?? 'One of your products';
+                    $flavorName = $flavor?->name ?? 'selected option';
+                    $optionLabel = $flavor?->option_type === ProductFlavor::TYPE_COLOR ? 'battery color' : 'flavor';
+                    $stock = $flavor?->stock ?? 0;
+
+                    throw ValidationException::withMessages([
+                        'cart' => "{$name} ({$flavorName}) only has {$stock} {$optionLabel} item(s) left.",
+                    ]);
+                }
             }
 
             $deliveryFee = $subtotal >= 500 ? 0 : 50;
@@ -103,27 +175,46 @@ class CheckoutService
                 'payment_method' => $data['payment_method'],
             ]);
 
-            foreach ($cartItems as $item) {
-                $product = $products->get($item->product_id);
-                $lineSubtotal = (float) $product->price * $item->quantity;
+            foreach ($lines as $line) {
+                /** @var \App\Models\CartItem $item */
+                $item = $line['item'];
+                /** @var \App\Models\Product $product */
+                $product = $line['product'];
+                /** @var \App\Models\ProductFlavor $flavor */
+                $flavor = $line['flavor'];
+                $batteryColor = $line['battery_color'];
+                $lineSubtotal = $line['subtotal'];
 
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
+                    'product_flavor_id' => $flavor->id,
+                    'battery_color_id' => $batteryColor?->id,
                     'product_name' => $product->name,
                     'price' => $product->price,
                     'quantity' => $item->quantity,
+                    'selected_flavor' => $flavor->option_type === ProductFlavor::TYPE_FLAVOR ? $flavor->name : null,
+                    'selected_battery_color' => $batteryColor?->name ?: ($flavor->option_type === ProductFlavor::TYPE_COLOR ? $flavor->name : null),
+                    'product_type' => $item->product_type ?: ($product->product_type ?? 'other'),
+                    'bundle_pods' => $item->bundle_pods ?: $product->bundle_pods,
+                    'bundle_battery' => $item->bundle_battery ?: $product->bundle_battery,
                     'subtotal' => round($lineSubtotal, 2),
                 ]);
 
-                $updates = ['stock' => $product->stock - $item->quantity];
+                $this->behaviorService->purchased($user, $product, $item->quantity, $lineSubtotal, $request);
+            }
+
+            foreach ($requiredByFlavor as $flavorId => $requiredQuantity) {
+                $flavors->get($flavorId)->decrement('stock', $requiredQuantity);
+            }
+
+            foreach ($requiredByProduct as $productId => $quantitySold) {
+                $product = $products->get($productId);
+                $product->syncStockFromFlavors();
 
                 if (Schema::hasColumn('products', 'sales_count')) {
-                    $updates['sales_count'] = (int) $product->sales_count + $item->quantity;
+                    $product->increment('sales_count', $quantitySold);
                 }
-
-                $product->update($updates);
-                $this->behaviorService->purchased($user, $product, $item->quantity, $lineSubtotal, $request);
             }
 
             Payment::create([
@@ -149,7 +240,7 @@ class CheckoutService
 
             CartItem::where('user_id', $user->id)->delete();
 
-            return $order->load('items.product', 'payment', 'tracking');
+            return $order->load('items.product', 'items.flavor', 'items.batteryColor', 'payment', 'tracking');
         });
     }
 
@@ -164,5 +255,39 @@ class CheckoutService
         return PromoCode::available()
             ->where('code', strtoupper($code))
             ->first();
+    }
+
+    private function stockErrors($items): array
+    {
+        return $items
+            ->map(function (CartItem $item): ?string {
+                if (!$item->product || !$item->product->is_active) {
+                    return 'One of the products in your cart is no longer available.';
+                }
+
+                if (!$item->flavor || !$item->flavor->is_active) {
+                    return "{$item->product->name} is no longer available in the selected option.";
+                }
+
+                if ($item->product_type === Product::TYPE_BUNDLE && (!$item->batteryColor || !$item->batteryColor->is_active)) {
+                    return "{$item->product->name} is no longer available in the selected battery color.";
+                }
+
+                if ($item->product_type === Product::TYPE_BUNDLE && $item->batteryColor->stock < $item->quantity) {
+                    return "{$item->product->name} ({$item->batteryColor->name}) only has {$item->batteryColor->stock} battery color item(s) left.";
+                }
+
+                if ($item->flavor->stock < $item->quantity) {
+                    $optionLabel = $item->product_type === Product::TYPE_BATTERY ? 'battery color' : 'flavor';
+
+                    return "{$item->product->name} ({$item->flavor->name}) only has {$item->flavor->stock} {$optionLabel} item(s) left.";
+                }
+
+                return null;
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
     }
 }

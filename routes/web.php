@@ -19,6 +19,7 @@ use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,7 +149,7 @@ Route::prefix('payment')->name('payment.')->group(function () {
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
-|--------------------------------------------------------------------------
+|-----------------------------------------------------------------a---------
 */
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -166,6 +167,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
         Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
         Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');

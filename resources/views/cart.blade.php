@@ -236,13 +236,23 @@
                         <div>
                             <a class="item-name" href="{{ route('product.show', $item->product) }}">{{ $item->product->name }}</a>
                             <div class="muted">{{ $item->product->category_name }} / PHP {{ number_format($item->product->price, 2) }}</div>
-                            <div class="muted">{{ $item->product->stock }} in stock</div>
+                            <div class="muted">Type: {{ $item->product_type_label }}</div>
+                            @if($item->flavor_label)
+                                <div class="muted">Flavor: {{ $item->flavor_label }}</div>
+                            @endif
+                            @if($item->battery_color_label)
+                                <div class="muted">Battery Color: {{ $item->battery_color_label }}</div>
+                            @endif
+                            @if($item->bundle_description)
+                                <div class="muted">{{ $item->bundle_description }}</div>
+                            @endif
+                            <div class="muted">{{ $item->available_stock }} available for this selection</div>
                         </div>
 
                         <form class="quantity-form" method="POST" action="{{ route('cart.update', $item) }}">
                             @csrf
                             @method('PATCH')
-                            <input type="number" name="quantity" min="1" max="{{ max(1, $item->product->stock) }}" value="{{ $item->quantity }}">
+                            <input type="number" name="quantity" min="1" max="{{ max(1, $item->available_stock) }}" value="{{ $item->quantity }}">
                             <button class="btn-secondary" type="submit">Update</button>
                         </form>
 

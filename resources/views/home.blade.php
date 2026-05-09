@@ -711,6 +711,35 @@
         </div>
 
         <div class="products-grid">
+            @forelse($featuredProducts as $product)
+                @php
+                    $availableFlavors = $product->availableFlavors;
+                @endphp
+                <a class="product-card" href="{{ route('product.show', $product) }}">
+                    <div class="product-image">
+                        @if($product->badge && $product->badge !== 'none')
+                            <span class="product-badge">{{ $product->badge }}</span>
+                        @endif
+
+                        @if($product->image_url)
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" style="height:100%;width:100%;object-fit:cover;">
+                        @else
+                            PC
+                        @endif
+                    </div>
+
+                    <div class="product-body">
+                        <div class="product-category">{{ $product->category_name }}</div>
+                        <h3>{{ $product->name }}</h3>
+                        <div class="product-meta">{{ $product->brand ?: 'Puffcart' }}</div>
+                        @if($availableFlavors->isNotEmpty())
+                            <div class="product-meta">Flavors: {{ $availableFlavors->pluck('name')->implode(', ') }}</div>
+                        @endif
+                        <div class="product-rating">{{ number_format((float) $product->rating, 1) }} / 5 rating</div>
+                        <div class="product-price">PHP {{ number_format($product->price, 2) }}</div>
+                    </div>
+                </a>
+            @empty
             <div class="product-card">
                 <div class="product-image">
                     <span class="product-badge">New</span>
@@ -770,6 +799,7 @@
                     <div class="product-price">₱1,650</div>
                 </div>
             </div>
+            @endforelse
         </div>
     </section>
 
@@ -825,7 +855,7 @@
 <div class="chatbot-widget" id="chatbotWidget">
     <div class="chatbot-header">
         <span>Puffcart Assistant</span>
-        <button type="button" class="chatbot-toggle" id="chatbotToggle">−</button>
+        <button type="button" class="chatbot-toggle" id="chatbotToggle">-</button>
     </div>
 
     <div class="chatbot-body" id="chatbotMessages">
@@ -843,7 +873,7 @@
 
     <form class="chatbot-footer" id="chatbotForm">
         <input type="text" id="chatbotInput" placeholder="Ask about Puffcart..." autocomplete="off">
-        <button type="submit">Send</button>
+        <button type="submit" id="chatbotSubmit">Send</button>
     </form>
 </div>
 
@@ -853,6 +883,7 @@
         const toggle = document.getElementById('chatbotToggle');
         const form = document.getElementById('chatbotForm');
         const input = document.getElementById('chatbotInput');
+        const submit = document.getElementById('chatbotSubmit');
         const messages = document.getElementById('chatbotMessages');
         const csrfMeta = document.querySelector('meta[name="csrf-token"]');
 
@@ -872,6 +903,12 @@
             messages.scrollTop = messages.scrollHeight;
         }
 
+        function setSending(isSending) {
+            input.disabled = isSending;
+            submit.disabled = isSending;
+            submit.textContent = isSending ? 'Sending' : 'Send';
+        }
+
         async function sendMessage(message) {
             const cleanMessage = message.trim();
 
@@ -879,11 +916,12 @@
                 return;
             }
 
-            addMessage(cleanMessage, 'user');
+            addMessage(cleanMessage, 'user');art
             input.value = '';
+            setSending(true);
 
             try {
-                const response = await fetch('/chatbot/send', {
+                const response = await fetch("{{ route('chatbot.send') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -895,18 +933,26 @@
                     }),
                 });
 
+                const data = await response.json().catch(() => ({}));
+
                 if (!response.ok) {
-                    addMessage('Sorry, the assistant could not process that message.', 'bot');
+                    addMessage(data.message || 'Sorry, the assistant could not process that message.', 'bot');
+                    return;
                 }
+
+                addMessage(data.reply || 'I received your message, but I do not have a reply yet.', 'bot');
             } catch (error) {
                 addMessage('Sorry, I could not connect to the assistant right now.', 'bot');
                 console.error(error);
+            } finally {
+                setSending(false);
+                input.focus();
             }
         }
 
         toggle.addEventListener('click', () => {
             widget.classList.toggle('closed');
-            toggle.textContent = widget.classList.contains('closed') ? '+' : '−';
+            toggle.textContent = widget.classList.contains('closed') ? '+' : '-';
         });
 
         form.addEventListener('submit', (event) => {
@@ -920,16 +966,7 @@
             });
         });
 
-        if (window.Echo) {
-            window.Echo.channel('puffcart-chatbot')
-                .listen('.chatbot.message', (event) => {
-                    addMessage(event.message, event.sender || 'bot');
-                });
-
-            console.log('Chatbot WebSocket connected');
-        } else {
-            console.error('window.Echo is not loaded. Check resources/js/app.js, resources/js/echo.js, and layouts/app.blade.php.');
-        }
+        console.log('Puffcart Assistant ready');
     });
 </script>
 

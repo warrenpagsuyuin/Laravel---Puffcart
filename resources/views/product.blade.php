@@ -9,21 +9,16 @@
         background: var(--bg-white);
         border-bottom: 1px solid var(--border);
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         padding: 16px 40px;
-    }
-
-    .logo {
-        color: var(--primary);
-        font-family: 'Poppins', sans-serif;
-        font-size: 18px;
-        font-weight: 700;
     }
 
     .nav-links {
         display: flex;
         flex-wrap: wrap;
         gap: 22px;
+        justify-content: flex-end;
+        margin-left: auto;
     }
 
     .nav-links a {
@@ -68,6 +63,8 @@
         font-size: 72px;
         font-weight: 800;
     }
+
+    
 
     .eyebrow {
         color: var(--text-muted);
@@ -150,6 +147,21 @@
         display: grid;
         gap: 12px;
         max-width: 360px;
+    }
+
+    .choice-field {
+        display: grid;
+        gap: 6px;
+    }
+
+    .choice-field label {
+        color: var(--text-primary);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .choice-field select {
+        min-height: 44px;
     }
 
     .quantity-row {
@@ -241,8 +253,7 @@
 
     @media (max-width: 860px) {
         .store-nav {
-            align-items: flex-start;
-            flex-direction: column;
+            align-items: flex-end;
             gap: 14px;
             padding: 16px 20px;
         }
@@ -259,7 +270,6 @@
 </style>
 
 <nav class="store-nav">
-    <a class="logo" href="{{ route('home') }}">Puffcart</a>
     <div class="nav-links">
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('shop') }}">Shop</a>
@@ -274,6 +284,31 @@
 </nav>
 
 <main class="product-shell">
+    @php
+        $isBattery = ($product->product_type ?? null) === \App\Models\Product::TYPE_BATTERY;
+        $isBundle = ($product->product_type ?? null) === \App\Models\Product::TYPE_BUNDLE;
+        $availableFlavors = $isBattery ? collect() : ($product->availableFlavorOptions ?? collect());
+        $availableColors = ($isBattery || $isBundle) ? ($product->availableColorOptions ?? collect()) : collect();
+
+        $selectedFlavorId = old('product_flavor_id');
+        $selectedFlavor = $availableFlavors->firstWhere('id', (int) $selectedFlavorId) ?: $availableFlavors->first();
+        $selectedColorId = old($isBattery ? 'product_flavor_id' : 'battery_color_id');
+        $selectedColor = $availableColors->firstWhere('id', (int) $selectedColorId) ?: $availableColors->first();
+
+        if ($isBundle) {
+            $podStock = $selectedFlavor?->stock ?? 0;
+            $batteryStock = $selectedColor?->stock ?? 0;
+            $maxAvailable = max(0, min($podStock, $batteryStock));
+        } elseif ($isBattery) {
+            $maxAvailable = max(0, $selectedColor?->stock ?? 0);
+        } else {
+            $maxAvailable = max(0, $selectedFlavor?->stock ?? 0);
+        }
+
+        $canPurchase = $maxAvailable > 0;
+    @endphp
+    
+
     @if(session('success'))
         <div class="notice notice-success">{{ session('success') }}</div>
     @endif
@@ -319,8 +354,30 @@
                     <span>{{ $product->sku ?: 'N/A' }}</span>
                 </div>
                 <div class="fact-row">
+                    <span>Product Type</span>
+                    <span>{{ $product->product_type_label }}</span>
+                </div>
+                @if($availableFlavors->isNotEmpty())
+                    <div class="fact-row">
+                        <span>Available Flavors</span>
+                        <span>{{ $availableFlavors->pluck('name')->implode(', ') }}</span>
+                    </div>
+                @endif
+                @if($availableColors->isNotEmpty())
+                    <div class="fact-row">
+                        <span>Battery Colors</span>
+                        <span>{{ $availableColors->pluck('name')->implode(', ') }}</span>
+                    </div>
+                @endif
+                @if($product->bundle_description)
+                    <div class="fact-row">
+                        <span>Bundle Includes</span>
+                        <span>{{ $product->bundle_description }}</span>
+                    </div>
+                @endif
+                <div class="fact-row">
                     <span>Stock</span>
-                    <span>{{ $product->stock > 0 ? $product->stock . ' available' : 'Out of stock' }}</span>
+                    <span>{{ $product->available_stock > 0 ? $product->available_stock . ' available' : 'Out of stock' }}</span>
                 </div>
                 <div class="fact-row">
                     <span>Demand</span>
@@ -332,10 +389,77 @@
                 <form class="purchase-form" method="POST" action="{{ route('cart.add') }}">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="product_type" value="{{ $product->product_type ?: \App\Models\Product::TYPE_OTHER }}">
+                    @if($isBattery)
+                        @if($availableColors->isNotEmpty())
+                            <div class="choice-field">
+                                <label for="product_flavor_id">Color</label>
+                                <select id="product_flavor_id" name="product_flavor_id" required>
+                                    <option value="">Choose color</option>
+                                    @foreach($availableColors as $color)
+                                        <option value="{{ $color->id }}" data-stock="{{ $color->stock }}" @selected((string) old('product_flavor_id') === (string) $color->id)>
+                                            {{ $color->name }} ({{ $color->stock }} left)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @else
+                            <div class="notice notice-error">No colors are currently in stock for this product.</div>
+                        @endif
+                    @elseif($isBundle)
+                        <div class="choice-field">
+                            <label for="product_flavor_id">Flavor (Pods)</label>
+                            @if($availableFlavors->isNotEmpty())
+                                <select id="product_flavor_id" name="product_flavor_id" required>
+                                    <option value="">Choose flavor</option>
+                                    @foreach($availableFlavors as $flavor)
+                                        <option value="{{ $flavor->id }}" data-stock="{{ $flavor->stock }}" @selected((string) old('product_flavor_id') === (string) $flavor->id)>
+                                            {{ $flavor->name }} ({{ $flavor->stock }} left)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <div class="notice notice-error">No pod flavors are currently in stock for this product.</div>
+                            @endif
+                        </div>
+
+                        <div class="choice-field">
+                            <label for="battery_color_id">Color (Battery)</label>
+                            @if($availableColors->isNotEmpty())
+                                <select id="battery_color_id" name="battery_color_id" required>
+                                    <option value="">Choose color</option>
+                                    @foreach($availableColors as $color)
+                                        <option value="{{ $color->id }}" data-stock="{{ $color->stock }}" @selected((string) old('battery_color_id') === (string) $color->id)>
+                                            {{ $color->name }} ({{ $color->stock }} left)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <div class="notice notice-error">No battery colors are currently in stock for this bundle.</div>
+                            @endif
+                        </div>
+                    @else
+                        @if($availableFlavors->isNotEmpty())
+                            <div class="choice-field">
+                                <label for="product_flavor_id">Flavor</label>
+                                <select id="product_flavor_id" name="product_flavor_id" required>
+                                    <option value="">Choose flavor</option>
+                                    @foreach($availableFlavors as $flavor)
+                                        <option value="{{ $flavor->id }}" data-stock="{{ $flavor->stock }}" @selected((string) old('product_flavor_id') === (string) $flavor->id)>
+                                            {{ $flavor->name }} ({{ $flavor->stock }} left)
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @else
+                            <div class="notice notice-error">No flavors are currently in stock for this product.</div>
+                        @endif
+                    @endif
                     <div class="quantity-row">
-                        <input type="number" name="quantity" min="1" max="{{ max(1, $product->stock) }}" value="1" @disabled($product->stock < 1)>
-                        <button class="btn-primary" type="submit" @disabled($product->stock < 1)>Add to Cart</button>
+                        <input id="quantity" type="number" name="quantity" min="1" max="{{ max(1, $maxAvailable) }}" value="{{ old('quantity', 1) }}" @disabled(!$canPurchase)>
+                        <button class="btn-primary" name="intent" value="add_to_cart" type="submit" @disabled(!$canPurchase)>Add to Cart</button>
                     </div>
+                    <button class="btn-primary" name="intent" value="buy_now" type="submit" @disabled(!$canPurchase)>Buy Now</button>
                     <a class="btn-secondary" href="{{ route('shop') }}">Back to Shop</a>
                 </form>
             @else
@@ -374,4 +498,40 @@
         @endforelse
     </section>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const flavorSelect = document.getElementById('product_flavor_id');
+        const batteryColorSelect = document.getElementById('battery_color_id');
+        const quantityInput = document.getElementById('quantity');
+
+        if (!flavorSelect || !quantityInput) return;
+
+        function selectedStock(select) {
+            if (!select) return null;
+
+            const selected = select.options[select.selectedIndex];
+
+            return Number(selected ? selected.dataset.stock : 0) || 0;
+        }
+
+        function syncQuantityLimit() {
+            const flavorStock = selectedStock(flavorSelect);
+            const colorStock = selectedStock(batteryColorSelect);
+            const stock = colorStock === null ? flavorStock : Math.min(flavorStock, colorStock);
+
+            quantityInput.max = String(Math.max(1, stock));
+
+            if (Number(quantityInput.value) > stock) {
+                quantityInput.value = stock > 0 ? String(stock) : '1';
+            }
+        }
+
+        flavorSelect.addEventListener('change', syncQuantityLimit);
+        if (batteryColorSelect) {
+            batteryColorSelect.addEventListener('change', syncQuantityLimit);
+        }
+        syncQuantityLimit();
+    });
+</script>
 @endsection

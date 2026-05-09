@@ -48,7 +48,7 @@ class ProductController extends Controller
     {
         abort_if(!$product->is_active, 404);
 
-        $product->load('reviews.user');
+        $product->load('reviews.user', 'availableFlavorOptions', 'availableColorOptions', 'flavors');
         $behaviorService->productViewed($product, $request);
 
         $related = $recommendationService->relatedProducts($product, $request->user(), 4);

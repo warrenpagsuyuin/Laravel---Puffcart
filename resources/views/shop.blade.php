@@ -173,6 +173,22 @@
         font-size: 13px;
     }
 
+    .product-detail-line {
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+    .flavor-picker {
+        display: grid;
+        gap: 6px;
+    }
+
+    .flavor-picker label {
+        color: var(--text-primary);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
     .card-actions {
         display: grid;
         gap: 8px;
@@ -372,6 +388,13 @@
 
         <div class="products-grid">
             @forelse($products as $product)
+                @php
+                    $isBattery = $product->product_type === \App\Models\Product::TYPE_BATTERY;
+                    $isBundle = $product->product_type === \App\Models\Product::TYPE_BUNDLE;
+                    $availableFlavors = $isBattery ? collect() : $product->availableFlavorOptions;
+                    $availableColors = ($isBattery || $isBundle) ? $product->availableColorOptions : collect();
+                    $canAddFromCard = $isBattery ? $availableColors->isNotEmpty() : ($isBundle ? $availableFlavors->isNotEmpty() && $availableColors->isNotEmpty() : $availableFlavors->isNotEmpty());
+                @endphp
                 <article class="product-card">
                     <a class="product-media" href="{{ route('product.show', $product) }}">
                         @if($product->image_url)
@@ -390,7 +413,8 @@
                                 <span class="old-price">PHP {{ number_format($product->original_price, 2) }}</span>
                             @endif
                         </div>
-                        <div class="stock">{{ $product->stock > 0 ? $product->stock . ' in stock' : 'Out of stock' }}</div>
+                        <div class="stock">{{ $product->available_stock > 0 ? $product->available_stock . ' in stock' : 'Out of stock' }}</div>
+                        <div class="product-detail-line">Type: {{ $product->product_type_label }}</div>
 
                         <div class="card-actions">
                             <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
@@ -399,7 +423,44 @@
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button class="btn-primary" type="submit" @disabled($product->stock < 1)>Add to Cart</button>
+                                    <input type="hidden" name="product_type" value="{{ $product->product_type ?: \App\Models\Product::TYPE_OTHER }}">
+                                    @if($isBattery)
+                                        @if($availableColors->isNotEmpty())
+                                            <div class="flavor-picker">
+                                                <label for="product-color-{{ $product->id }}">Color</label>
+                                                <select id="product-color-{{ $product->id }}" name="product_flavor_id" required>
+                                                    <option value="">Choose color</option>
+                                                    @foreach($availableColors as $color)
+                                                        <option value="{{ $color->id }}">{{ $color->name }} ({{ $color->stock }} left)</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+                                    @else
+                                        @if($availableFlavors->isNotEmpty())
+                                            <div class="flavor-picker">
+                                                <label for="product-flavor-{{ $product->id }}">Flavor</label>
+                                                <select id="product-flavor-{{ $product->id }}" name="product_flavor_id" required>
+                                                    <option value="">Choose flavor</option>
+                                                    @foreach($availableFlavors as $flavor)
+                                                        <option value="{{ $flavor->id }}">{{ $flavor->name }} ({{ $flavor->stock }} left)</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+                                    @endif
+                                    @if($isBundle && $availableColors->isNotEmpty())
+                                        <div class="flavor-picker">
+                                            <label for="battery-color-{{ $product->id }}">Battery Color</label>
+                                            <select id="battery-color-{{ $product->id }}" name="battery_color_id" required>
+                                                <option value="">Choose color</option>
+                                                @foreach($availableColors as $color)
+                                                    <option value="{{ $color->id }}">{{ $color->name }} ({{ $color->stock }} left)</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+                                    <button class="btn-primary" name="intent" value="add_to_cart" type="submit" @disabled(!$canAddFromCard)>Add to Cart</button>
                                 </form>
                             @else
                                 <a class="btn-primary" href="{{ route('login') }}">Login to Buy</a>
