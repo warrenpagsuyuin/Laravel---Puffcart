@@ -29,10 +29,13 @@ class AuthController extends Controller
 
     public function showLogin()
     {
-        if (Auth::check()) {
-            return auth()->user()->role === 'admin'
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if ($user) {
+            return $user->role === 'admin'
                 ? redirect()->route('admin.dashboard')
-                : redirect()->route('profile');
+                : redirect()->route('home');
         }
 
         return view('login');
@@ -68,7 +71,7 @@ class AuthController extends Controller
 
             return $user->role === 'admin'
                 ? redirect()->route('admin.dashboard')
-                : redirect()->route('profile');
+                : redirect()->route('home');
         }
 
         RateLimiter::hit($key, 300);

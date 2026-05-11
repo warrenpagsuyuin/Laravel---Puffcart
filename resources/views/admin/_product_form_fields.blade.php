@@ -63,6 +63,26 @@
         </select>
     </div>
 
+    <div data-nicotine-field>
+        <label for="nicotine_type" class="block text-sm font-medium text-gray-700 mb-1">Nicotine Type</label>
+        <select id="nicotine_type" name="nicotine_type" class="w-full border-gray-200 rounded-md px-3 py-2 bg-white">
+            <option value="">None</option>
+            @foreach(\App\Models\Product::NICOTINE_TYPE_LABELS as $value => $label)
+                <option value="{{ $value }}" @selected(old('nicotine_type', $editingProduct?->nicotine_type) === $value)>{{ $label }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div data-nicotine-field>
+        <label for="nicotine_strengths" class="block text-sm font-medium text-gray-700 mb-1">Nicotine Strengths</label>
+        <input id="nicotine_strengths" name="nicotine_strengths" value="{{ old('nicotine_strengths', $editingProduct?->nicotine_strengths ? implode(', ', $editingProduct->nicotine_strengths) : '') }}" placeholder="e.g. 3mg, 6mg, 12mg" class="w-full border-gray-200 rounded-md px-3 py-2" />
+    </div>
+
+    <div data-nicotine-field>
+        <label for="volume_ml" class="block text-sm font-medium text-gray-700 mb-1">Bottle Size (ml)</label>
+        <input id="volume_ml" type="number" min="1" max="1000" name="volume_ml" value="{{ old('volume_ml', $editingProduct?->volume_ml) }}" placeholder="e.g. 30, 60, 100" class="w-full border-gray-200 rounded-md px-3 py-2" />
+    </div>
+
     <div>
         <label for="bundle_pods" class="block text-sm font-medium text-gray-700 mb-1">Bundle Pods / Flavor</label>
         <input id="bundle_pods" name="bundle_pods" value="{{ old('bundle_pods', $editingProduct?->bundle_pods) }}" placeholder="Required for bundles" class="w-full border-gray-200 rounded-md px-3 py-2" />
@@ -88,7 +108,7 @@
         <input id="reorder_level" type="number" min="0" name="reorder_level" value="{{ old('reorder_level', $editingProduct?->reorder_level ?? 5) }}" class="w-full border-gray-200 rounded-md px-3 py-2" />
     </div>
 
-    <div class="md:col-span-2" data-flavor-builder data-show-for="pods,bundle,other">
+    <div class="md:col-span-2" data-flavor-builder data-show-for="pods,bundle,e_liquid,other">
         <div class="p-4 border rounded-lg bg-white shadow-sm">
             <div class="flex items-center justify-between gap-3 mb-2">
                 <div>
@@ -184,6 +204,22 @@
                     if (productType) {
                         updateVisibility();
                         productType.addEventListener('change', updateVisibility);
+                    }
+
+                    const nicotineFields = document.querySelectorAll('[data-nicotine-field]');
+                    function updateNicotineVisibility() {
+                        const isELiquid = productType?.value === 'e_liquid';
+                        nicotineFields.forEach(function (field) {
+                            field.style.display = isELiquid ? '' : 'none';
+                            field.querySelectorAll('input, select').forEach(function (input) {
+                                input.disabled = !isELiquid;
+                            });
+                        });
+                    }
+
+                    if (productType) {
+                        updateNicotineVisibility();
+                        productType.addEventListener('change', updateNicotineVisibility);
                     }
 
                     const rows = builder.querySelector('[data-flavor-rows]');

@@ -10,7 +10,11 @@
         border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-        padding: 16px 40px;
+        min-height: 72px;
+        padding: 14px 40px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
     }
 
     .logo {
@@ -34,36 +38,86 @@
 
     .shop-shell {
         display: grid;
-        grid-template-columns: 280px minmax(0, 1fr);
-        min-height: calc(100vh - 65px);
+        grid-template-columns: 320px minmax(0, 1fr);
+        min-height: calc(100vh - 72px);
+        background: #f6f8fb;
     }
 
     .filters {
-        background: var(--bg-light);
+        background: var(--bg-white);
         border-right: 1px solid var(--border);
-        padding: 28px 24px;
+        padding: 22px 28px;
+        position: sticky;
+        top: 72px;
+        align-self: start;
+        min-height: calc(100vh - 72px);
+        overflow: visible;
+        box-shadow: 8px 0 24px rgba(15, 23, 42, 0.04);
     }
 
     .filter-group {
         display: grid;
-        gap: 8px;
-        margin-bottom: 18px;
+        gap: 7px;
+        margin-bottom: 13px;
     }
 
     .filter-group label {
-        color: var(--text-primary);
-        font-size: 13px;
+        color: #111827;
+        font-size: 12px;
         font-weight: 700;
+        letter-spacing: 0;
+    }
+
+    .filters input,
+    .filters select {
+        width: 100%;
+        min-height: 44px;
+        padding: 9px 14px;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 14px;
+        color: #1f2937;
+        box-sizing: border-box;
+    }
+
+    .filters input:focus,
+    .filters select:focus {
+        border-color: #0b66ff;
+        box-shadow: 0 0 0 3px rgba(11, 102, 255, 0.12);
+        outline: none;
+    }
+
+    .price-filter-row {
+        display: grid;
+        gap: 13px;
     }
 
     .filter-actions {
         display: grid;
         gap: 10px;
-        margin-top: 22px;
+        margin-top: 16px;
+    }
+
+    .filter-actions .btn-primary {
+        width: 100%;
+        min-height: 46px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 15px;
+        box-shadow: none;
+    }
+
+    .filter-actions .btn-secondary {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 16px;
+        border-radius: 8px;
     }
 
     .shop-main {
-        padding: 36px 40px;
+        padding: 34px 48px 44px;
+        min-width: 0;
     }
 
     .shop-heading {
@@ -86,7 +140,7 @@
 
     .products-grid {
         display: grid;
-        gap: 20px;
+        gap: 24px;
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -99,6 +153,13 @@
         min-height: 100%;
         overflow: hidden;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Improve mobile card spacing and button layout */
+    .product-body {
+        display: grid;
+        gap: 12px;
+        padding: 20px;
     }
 
     .product-card:hover {
@@ -119,6 +180,11 @@
         height: 100%;
         object-fit: cover;
         width: 100%;
+    }
+
+    .product-media {
+        background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+        min-height: 180px;
     }
 
     .product-placeholder {
@@ -189,11 +255,42 @@
         font-weight: 800;
     }
 
+    .flavor-picker select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+        background: #fff;
+    }
+
     .card-actions {
         display: grid;
         gap: 8px;
         margin-top: auto;
     }
+
+    .card-actions .btn-primary {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(11,102,255,0.08);
+    }
+
+    .card-actions .btn-secondary {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+    }
+
+    /* corporate look: stronger primary color */
+    .btn-primary {
+        background: #0b66ff;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-primary:hover { background: #0954d6; }
 
     .btn-primary,
     .btn-secondary {
@@ -255,10 +352,96 @@
     }
 
     .pagination {
-        margin-top: 24px;
+        margin-top: 28px;
+        border-top: 1px solid #e3e8f0;
+        padding-top: 22px;
+    }
+
+    .pagination nav {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+    }
+
+    .pagination nav > div:first-child {
+        display: none;
+    }
+
+    .pagination nav > div:last-child {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .pagination p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .pagination a,
+    .pagination span {
+        align-items: center;
+        border-radius: 7px;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 700;
+        gap: 6px;
+        line-height: 1;
+        min-height: 40px;
+        padding: 10px 13px;
+        text-decoration: none;
+    }
+
+    .pagination a {
+        background: var(--bg-white);
+        border: 1px solid #d9dee8;
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .pagination span {
+        color: var(--text-secondary);
+    }
+
+    .pagination span[aria-disabled="true"],
+    .pagination [aria-disabled="true"] span {
+        opacity: 0.55;
+    }
+
+    .pagination [aria-current="page"] span,
+    .pagination .active span {
+        background: var(--primary);
+        border: 1px solid var(--primary);
+        color: #fff;
+    }
+
+    .pagination svg {
+        display: block;
+        flex: 0 0 18px;
+        height: 18px;
+        max-height: 18px;
+        max-width: 18px;
+        width: 18px;
     }
 
     @media (max-width: 1100px) {
+        .shop-shell {
+            grid-template-columns: 300px minmax(0, 1fr);
+        }
+
+        .shop-main {
+            padding: 30px;
+        }
+
         .products-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
@@ -266,23 +449,65 @@
 
     @media (max-width: 760px) {
         .store-nav {
-            align-items: flex-start;
-            flex-direction: column;
-            gap: 14px;
-            padding: 16px 20px;
+            align-items: center;
+            flex-direction: row;
+            gap: 12px;
+            min-height: 64px;
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-links {
+            gap: 12px;
+            justify-content: flex-end;
         }
 
         .shop-shell {
             grid-template-columns: 1fr;
+            min-height: calc(100vh - 64px);
         }
 
         .filters {
             border-right: 0;
             border-bottom: 1px solid var(--border);
+            height: auto;
+            min-height: 0;
+            max-height: none;
+            position: static;
+            padding: 18px 20px;
+        }
+
+        .filters form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .filter-group {
+            margin-bottom: 0;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+        }
+
+        .filters input,
+        .filters select {
+            min-height: 40px;
+            padding: 8px 12px;
+        }
+
+        .price-filter-row {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-actions {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-top: 2px;
         }
 
         .shop-main {
-            padding: 26px 20px;
+            padding: 24px 20px 32px;
         }
 
         .shop-heading {
@@ -292,6 +517,11 @@
 
         .products-grid {
             grid-template-columns: 1fr;
+        }
+
+        .pagination nav > div:last-child {
+            align-items: flex-start;
+            flex-direction: column;
         }
     }
 </style>
@@ -304,7 +534,7 @@
         <a href="{{ route('cart') }}">Cart</a>
         <a href="{{ route('tracking') }}">Tracking</a>
         @auth
-            <a href="{{ route('profile') }}">Profile</a>
+            <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
         @else
             <a href="{{ route('login') }}">Login</a>
         @endauth
@@ -342,13 +572,25 @@
             </div>
 
             <div class="filter-group">
-                <label for="min_price">Min Price</label>
-                <input id="min_price" type="number" min="0" step="0.01" name="min_price" value="{{ request('min_price') }}">
+                <label for="nicotine_type">Nicotine Type</label>
+                <select id="nicotine_type" name="nicotine_type">
+                    <option value="">All nicotine types</option>
+                    @foreach(\App\Models\Product::NICOTINE_TYPE_LABELS as $value => $label)
+                        <option value="{{ $value }}" @selected(request('nicotine_type') === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
             </div>
 
-            <div class="filter-group">
-                <label for="max_price">Max Price</label>
-                <input id="max_price" type="number" min="0" step="0.01" name="max_price" value="{{ request('max_price') }}">
+            <div class="price-filter-row">
+                <div class="filter-group">
+                    <label for="min_price">Min Price</label>
+                    <input id="min_price" type="number" min="0" step="0.01" name="min_price" value="{{ request('min_price') }}">
+                </div>
+
+                <div class="filter-group">
+                    <label for="max_price">Max Price</label>
+                    <input id="max_price" type="number" min="0" step="0.01" name="max_price" value="{{ request('max_price') }}">
+                </div>
             </div>
 
             <div class="filter-group">
@@ -415,6 +657,12 @@
                         </div>
                         <div class="stock">{{ $product->available_stock > 0 ? $product->available_stock . ' in stock' : 'Out of stock' }}</div>
                         <div class="product-detail-line">Type: {{ $product->product_type_label }}</div>
+                        @if($product->nicotine_profile)
+                            <div class="product-detail-line">Nicotine: {{ $product->nicotine_profile }}</div>
+                        @endif
+                        @if($product->volume_label)
+                            <div class="product-detail-line">Size: {{ $product->volume_label }}</div>
+                        @endif
 
                         <div class="card-actions">
                             <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
@@ -500,6 +748,12 @@
                                 <div class="product-meta">{{ $product->category_name }}</div>
                                 <a class="product-title" href="{{ route('product.show', $product) }}">{{ $product->name }}</a>
                                 <div class="price">PHP {{ number_format($product->price, 2) }}</div>
+                                @if($product->nicotine_profile)
+                                    <div class="product-detail-line">Nicotine: {{ $product->nicotine_profile }}</div>
+                                @endif
+                                @if($product->volume_label)
+                                    <div class="product-detail-line">Size: {{ $product->volume_label }}</div>
+                                @endif
                                 <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
                             </div>
                         </article>

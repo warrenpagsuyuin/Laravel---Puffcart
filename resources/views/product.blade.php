@@ -276,7 +276,7 @@
         <a href="{{ route('cart') }}">Cart</a>
         <a href="{{ route('tracking') }}">Tracking</a>
         @auth
-            <a href="{{ route('profile') }}">Profile</a>
+            <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
         @else
             <a href="{{ route('login') }}">Login</a>
         @endauth
@@ -357,6 +357,18 @@
                     <span>Product Type</span>
                     <span>{{ $product->product_type_label }}</span>
                 </div>
+                @if($product->nicotine_profile)
+                    <div class="fact-row">
+                        <span>Nicotine Type</span>
+                        <span>{{ $product->nicotine_profile }}</span>
+                    </div>
+                @endif
+                @if($product->volume_label)
+                    <div class="fact-row">
+                        <span>Bottle Size</span>
+                        <span>{{ $product->volume_label }}</span>
+                    </div>
+                @endif
                 @if($availableFlavors->isNotEmpty())
                     <div class="fact-row">
                         <span>Available Flavors</span>

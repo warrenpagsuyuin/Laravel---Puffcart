@@ -10,74 +10,296 @@
 
 @push('styles')
     <style>
+        body {
+            background: #f4f7fb;
+        }
+
+        .sidebar {
+            background: #ffffff;
+            border-right-color: #d9e2ec;
+        }
+
+        .brand {
+            padding: 26px 24px;
+        }
+
+        .brand-name {
+            color: #0b66ff;
+            letter-spacing: 0;
+        }
+
+        .brand-subtitle,
+        .page-subtitle,
+        .muted {
+            color: #64748b;
+        }
+
+        .sidebar-nav {
+            gap: 8px;
+            padding: 18px 20px;
+        }
+
+        .sidebar-link {
+            border-radius: 8px;
+            color: #475569;
+            min-height: 44px;
+            padding: 12px 14px;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: #eff6ff;
+            color: #0b66ff;
+        }
+
+        .topbar {
+            background: #ffffff;
+            border-bottom-color: #d9e2ec;
+            min-height: 86px;
+            padding: 20px 36px;
+        }
+
+        .page-title {
+            color: #0f172a;
+            font-size: 28px;
+            letter-spacing: 0;
+        }
+
+        .content {
+            max-width: 1520px;
+            padding: 32px 36px 48px;
+        }
+
         .product-console {
             display: grid;
-            gap: 16px;
+            gap: 20px;
         }
 
         .catalog-summary {
             display: grid;
-            gap: 12px;
-            grid-template-columns: 1.4fr repeat(2, minmax(150px, 0.45fr));
+            gap: 16px;
+            grid-template-columns: 1.3fr minmax(220px, 0.45fr) minmax(260px, 0.55fr);
         }
 
         .summary-tile {
-            background: var(--bg-white);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            padding: 14px 16px;
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+            min-height: 112px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .summary-tile::before {
+            background: #0b66ff;
+            content: "";
+            height: 3px;
+            left: 20px;
+            position: absolute;
+            right: 20px;
+            top: 0;
+        }
+
+        .summary-tile:nth-child(2)::before {
+            background: #b45309;
+        }
+
+        .summary-tile:nth-child(3)::before {
+            background: #047857;
         }
 
         .summary-tile strong {
-            color: #0f2747;
+            color: #0f172a;
             display: block;
-            font-size: 24px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
             line-height: 1.1;
-            margin-top: 4px;
+            margin-top: 14px;
+            overflow-wrap: anywhere;
         }
 
         .summary-tile span {
-            color: var(--text-muted);
+            color: #64748b;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
         }
 
+        .admin-toolbar {
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+            display: grid;
+            gap: 20px;
+            grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.7fr);
+            padding: 20px;
+        }
+
+        .admin-toolbar-title {
+            gap: 4px;
+        }
+
+        .admin-toolbar-title strong,
+        .catalog-head h2,
+        .section-title h2 {
+            color: #0f172a;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .admin-toolbar-title span {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .toolbar-form {
+            align-items: center;
+            display: grid;
+            gap: 12px;
+            grid-template-columns: minmax(260px, 1fr) 220px 190px;
+            justify-content: stretch;
+        }
+
+        .toolbar-form .search-control,
+        .toolbar-form .filter-control {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            color: #0f172a;
+            max-width: none;
+            min-height: 44px;
+            min-width: 0;
+            padding: 10px 12px;
+            width: 100%;
+        }
+
+        .toolbar-form .search-control:focus,
+        .toolbar-form .filter-control:focus {
+            border-color: #0b66ff;
+            box-shadow: 0 0 0 3px #dbeafe;
+            outline: none;
+        }
+
+        #product-form-section {
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+            padding: 24px;
+        }
+
+        #product-form-section .section-title {
+            border-bottom: 1px solid #e2e8f0;
+            margin: -4px 0 22px;
+            padding-bottom: 16px;
+        }
+
+        .form-grid {
+            gap: 16px;
+        }
+
+        .form-group {
+            gap: 7px;
+        }
+
+        .form-group label,
+        .checkbox-row {
+            color: #334155;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        input,
+        textarea,
+        select {
+            border-color: #cbd5e1;
+            border-radius: 8px;
+            color: #0f172a;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #0b66ff;
+            box-shadow: 0 0 0 3px #dbeafe;
+        }
+
+        .flavor-inventory {
+            background: #f8fafc;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+        }
+
+        .flavor-inventory-head {
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .flavor-row {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
         .catalog-panel {
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
             padding: 0;
             overflow: hidden;
         }
 
         .catalog-head {
             align-items: center;
-            background: #f8fafc;
-            border-bottom: 1px solid var(--border);
+            background: #ffffff;
+            border-bottom: 1px solid #d9e2ec;
             display: flex;
             justify-content: space-between;
             gap: 12px;
-            padding: 14px 16px;
+            padding: 22px 26px;
         }
 
-        .catalog-head h2 {
-            color: #0f2747;
-            font-size: 17px;
+        .catalog-head .muted {
+            font-size: 13px;
+            margin-top: 4px;
         }
 
         .catalog-list {
             display: grid;
         }
 
+        .catalog-grid-head {
+            align-items: center;
+            background: #f8fafc;
+            border-bottom: 1px solid #d9e2ec;
+            color: #64748b;
+            display: grid;
+            font-size: 12px;
+            font-weight: 800;
+            gap: 18px;
+            grid-template-columns: minmax(360px, 1.9fr) minmax(150px, 0.6fr) minmax(160px, 0.7fr) minmax(190px, 0.8fr) 86px;
+            letter-spacing: 0;
+            padding: 14px 22px;
+            text-transform: uppercase;
+        }
+
         .catalog-row {
             align-items: center;
             display: grid;
-            gap: 14px;
-            grid-template-columns: minmax(280px, 1.8fr) minmax(120px, 0.7fr) minmax(100px, 0.5fr) minmax(130px, 0.6fr) auto;
-            padding: 12px 16px;
+            gap: 18px;
+            grid-template-columns: minmax(360px, 1.9fr) minmax(150px, 0.6fr) minmax(160px, 0.7fr) minmax(190px, 0.8fr) 86px;
+            padding: 18px 22px;
         }
 
         .catalog-row + .catalog-row {
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #e2e8f0;
         }
 
         .catalog-row:hover {
@@ -87,52 +309,54 @@
         .catalog-product {
             align-items: center;
             display: flex;
-            gap: 12px;
+            gap: 16px;
             min-width: 0;
         }
 
         .catalog-image {
             align-items: center;
-            background: #f4f7fb;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            background: #f8fafc;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
             display: inline-flex;
-            height: 52px;
+            height: 64px;
             justify-content: center;
             overflow: hidden;
-            width: 52px;
+            width: 64px;
+            flex: 0 0 64px;
         }
 
         .catalog-image img {
-            max-height: 46px;
-            max-width: 46px;
+            max-height: 56px;
+            max-width: 56px;
             object-fit: contain;
         }
 
         .catalog-image-fallback {
-            color: #0f2747;
+            color: #0f172a;
             font-size: 13px;
             font-weight: 800;
             letter-spacing: 0;
         }
 
         .catalog-name {
-            color: var(--text-primary);
+            color: #0f172a;
             display: block;
+            font-size: 15px;
             font-weight: 800;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
         }
 
         .catalog-meta {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-top: 2px;
+            color: #64748b;
+            display: block;
+            font-size: 13px;
+            margin-top: 4px;
         }
 
         .catalog-label {
-            color: var(--text-muted);
+            color: #64748b;
             display: block;
             font-size: 11px;
             font-weight: 800;
@@ -140,7 +364,7 @@
         }
 
         .catalog-value {
-            color: var(--text-primary);
+            color: #0f172a;
             display: block;
             font-size: 14px;
             font-weight: 700;
@@ -150,13 +374,89 @@
         .catalog-actions {
             align-items: center;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             justify-content: flex-end;
         }
 
+        .badge {
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 6px 9px;
+        }
+
+        .badge-green {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #047857;
+        }
+
+        .badge-red {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .badge-gray {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn {
+            border-radius: 8px;
+            min-height: 42px;
+        }
+
+        .btn-primary {
+            background: #0b66ff;
+            box-shadow: 0 8px 18px rgba(11, 102, 255, 0.15);
+        }
+
+        .btn-primary:hover {
+            background: #0954d6;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+
+        .btn-secondary:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            color: #0b66ff;
+        }
+
+        .icon-btn {
+            border-color: #d9e2ec;
+            border-radius: 8px;
+            color: #475569;
+            height: 38px;
+            width: 38px;
+        }
+
+        .icon-btn:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            color: #0b66ff;
+        }
+
+        .icon-btn.danger {
+            color: #b91c1c;
+        }
+
+        .icon-btn.danger:hover {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+
         .empty-state {
-            color: var(--text-muted);
-            padding: 22px 16px;
+            color: #64748b;
+            padding: 28px 24px;
+            text-align: center;
         }
 
         .conditional-field.is-hidden,
@@ -165,8 +465,6 @@
         }
 
         .flavor-inventory {
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
             display: grid;
             gap: 12px;
             padding: 14px;
@@ -192,14 +490,28 @@
         }
 
         @media (max-width: 980px) {
+            .content {
+                padding: 20px 16px 36px;
+            }
+
             .catalog-summary,
+            .admin-toolbar,
+            .toolbar-form,
             .catalog-row,
             .flavor-row {
                 grid-template-columns: 1fr;
             }
 
+            .catalog-grid-head {
+                display: none;
+            }
+
             .catalog-actions {
                 justify-content: flex-start;
+            }
+
+            .catalog-row {
+                padding: 18px;
             }
         }
     </style>
@@ -263,6 +575,12 @@
                             $categoryFilter = $makeCategoryFilter($category);
                         @endphp
                         <option value="{{ $categoryFilter }}" @selected(request('filter') === $categoryFilter)>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                <select class="filter-control" name="nicotine_type" aria-label="Filter products by nicotine type">
+                    <option value="">All nicotine types</option>
+                    @foreach(\App\Models\Product::NICOTINE_TYPE_LABELS as $value => $label)
+                        <option value="{{ $value }}" @selected(request('nicotine_type') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
             </form>
@@ -370,14 +688,20 @@
                         <label for="nicotine_type">Nicotine Type</label>
                         <select id="nicotine_type" name="nicotine_type">
                             <option value="">None</option>
-                            <option value="freebase" @selected(old('nicotine_type', $editingProduct?->nicotine_type) === 'freebase')>Freebase</option>
-                            <option value="saltnic" @selected(old('nicotine_type', $editingProduct?->nicotine_type) === 'saltnic')>Salt Nic</option>
+                            @foreach(\App\Models\Product::NICOTINE_TYPE_LABELS as $value => $label)
+                                <option value="{{ $value }}" @selected(old('nicotine_type', $editingProduct?->nicotine_type) === $value)>{{ $label }}</option>
+                            @endforeach
                         </select>
                     </div>
 
                     <div class="form-group conditional-field" data-product-field="e-liquid">
                         <label for="nicotine_strengths">Nicotine Strengths (comma separated)</label>
                         <input id="nicotine_strengths" name="nicotine_strengths" value="{{ old('nicotine_strengths', $editingProduct?->nicotine_strengths ? implode(', ', $editingProduct->nicotine_strengths) : '') }}" placeholder="e.g. 3mg, 6mg, 12mg">
+                    </div>
+
+                    <div class="form-group conditional-field" data-product-field="e-liquid">
+                        <label for="volume_ml">Bottle Size (ml)</label>
+                        <input id="volume_ml" type="number" min="1" max="1000" name="volume_ml" value="{{ old('volume_ml', $editingProduct?->volume_ml) }}" placeholder="e.g. 30, 60, 100">
                     </div>
 
                     <div class="form-group conditional-field" data-product-field="bundle">
@@ -526,6 +850,14 @@
             </div>
 
             <div class="catalog-list">
+                <div class="catalog-grid-head" aria-hidden="true">
+                    <span>Product</span>
+                    <span>Brand</span>
+                    <span>Type</span>
+                    <span>Stock Status</span>
+                    <span>Actions</span>
+                </div>
+
                 @forelse($products as $product)
                     <article class="catalog-row">
                         <div class="catalog-product">
@@ -548,6 +880,8 @@
                                         $typeSuffix = '(POD ONLY)';
                                     } elseif ($product->product_type === \App\Models\Product::TYPE_BUNDLE) {
                                         $typeSuffix = '(Bundle)';
+                                    } elseif ($product->product_type === \App\Models\Product::TYPE_E_LIQUID) {
+                                        $typeSuffix = '(E-Liquid)';
                                     }
                                 @endphp
 
@@ -566,6 +900,12 @@
                         <div>
                             <span class="catalog-label">Type</span>
                             <span class="catalog-value">{{ $product->product_type_label }}</span>
+                            @if($product->nicotine_profile)
+                                <span class="catalog-meta">Nicotine: {{ $product->nicotine_profile }}</span>
+                            @endif
+                            @if($product->volume_label)
+                                <span class="catalog-meta">Bottle size: {{ $product->volume_label }}</span>
+                            @endif
                             <span class="catalog-meta">PHP {{ number_format($product->price, 2) }}</span>
                             {{-- Flavors and colors removed from list view to reduce clutter --}}
                             {{-- Bundle description removed from list view to keep the TYPE column concise --}}
@@ -626,9 +966,11 @@
                 });
             }
 
-            if(filter && filterForm) {
-                filter.addEventListener('change', function () {
-                    filterForm.submit();
+            if(filterForm) {
+                filterForm.querySelectorAll('select').forEach(function (select) {
+                    select.addEventListener('change', function () {
+                        filterForm.submit();
+                    });
                 });
             }
 
@@ -753,12 +1095,20 @@
 
                 // Toggle nicotine fields when category is E-liquids
                 const categorySelect = document.getElementById('category_id');
+                const newCategoryInput = document.getElementById('category');
                 const nicotineFields = document.querySelectorAll('[data-product-field="e-liquid"]');
 
                 function syncNicotineFields() {
-                    if (!categorySelect) return;
-                    const selectedText = categorySelect.options[categorySelect.selectedIndex]?.text || '';
-                    const isELiquid = /e-?liquid/i.test(selectedText) || /e-?liquids/i.test(selectedText);
+                    const selectedText = categorySelect?.options[categorySelect.selectedIndex]?.text || '';
+                    const newCategoryText = newCategoryInput?.value || '';
+                    const categoryIsELiquid = /e-?liquids?/i.test(selectedText) || /e-?liquids?/i.test(newCategoryText);
+
+                    if (categoryIsELiquid && productType?.value === 'other') {
+                        productType.value = 'e_liquid';
+                        syncProductTypeFields();
+                    }
+
+                    const isELiquid = productType?.value === 'e_liquid' || categoryIsELiquid;
 
                     nicotineFields.forEach((el) => {
                         el.classList.toggle('is-hidden', !isELiquid);
@@ -770,8 +1120,14 @@
 
                 if (categorySelect) {
                     categorySelect.addEventListener('change', syncNicotineFields);
-                    syncNicotineFields();
                 }
+                if (newCategoryInput) {
+                    newCategoryInput.addEventListener('input', syncNicotineFields);
+                }
+                if (productType) {
+                    productType.addEventListener('change', syncNicotineFields);
+                }
+                syncNicotineFields();
         })();
     </script>
 @endsection

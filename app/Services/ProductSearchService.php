@@ -39,6 +39,10 @@ class ProductSearchService
             $query->where('brand', $request->string('brand')->toString());
         }
 
+        if ($request->filled('nicotine_type') && Schema::hasColumn('products', 'nicotine_type')) {
+            $query->where('nicotine_type', $request->string('nicotine_type')->toString());
+        }
+
         if ($request->filled('min_price')) {
             $query->where('price', '>=', (float) $request->min_price);
         }
@@ -62,7 +66,7 @@ class ProductSearchService
                     ->orWhere('category', 'like', $contains)
                     ->orWhere('description', 'like', $contains);
 
-                foreach (['product_type', 'flavor', 'bundle_pods', 'bundle_battery'] as $column) {
+                foreach (['product_type', 'flavor', 'bundle_pods', 'bundle_battery', 'nicotine_type', 'volume_ml'] as $column) {
                     if (Schema::hasColumn('products', $column)) {
                         $query->orWhere($column, 'like', $contains);
                     }

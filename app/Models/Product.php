@@ -37,6 +37,7 @@ class Product extends Model
         'views_count',
         'nicotine_type',
         'nicotine_strengths',
+        'volume_ml',
     ];
 
     protected $casts = [
@@ -51,17 +52,25 @@ class Product extends Model
         'sales_count' => 'integer',
         'views_count' => 'integer',
         'nicotine_strengths' => 'array',
+        'volume_ml' => 'integer',
     ];
 
     public const TYPE_PODS = 'pods';
     public const TYPE_BATTERY = 'battery';
     public const TYPE_BUNDLE = 'bundle';
+    public const TYPE_E_LIQUID = 'e_liquid';
     public const TYPE_OTHER = 'other';
+
+    public const NICOTINE_TYPE_LABELS = [
+        'freebase' => 'Freebase',
+        'saltnic' => 'Salt Nic',
+    ];
 
     public const TYPE_LABELS = [
         self::TYPE_PODS => 'Pods',
         self::TYPE_BATTERY => 'Battery',
         self::TYPE_BUNDLE => 'Pods + Battery Bundle',
+        self::TYPE_E_LIQUID => 'E-Liquid',
         self::TYPE_OTHER => 'Other',
     ];
 
@@ -229,6 +238,30 @@ class Product extends Model
     public function getProductTypeLabelAttribute(): string
     {
         return self::TYPE_LABELS[$this->product_type ?: self::TYPE_OTHER] ?? 'Other';
+    }
+
+    public function getNicotineTypeLabelAttribute(): ?string
+    {
+        return self::NICOTINE_TYPE_LABELS[$this->nicotine_type] ?? null;
+    }
+
+    public function getNicotineProfileAttribute(): ?string
+    {
+        if (!$this->nicotine_type_label) {
+            return null;
+        }
+
+        $strengths = collect($this->nicotine_strengths ?? [])
+            ->filter()
+            ->map(fn ($strength) => "{$strength}mg")
+            ->implode(', ');
+
+        return $strengths ? "{$this->nicotine_type_label} ({$strengths})" : $this->nicotine_type_label;
+    }
+
+    public function getVolumeLabelAttribute(): ?string
+    {
+        return $this->volume_ml ? "{$this->volume_ml}ml" : null;
     }
 
     public function getRequiresFlavorAttribute(): bool

@@ -102,6 +102,10 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        if (class_exists(SharedProductsSeeder::class)) {
+            $this->call(SharedProductsSeeder::class);
+        }
+
         if (Schema::hasTable('promo_codes')) {
             PromoCode::updateOrCreate(
                 ['code' => 'PUFF10'],
@@ -140,6 +144,10 @@ class DatabaseSeeder extends Seeder
                 'sku' => 'NK-LF-3MG',
                 'category' => 'E-Liquids',
                 'brand' => 'Naked 100',
+                'product_type' => Product::TYPE_E_LIQUID,
+                'nicotine_type' => 'freebase',
+                'nicotine_strengths' => ['3'],
+                'volume_ml' => 60,
                 'price' => 450,
                 'stock' => 12,
                 'reorder_level' => 8,
@@ -218,6 +226,10 @@ class DatabaseSeeder extends Seeder
                 'sku' => 'RV-VCT-60',
                 'category' => 'E-Liquids',
                 'brand' => 'Ripe Vapes',
+                'product_type' => Product::TYPE_E_LIQUID,
+                'nicotine_type' => 'freebase',
+                'nicotine_strengths' => ['3', '6'],
+                'volume_ml' => 60,
                 'price' => 520,
                 'stock' => 18,
                 'reorder_level' => 8,
@@ -233,6 +245,10 @@ class DatabaseSeeder extends Seeder
                 'sku' => 'TK-LYC-ICE',
                 'category' => 'E-Liquids',
                 'brand' => 'Tokyo',
+                'product_type' => Product::TYPE_E_LIQUID,
+                'nicotine_type' => 'saltnic',
+                'nicotine_strengths' => ['30'],
+                'volume_ml' => 30,
                 'price' => 390,
                 'stock' => 26,
                 'reorder_level' => 10,

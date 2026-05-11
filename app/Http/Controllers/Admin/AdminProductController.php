@@ -30,7 +30,7 @@ class AdminProductController extends Controller
                         $query->orWhere('sku', 'like', "%{$search}%");
                     }
 
-                    foreach (['product_type', 'flavor', 'bundle_pods', 'bundle_battery'] as $column) {
+                    foreach (['product_type', 'flavor', 'bundle_pods', 'bundle_battery', 'nicotine_type', 'volume_ml'] as $column) {
                         if (Schema::hasColumn('products', $column)) {
                             $query->orWhere($column, 'like', "%{$search}%");
                         }
@@ -43,6 +43,9 @@ class AdminProductController extends Controller
             })
             ->when($request->filled('filter'), function ($query) use ($request) {
                 $this->applyCategoryFilter($query, $request->string('filter')->toString());
+            })
+            ->when($request->filled('nicotine_type') && Schema::hasColumn('products', 'nicotine_type'), function ($query) use ($request) {
+                $query->where('nicotine_type', $request->string('nicotine_type')->toString());
             })
             ->latest()
             ->paginate(12)
@@ -159,6 +162,13 @@ class AdminProductController extends Controller
 
         $data['product_type'] = $data['product_type'] ?? Product::TYPE_OTHER;
 
+        if (Str::contains(Str::lower((string) ($data['category'] ?? '')), ['e-liquid', 'e liquid'])) {
+            $data['product_type'] = Product::TYPE_E_LIQUID;
+        }
+
+        $isELiquid = $data['product_type'] === Product::TYPE_E_LIQUID
+            || Str::contains(Str::lower((string) ($data['category'] ?? '')), ['e-liquid', 'e liquid']);
+
         if ($data['product_type'] !== Product::TYPE_BUNDLE) {
             $data['bundle_pods'] = null;
             $data['bundle_battery'] = null;
@@ -173,18 +183,17 @@ class AdminProductController extends Controller
             $batteryColors = [];
         }
 
-        // Handle nicotine fields for e-liquids when DB columns exist
         if (Schema::hasColumn('products', 'nicotine_type') && Schema::hasColumn('products', 'nicotine_strengths')) {
             $nicType = $request->input('nicotine_type');
             $nicStr = $request->input('nicotine_strengths');
 
-            if ($nicType) {
+            if ($isELiquid && $nicType) {
                 $data['nicotine_type'] = in_array($nicType, ['freebase', 'saltnic'], true) ? $nicType : null;
             } else {
                 $data['nicotine_type'] = null;
             }
 
-            if ($nicStr) {
+            if ($isELiquid && $nicStr) {
                 $strengths = collect(explode(',', (string) $nicStr))
                     ->map(fn ($s) => trim((string) $s))
                     ->filter()
@@ -198,6 +207,14 @@ class AdminProductController extends Controller
             } else {
                 $data['nicotine_strengths'] = null;
             }
+        }
+
+        if (Schema::hasColumn('products', 'volume_ml')) {
+            $data['volume_ml'] = $isELiquid && $request->filled('volume_ml')
+                ? (int) $request->input('volume_ml')
+                : null;
+        } else {
+            unset($data['volume_ml']);
         }
 
         return [$data, $flavors, $batteryColors];

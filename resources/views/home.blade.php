@@ -585,6 +585,21 @@
             grid-template-columns: 1fr;
         }
 
+        .category-image-wrap img {
+            max-width: 72px;
+            max-height: 72px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 12px;
+        }
+
+        .category-card .category-icon i {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+            color: #0b66ff;
+        }
+
         .section {
             padding: 50px 20px;
         }
@@ -620,10 +635,14 @@
         <div class="logo">Puffcart</div>
 
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/shop">Shop</a>
-            <a href="/cart">Cart</a>
-            <a href="/login">Login</a>
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('shop') }}">Shop</a>
+            <a href="{{ route('cart') }}">Cart</a>
+            @auth
+                <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
+            @else
+                <a href="{{ route('login') }}">Login</a>
+            @endauth
         </div>
     </nav>
 
@@ -673,29 +692,77 @@
         <p class="section-desc">Find the products you need by category.</p>
 
         <div class="categories-grid">
-            <div class="category-card">
-                <div class="category-icon">🔋</div>
-                <h3>Devices</h3>
-                <p>Pod systems, box mods & more</p>
-            </div>
+            @if($categories->isNotEmpty())
+                @foreach($categories as $category)
+                    <a class="category-card" href="{{ route('shop', ['category' => $category->slug]) }}">
+                        @php
+                            $slug = $category->slug ?? null;
+                            $localImage = null;
+                            if ($slug) {
+                                foreach (['png','jpg','jpeg','webp','svg'] as $ext) {
+                                    $path = public_path("images/categories/{$slug}.{$ext}");
+                                    if (file_exists($path)) {
+                                        $localImage = asset("images/categories/{$slug}.{$ext}");
+                                        break;
+                                    }
+                                }
+                            }
+                        @endphp
 
-            <div class="category-card">
-                <div class="category-icon">🧪</div>
-                <h3>E-Liquids</h3>
-                <p>Premium flavors & nicotine levels</p>
-            </div>
+                        @if(!empty($localImage))
+                            <div class="category-image-wrap">
+                                <img src="{{ $localImage }}" alt="{{ $category->name }}">
+                            </div>
+                        @elseif(!empty($category->image_url))
+                            <div class="category-image-wrap">
+                                <img src="{{ $category->image_url }}" alt="{{ $category->name }}">
+                            </div>
+                        @elseif(!empty($category->icon))
+                            @php $icon = trim($category->icon); @endphp
+                            @if(\Illuminate\Support\Str::startsWith($icon, ['http', '/', 'data:']))
+                                <div class="category-image-wrap">
+                                    <img src="{{ $icon }}" alt="{{ $category->name }}">
+                                </div>
+                            @elseif(\Illuminate\Support\Str::contains($icon, '<svg') || \Illuminate\Support\Str::startsWith($icon, '<'))
+                                <div class="category-icon">{!! $icon !!}</div>
+                            @elseif(mb_strlen($icon) <= 2)
+                                <div class="category-icon">{{ $icon }}</div>
+                            @else
+                                <div class="category-icon"><i class="{{ $icon }}"></i></div>
+                            @endif
+                        @else
+                            <div class="category-icon">📦</div>
+                        @endif
 
-            <div class="category-card">
-                <div class="category-icon">⚙️</div>
-                <h3>Coils & Pods</h3>
-                <p>Replacement coils & pods</p>
-            </div>
+                        <h3>{{ $category->name }}</h3>
+                        <p>{{ $category->products_count ?? 'Browse products' }} products</p>
+                    </a>
+                @endforeach
+            @else
+                <div class="category-card">
+                    <div class="category-icon">🔋</div>
+                    <h3>Devices</h3>
+                    <p>Pod systems, box mods & more</p>
+                </div>
 
-            <div class="category-card">
-                <div class="category-icon">🛠️</div>
-                <h3>Accessories</h3>
-                <p>Chargers, cases & more</p>
-            </div>
+                <div class="category-card">
+                    <div class="category-icon">🧪</div>
+                    <h3>E-Liquids</h3>
+                    <p>Premium flavors & nicotine levels</p>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">⚙️</div>
+                    <h3>Coils & Pods</h3>
+                    <p>Replacement coils & pods</p>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">🛠️</div>
+                    <h3>Accessories</h3>
+                    <p>Chargers, cases & more</p>
+                </div>
+            @endif
         </div>
     </section>
 
@@ -732,9 +799,7 @@
                         <div class="product-category">{{ $product->category_name }}</div>
                         <h3>{{ $product->name }}</h3>
                         <div class="product-meta">{{ $product->brand ?: 'Puffcart' }}</div>
-                        @if($availableFlavors->isNotEmpty())
-                            <div class="product-meta">Flavors: {{ $availableFlavors->pluck('name')->implode(', ') }}</div>
-                        @endif
+                        {{-- Flavors removed from featured product cards for cleaner layout --}}
                         <div class="product-rating">{{ number_format((float) $product->rating, 1) }} / 5 rating</div>
                         <div class="product-price">PHP {{ number_format($product->price, 2) }}</div>
                     </div>

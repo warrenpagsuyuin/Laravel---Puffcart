@@ -199,7 +199,7 @@
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('shop') }}">Shop</a>
         <a href="{{ route('tracking') }}">Tracking</a>
-        <a href="{{ route('profile') }}">Profile</a>
+        <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
     </div>
 </nav>
 
