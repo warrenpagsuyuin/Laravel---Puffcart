@@ -22,9 +22,9 @@ class CheckoutService
     {
     }
 
-    public function preview(User $user, ?string $promoCode = null): array
+    public function preview(User $user, ?string $promoCode = null, ?array $cartItemIds = null): array
     {
-        $items = $user->cartItems()->with('product', 'flavor', 'batteryColor')->get();
+        $items = $this->cartItemsForCheckout($user, $cartItemIds)->get();
         $subtotal = $items->sum(fn (CartItem $item) => (float) $item->product->price * $item->quantity);
         $deliveryFee = $subtotal >= 500 || $subtotal <= 0 ? 0 : 50;
         $promo = $this->resolvePromoCode($promoCode);
@@ -38,13 +38,14 @@ class CheckoutService
             'total' => round(max(0, $subtotal + $deliveryFee - $discount), 2),
             'promo' => $promo,
             'stock_errors' => $this->stockErrors($items),
+            'cart_item_ids' => $items->pluck('id')->all(),
         ];
     }
 
     public function placeOrder(User $user, array $data, Request $request): Order
     {
         return DB::transaction(function () use ($user, $data, $request) {
-            $cartItems = CartItem::where('user_id', $user->id)
+            $cartItems = $this->cartItemsForCheckout($user, $data['cart_item_ids'] ?? null)
                 ->with('flavor', 'batteryColor')
                 ->lockForUpdate()
                 ->get();
@@ -238,10 +239,28 @@ class CheckoutService
                 $promo->increment('used_count');
             }
 
-            CartItem::where('user_id', $user->id)->delete();
+            CartItem::where('user_id', $user->id)
+                ->whereIn('id', $cartItems->pluck('id'))
+                ->delete();
 
             return $order->load('items.product', 'items.flavor', 'items.batteryColor', 'payment', 'tracking');
         });
+    }
+
+    private function cartItemsForCheckout(User $user, ?array $cartItemIds = null)
+    {
+        $query = $user->cartItems()->with('product', 'flavor', 'batteryColor');
+        $cartItemIds = collect($cartItemIds)
+            ->filter(fn ($id) => is_numeric($id))
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
+
+        if ($cartItemIds->isNotEmpty()) {
+            $query->whereIn('id', $cartItemIds);
+        }
+
+        return $query;
     }
 
     private function resolvePromoCode(?string $code): ?PromoCode

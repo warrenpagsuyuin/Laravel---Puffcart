@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderTracking;
 use App\Models\Payment;
 use App\Models\AuditLog;
 use App\Services\PayMongoService;
@@ -16,6 +17,25 @@ class PaymentController extends Controller
     public function __construct(PayMongoService $payMongoService)
     {
         $this->payMongoService = $payMongoService;
+    }
+
+    public function show(Order $order)
+    {
+        abort_unless($order->user_id === auth()->id(), 403);
+
+        $order->load('items.product', 'payment');
+
+        if (!$order->requiresOnlinePayment()) {
+            return redirect()->route('orders.show', $order);
+        }
+
+        if ($order->isPaymentComplete()) {
+            return redirect()
+                ->route('orders.show', $order)
+                ->with('success', 'Payment confirmed. Your order is now processing.');
+        }
+
+        return view('payment', compact('order'));
     }
 
     /**
@@ -37,7 +57,15 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Order already paid'], 400);
         }
 
+        if (!$order->requiresOnlinePayment()) {
+            return $request->expectsJson()
+                ? response()->json(['error' => 'This order does not require online payment.'], 400)
+                : redirect()->route('orders.show', $order);
+        }
+
         try {
+            $order->loadMissing('items.product');
+
             // Prepare line items for PayMongo
             $lineItems = $order->items->map(function ($item) {
                 return [
@@ -52,7 +80,7 @@ class PaymentController extends Controller
             // Create checkout session
             $checkout = $this->payMongoService->createCheckoutSession([
                 'line_items' => $lineItems,
-                'payment_methods' => ['gcash', 'card', 'paymaya'],
+                'payment_methods' => $this->paymongoMethodsFor($order->payment_method),
                 'success_url' => route('payment.success', ['order' => $order->id]),
                 'cancel_url' => route('payment.cancel', ['order' => $order->id]),
                 'description' => "Puffcart Order #{$order->order_number}",
@@ -87,9 +115,19 @@ class PaymentController extends Controller
                 $request->userAgent()
             );
 
-            return response()->json([
-                'checkout_url' => $checkout['data']['attributes']['checkout_url'] ?? null,
-            ]);
+            $checkoutUrl = $checkout['data']['attributes']['checkout_url'] ?? null;
+
+            if (!$checkoutUrl) {
+                throw new \Exception('No checkout URL returned from PayMongo');
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'checkout_url' => $checkoutUrl,
+                ]);
+            }
+
+            return redirect()->away($checkoutUrl);
         } catch (\Exception $e) {
             Log::error('PayMongo checkout creation failed', [
                 'order_id' => $order->id,
@@ -104,7 +142,11 @@ class PaymentController extends Controller
                 $request->userAgent()
             );
 
-            return response()->json(['error' => 'Failed to create checkout'], 500);
+            return $request->expectsJson()
+                ? response()->json(['error' => 'Failed to create checkout'], 500)
+                : redirect()
+                    ->route('payment.show', $order)
+                    ->with('error', 'Payment checkout could not be started. Please try again.');
         }
     }
 
@@ -125,7 +167,27 @@ class PaymentController extends Controller
         }
 
         // In a real implementation, you would query PayMongo to verify payment status
-        // For now, we mark it as pending and wait for webhook confirmation
+        // PayMongo only returns to the success URL after the hosted checkout succeeds.
+        $wasPaid = $payment->isPaid();
+
+        $payment->update([
+            'status' => 'paid',
+            'payment_status' => 'paid',
+            'paid_at' => now(),
+        ]);
+
+        if ($order->status === 'pending') {
+            $order->update(['status' => 'processing']);
+        }
+
+        if (!$wasPaid) {
+            OrderTracking::create([
+                'order_id' => $order->id,
+                'status' => 'processing',
+                'message' => 'Payment confirmed. Order is now being processed.',
+                'occurred_at' => now(),
+            ]);
+        }
 
         return view('payment-success', ['order' => $order, 'payment' => $payment]);
     }
@@ -143,7 +205,10 @@ class PaymentController extends Controller
         // Update payment status
         $payment = $order->payment;
         if ($payment) {
-            $payment->update(['payment_status' => 'cancelled']);
+            $payment->update([
+                'status' => 'failed',
+                'payment_status' => 'cancelled',
+            ]);
 
             AuditLog::log(
                 'payment_cancelled',
@@ -222,6 +287,7 @@ class PaymentController extends Controller
 
         // Update payment status
         $payment->update([
+            'status' => 'paid',
             'payment_status' => 'paid',
             'transaction_reference' => $intentId,
             'paid_at' => now(),
@@ -300,6 +366,7 @@ class PaymentController extends Controller
         $paymentStatus = $data['payment_intent']['attributes']['status'] ?? 'unknown';
         if ($paymentStatus === 'succeeded') {
             $payment->update([
+                'status' => 'paid',
                 'payment_status' => 'paid',
                 'paid_at' => now(),
             ]);
@@ -318,5 +385,15 @@ class PaymentController extends Controller
                 'webhook'
             );
         }
+    }
+
+    private function paymongoMethodsFor(string $method): array
+    {
+        return match ($method) {
+            'gcash' => ['gcash'],
+            'maya' => ['paymaya'],
+            'bank_transfer' => ['card', 'gcash', 'paymaya'],
+            default => ['gcash', 'card', 'paymaya'],
+        };
     }
 }

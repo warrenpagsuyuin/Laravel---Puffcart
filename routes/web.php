@@ -133,6 +133,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 
 Route::prefix('payment')->name('payment.')->group(function () {
+    Route::get('{order}', [PaymentController::class, 'show'])
+        ->middleware('auth')
+        ->name('show');
     Route::post('checkout/{order}', [PaymentController::class, 'initiateCheckout'])
         ->middleware('auth')
         ->name('checkout');

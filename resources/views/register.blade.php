@@ -36,8 +36,33 @@
             </div>
 
             <div style="margin-bottom:18px;">
+                <label style="font-weight:700;">Username</label>
+                <input type="text" name="username" value="{{ old('username') }}" placeholder="Choose a username" required>
+            </div>
+
+            <div style="margin-bottom:18px;">
                 <label style="font-weight:700;">Email Address</label>
                 <input type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" required>
+            </div>
+
+            <div style="margin-bottom:18px;">
+                <label style="font-weight:700;">Contact Number</label>
+                <input
+                    type="text"
+                    name="contact_number"
+                    value="{{ old('contact_number') }}"
+                    placeholder="09123456789"
+                    maxlength="11"
+                    minlength="11"
+                    pattern="[0-9]{11}"
+                    inputmode="numeric"
+                    required
+                >
+            </div>
+
+            <div style="margin-bottom:18px;">
+                <label style="font-weight:700;">Address</label>
+                <textarea name="address" placeholder="House no., street, barangay, city/province" required>{{ old('address') }}</textarea>
             </div>
 
             <div style="margin-bottom:18px;">

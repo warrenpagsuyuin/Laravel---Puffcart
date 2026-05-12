@@ -82,6 +82,28 @@
         padding: 9px 13px;
     }
 
+    .btn-primary {
+        align-items: center;
+        background: var(--primary);
+        border-radius: var(--radius);
+        color: white;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 800;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 13px;
+    }
+
+    .notice-warning {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: var(--radius);
+        color: #9a3412;
+        margin-bottom: 18px;
+        padding: 12px 14px;
+    }
+
     .notice-success {
         background: #f0fdf4;
         border: 1px solid #bbf7d0;
@@ -118,6 +140,17 @@
 <main class="order-shell">
     @if(session('success'))
         <div class="notice-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="notice-warning">{{ session('error') }}</div>
+    @endif
+
+    @if(!$order->isPaymentComplete())
+        <div class="notice-warning">
+            Payment is required before this order can proceed to tracking or processing.
+            <a href="{{ route('payment.show', $order) }}" style="font-weight:800;color:#9a3412;text-decoration:underline;">Pay now</a>
+        </div>
     @endif
 
     <h1>{{ $order->order_number }}</h1>
@@ -169,7 +202,11 @@
                 <span>Payment</span>
                 <strong>{{ strtoupper(str_replace('_', ' ', $order->payment_method)) }}</strong>
             </div>
-            <a class="btn-secondary" href="{{ route('orders.track', $order) }}" style="width:100%;margin-top:14px;">Track Order</a>
+            @if($order->isPaymentComplete())
+                <a class="btn-secondary" href="{{ route('orders.track', $order) }}" style="width:100%;margin-top:14px;">Track Order</a>
+            @else
+                <a class="btn-primary" href="{{ route('payment.show', $order) }}" style="width:100%;margin-top:14px;">Pay Now</a>
+            @endif
         </aside>
     </div>
 </main>
