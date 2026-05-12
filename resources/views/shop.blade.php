@@ -46,7 +46,7 @@
 
     .shop-shell {
         display: grid;
-        grid-template-columns: 320px minmax(0, 1fr);
+        grid-template-columns: 300px minmax(0, 1fr);
         min-height: calc(100vh - 72px);
         background: #f6f8fb;
     }
@@ -54,24 +54,29 @@
     .filters {
         background: var(--bg-white);
         border-right: 1px solid var(--border);
-        padding: 22px 28px;
+        padding: 18px 22px;
         position: sticky;
         top: 72px;
         align-self: start;
-        min-height: calc(100vh - 72px);
-        overflow: visible;
+        height: calc(100vh - 72px);
+        overflow: hidden;
         box-shadow: 8px 0 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .filters form {
+        display: grid;
+        gap: 9px;
     }
 
     .filter-group {
         display: grid;
-        gap: 7px;
-        margin-bottom: 13px;
+        gap: 5px;
+        margin-bottom: 0;
     }
 
     .filter-group label {
         color: #111827;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
         letter-spacing: 0;
     }
@@ -79,12 +84,12 @@
     .filters input,
     .filters select {
         width: 100%;
-        min-height: 44px;
-        padding: 9px 14px;
+        min-height: 38px;
+        padding: 7px 12px;
         border: 1px solid #d9dee8;
         border-radius: 8px;
         background: #fff;
-        font-size: 14px;
+        font-size: 13px;
         color: #1f2937;
         box-sizing: border-box;
     }
@@ -98,33 +103,33 @@
 
     .price-filter-row {
         display: grid;
-        gap: 13px;
+        gap: 9px;
     }
 
     .filter-actions {
         display: grid;
-        gap: 10px;
-        margin-top: 16px;
+        gap: 8px;
+        margin-top: 4px;
     }
 
     .filter-actions .btn-primary {
         width: 100%;
-        min-height: 46px;
-        padding: 10px 16px;
+        min-height: 38px;
+        padding: 8px 14px;
         border-radius: 8px;
-        font-size: 15px;
+        font-size: 13px;
         box-shadow: none;
     }
 
     .filter-actions .btn-secondary {
         width: 100%;
-        min-height: 44px;
-        padding: 10px 16px;
+        min-height: 38px;
+        padding: 8px 14px;
         border-radius: 8px;
     }
 
     .shop-main {
-        padding: 34px 48px 44px;
+        padding: 24px 32px 36px;
         min-width: 0;
     }
 
@@ -141,6 +146,63 @@
         margin-bottom: 6px;
     }
 
+    .shop-sortbar {
+        align-items: center;
+        background: #eef0f3;
+        border: 1px solid #e1e5eb;
+        border-radius: 4px;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        padding: 12px 16px;
+    }
+
+    .sort-group {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .sort-label {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 700;
+        margin-right: 2px;
+    }
+
+    .sort-pill,
+    .sort-select {
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 3px;
+        color: #111827;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 700;
+        min-height: 40px;
+        min-width: 110px;
+        padding: 9px 18px;
+    }
+
+    .sort-pill:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .sort-pill.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+    }
+
+    .sort-select {
+        min-width: 210px;
+        padding: 9px 14px;
+    }
+
     .muted {
         color: var(--text-muted);
         font-size: 14px;
@@ -148,8 +210,67 @@
 
     .products-grid {
         display: grid;
-        gap: 24px;
+        gap: 18px;
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .page-controls {
+        align-items: center;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        display: flex;
+        gap: 0;
+        padding: 0;
+    }
+
+    .product-page-controls {
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    .page-btn {
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0;
+        color: #111827;
+        display: inline-flex;
+        font-size: 18px;
+        font-weight: 800;
+        justify-content: center;
+        min-height: 40px;
+        min-width: 48px;
+        padding: 8px 12px;
+    }
+
+    .page-btn:hover {
+        background: #f8fafc;
+        color: #111827;
+    }
+
+    .page-btn.is-disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+        pointer-events: none;
+    }
+
+    .page-count {
+        border: 0;
+        color: #111827;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.35;
+        min-width: 64px;
+        padding: 0 16px;
+        text-align: center;
+    }
+
+    .page-count strong {
+        color: var(--primary);
+        display: inline;
+        font-size: 14px;
     }
 
     .product-card {
@@ -160,19 +281,20 @@
         flex-direction: column;
         min-height: 100%;
         overflow: hidden;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
 
     /* Improve mobile card spacing and button layout */
     .product-body {
         display: grid;
-        gap: 12px;
-        padding: 20px;
+        gap: 10px;
+        padding: 16px;
     }
 
     .product-card:hover {
         border-color: var(--primary);
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+        transform: translateY(-1px);
     }
 
     .product-media {
@@ -192,7 +314,7 @@
 
     .product-media {
         background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
-        min-height: 180px;
+        min-height: 168px;
     }
 
     .product-placeholder {
@@ -211,7 +333,7 @@
 
     .product-meta {
         color: var(--text-muted);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
         letter-spacing: 0;
         text-transform: uppercase;
@@ -219,7 +341,7 @@
 
     .product-title {
         color: var(--text-primary);
-        font-size: 17px;
+        font-size: 15px;
         font-weight: 700;
         line-height: 1.35;
     }
@@ -232,43 +354,44 @@
 
     .price {
         color: var(--primary);
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
     }
 
     .old-price {
         color: var(--text-muted);
-        font-size: 13px;
+        font-size: 12px;
         text-decoration: line-through;
     }
 
     .stock {
         color: var(--text-secondary);
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .product-detail-line {
         color: var(--text-secondary);
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .flavor-picker {
         display: grid;
-        gap: 6px;
+        gap: 5px;
     }
 
     .flavor-picker label {
         color: var(--text-primary);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 800;
     }
 
     .flavor-picker select {
         width: 100%;
-        padding: 10px 12px;
+        min-height: 38px;
+        padding: 8px 10px;
         border-radius: 8px;
         border: 1px solid var(--border);
-        font-size: 14px;
+        font-size: 13px;
         background: #fff;
     }
 
@@ -282,7 +405,7 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
-        min-height: 178px;
+        min-height: 158px;
     }
 
     .card-actions form .btn-primary {
@@ -291,14 +414,14 @@
 
     .card-actions .btn-primary {
         width: 100%;
-        padding: 12px 14px;
+        padding: 10px 12px;
         border-radius: 8px;
         box-shadow: 0 6px 18px rgba(11,102,255,0.08);
     }
 
     .card-actions .btn-secondary {
         width: 100%;
-        padding: 10px 12px;
+        padding: 9px 12px;
         border-radius: 8px;
     }
 
@@ -316,11 +439,11 @@
         align-items: center;
         border-radius: var(--radius);
         display: inline-flex;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         justify-content: center;
-        min-height: 42px;
-        padding: 10px 14px;
+        min-height: 40px;
+        padding: 9px 12px;
         text-align: center;
     }
 
@@ -464,6 +587,7 @@
         .products-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
     }
 
     @media (max-width: 760px) {
@@ -471,8 +595,8 @@
             align-items: center;
             flex-direction: row;
             gap: 12px;
-            min-height: 64px;
-            padding: 12px 20px;
+            min-height: 56px;
+            padding: 10px 18px;
             position: sticky;
             top: 0;
         }
@@ -484,7 +608,7 @@
 
         .shop-shell {
             grid-template-columns: 1fr;
-            min-height: calc(100vh - 64px);
+            min-height: calc(100vh - 56px);
         }
 
         .filters {
@@ -492,14 +616,13 @@
             border-bottom: 1px solid var(--border);
             height: auto;
             min-height: 0;
-            max-height: none;
             position: static;
-            padding: 18px 20px;
+            padding: 12px 18px;
         }
 
         .filters form {
             display: grid;
-            gap: 12px;
+            gap: 8px;
         }
 
         .filter-group {
@@ -507,13 +630,15 @@
         }
 
         .filter-group label {
-            font-size: 11px;
+            font-size: 10px;
+            line-height: 1.2;
         }
 
         .filters input,
         .filters select {
-            min-height: 40px;
-            padding: 8px 12px;
+            font-size: 12px;
+            min-height: 34px;
+            padding: 5px 10px;
         }
 
         .price-filter-row {
@@ -522,7 +647,13 @@
 
         .filter-actions {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            margin-top: 2px;
+            margin-top: 0;
+        }
+
+        .filter-actions .btn-primary,
+        .filter-actions .btn-secondary {
+            min-height: 34px;
+            padding: 6px 10px;
         }
 
         .shop-main {
@@ -534,13 +665,47 @@
             flex-direction: column;
         }
 
+        .shop-sortbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .sort-pill,
+        .sort-select {
+            flex: 1;
+            min-width: 0;
+        }
+
         .products-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .page-controls {
+            align-items: stretch;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .page-btn {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .page-count {
+            border: 0;
+            order: -1;
+            width: 100%;
         }
 
         .pagination nav > div:last-child {
             align-items: flex-start;
             flex-direction: column;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .products-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -573,7 +738,7 @@
                 <select id="category" name="category">
                     <option value="">All categories</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>
+                        <option value="{{ $category->slug }}" data-name="{{ $category->name }}" @selected(request('category') === $category->slug)>
                             {{ $category->name }}
                         </option>
                     @endforeach
@@ -590,7 +755,7 @@
                 </select>
             </div>
 
-            <div class="filter-group">
+            <div class="filter-group" id="nicotine-type-filter">
                 <label for="nicotine_type">Nicotine Type</label>
                 <select id="nicotine_type" name="nicotine_type">
                     <option value="">All nicotine types</option>
@@ -647,15 +812,46 @@
             </div>
         </div>
 
-        <div class="products-grid">
-            @forelse($products as $product)
-                @php
-                    $isBattery = $product->product_type === \App\Models\Product::TYPE_BATTERY;
-                    $isBundle = $product->product_type === \App\Models\Product::TYPE_BUNDLE;
-                    $availableFlavors = $isBattery ? collect() : $product->availableFlavorOptions;
-                    $availableColors = ($isBattery || $isBundle) ? $product->availableColorOptions : collect();
-                    $canAddFromCard = $isBattery ? $availableColors->isNotEmpty() : ($isBundle ? $availableFlavors->isNotEmpty() && $availableColors->isNotEmpty() : $availableFlavors->isNotEmpty());
-                @endphp
+        @php
+            $activeSort = request('sort', 'recommended');
+            $sortUrl = fn (string $sort) => request()->fullUrlWithQuery(['sort' => $sort, 'page' => 1]);
+        @endphp
+
+        <div class="shop-sortbar">
+            <div class="sort-group">
+                <span class="sort-label">Sort by</span>
+                <a class="sort-pill {{ $activeSort === 'popular' ? 'active' : '' }}" href="{{ $sortUrl('popular') }}">Popular</a>
+                <a class="sort-pill {{ $activeSort === 'newest' ? 'active' : '' }}" href="{{ $sortUrl('newest') }}">Latest</a>
+                <a class="sort-pill {{ $activeSort === 'top_sales' ? 'active' : '' }}" href="{{ $sortUrl('top_sales') }}">Top Sales</a>
+                <select class="sort-select" onchange="if (this.value) window.location.href = this.value;">
+                    <option value="{{ $sortUrl('recommended') }}" @selected($activeSort === 'recommended')>Price</option>
+                    <option value="{{ $sortUrl('price_asc') }}" @selected($activeSort === 'price_asc')>Price: Low to High</option>
+                    <option value="{{ $sortUrl('price_desc') }}" @selected($activeSort === 'price_desc')>Price: High to Low</option>
+                </select>
+            </div>
+
+            @if($products->hasPages())
+                <div class="page-controls" aria-label="Product page controls">
+                    <span class="page-count"><strong>{{ $products->currentPage() }}</strong>/{{ $products->lastPage() }}</span>
+                    <a class="page-btn {{ $products->onFirstPage() ? 'is-disabled' : '' }}"
+                       href="{{ $products->previousPageUrl() ?: '#' }}"
+                       aria-label="Previous page"
+                       aria-disabled="{{ $products->onFirstPage() ? 'true' : 'false' }}">
+                        ‹
+                    </a>
+                    <a class="page-btn {{ $products->hasMorePages() ? '' : 'is-disabled' }}"
+                       href="{{ $products->nextPageUrl() ?: '#' }}"
+                       aria-label="Next page"
+                       aria-disabled="{{ $products->hasMorePages() ? 'false' : 'true' }}">
+                        ›
+                    </a>
+                </div>
+            @endif
+        </div>
+
+        @if($products->isNotEmpty())
+            <div class="products-grid">
+                @foreach($products as $product)
                 <article class="product-card">
                     <a class="product-media" href="{{ route('product.show', $product) }}">
                         @if($product->image_url)
@@ -685,64 +881,14 @@
 
                         <div class="card-actions">
                             <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
-                            @auth
-                                <form method="POST" action="{{ route('cart.add') }}">
-                                    @csrf
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                    <input type="hidden" name="quantity" value="1">
-                                    <input type="hidden" name="product_type" value="{{ $product->product_type ?: \App\Models\Product::TYPE_OTHER }}">
-                                    @if($isBattery)
-                                        @if($availableColors->isNotEmpty())
-                                            <div class="flavor-picker">
-                                                <label for="product-color-{{ $product->id }}">Color</label>
-                                                <select id="product-color-{{ $product->id }}" name="product_flavor_id" required>
-                                                    <option value="">Choose color</option>
-                                                    @foreach($availableColors as $color)
-                                                        <option value="{{ $color->id }}">{{ $color->name }} ({{ $color->stock }} left)</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @endif
-                                    @else
-                                        @if($availableFlavors->isNotEmpty())
-                                            <div class="flavor-picker">
-                                                <label for="product-flavor-{{ $product->id }}">Flavor</label>
-                                                <select id="product-flavor-{{ $product->id }}" name="product_flavor_id" required>
-                                                    <option value="">Choose flavor</option>
-                                                    @foreach($availableFlavors as $flavor)
-                                                        <option value="{{ $flavor->id }}">{{ $flavor->name }} ({{ $flavor->stock }} left)</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @endif
-                                    @endif
-                                    @if($isBundle && $availableColors->isNotEmpty())
-                                        <div class="flavor-picker">
-                                            <label for="battery-color-{{ $product->id }}">Battery Color</label>
-                                            <select id="battery-color-{{ $product->id }}" name="battery_color_id" required>
-                                                <option value="">Choose color</option>
-                                                @foreach($availableColors as $color)
-                                                    <option value="{{ $color->id }}">{{ $color->name }} ({{ $color->stock }} left)</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    @endif
-                                    <button class="btn-primary" name="intent" value="add_to_cart" type="submit" @disabled(!$canAddFromCard)>Add to Cart</button>
-                                </form>
-                            @else
-                                <a class="btn-primary" href="{{ route('login') }}">Login to Buy</a>
-                            @endauth
                         </div>
                     </div>
                 </article>
-            @empty
-                <p class="muted">No products match your filters.</p>
-            @endforelse
-        </div>
-
-        <div class="pagination">
-            {{ $products->links() }}
-        </div>
+                @endforeach
+            </div>
+        @else
+            <p class="muted">No products match your filters.</p>
+        @endif
 
         @if($recommendedProducts->isNotEmpty())
             <section class="recommendations">
@@ -782,4 +928,26 @@
         @endif
     </main>
 </div>
+<script>
+    const categorySelect = document.getElementById('category');
+    const nicotineFilter = document.getElementById('nicotine-type-filter');
+    const nicotineSelect = document.getElementById('nicotine_type');
+
+    function syncNicotineFilter() {
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        const categoryName = (selectedOption?.dataset.name || selectedOption?.text || '').toLowerCase();
+        const categoryValue = (categorySelect.value || '').toLowerCase();
+        const isELiquid = categoryName.includes('e-liquid') || categoryValue.includes('e-liquid');
+
+        nicotineFilter.style.display = isELiquid ? '' : 'none';
+        nicotineSelect.disabled = !isELiquid;
+
+        if (!isELiquid) {
+            nicotineSelect.value = '';
+        }
+    }
+
+    categorySelect?.addEventListener('change', syncNicotineFilter);
+    syncNicotineFilter();
+</script>
 @endsection

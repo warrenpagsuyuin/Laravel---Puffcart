@@ -20,7 +20,7 @@ class ProductController extends Controller
         ProductRecommendationService $recommendationService
     )
     {
-        $products = $searchService->search($request);
+        $products = $searchService->search($request, 6);
         $categories = Schema::hasTable('categories')
             ? Category::withCount('products')->active()->orderBy('name')->get()
             : collect();

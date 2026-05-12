@@ -21,8 +21,11 @@ use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use App\Mail\PasswordResetMail;
 use Illuminate\Support\Facades\Mail;
+=======
+>>>>>>> 79ebfef (Update staging features and product management)
 
 /*
 |--------------------------------------------------------------------------
@@ -217,6 +220,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
     });
 });
+<<<<<<< HEAD
 
 /*
 |--------------------------------------------------------------------------
@@ -236,3 +240,5 @@ Route::get('/test-email', function () {
         return 'Error: ' . $e->getMessage();
     }
 });
+=======
+>>>>>>> 79ebfef (Update staging features and product management)

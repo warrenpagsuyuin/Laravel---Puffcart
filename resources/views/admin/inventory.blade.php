@@ -62,8 +62,8 @@
         }
 
         .content {
-            max-width: 1520px;
-            padding: 32px 36px 48px;
+            max-width: 1560px;
+            padding: 28px 34px 44px;
         }
 
         .inventory-page {
@@ -82,8 +82,8 @@
             border: 1px solid #d9e2ec;
             border-radius: 8px;
             box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
-            min-height: 118px;
-            padding: 20px;
+            min-height: 104px;
+            padding: 18px;
             position: relative;
         }
 
@@ -116,7 +116,7 @@
         .metric-value {
             color: #0f172a;
             font-family: 'Poppins', sans-serif;
-            font-size: 28px;
+            font-size: 25px;
             font-weight: 700;
             line-height: 1.1;
             margin-top: 14px;
@@ -281,7 +281,7 @@
         }
 
         .inventory-table {
-            min-width: 1080px;
+            min-width: 1180px;
         }
 
         .inventory-table th {
@@ -291,7 +291,7 @@
             font-size: 12px;
             font-weight: 800;
             letter-spacing: 0;
-            padding: 14px 16px;
+            padding: 13px 16px;
             text-transform: uppercase;
         }
 
@@ -300,8 +300,8 @@
             border-bottom: 1px solid #e2e8f0;
             color: #334155;
             font-size: 14px;
-            padding: 18px 16px;
-            vertical-align: top;
+            padding: 16px;
+            vertical-align: middle;
         }
 
         .inventory-table tr:last-child td {
@@ -312,8 +312,118 @@
             background: #fbfdff;
         }
 
+        .inventory-list {
+            display: grid;
+            gap: 0;
+        }
+
+        .inventory-card {
+            display: grid;
+            gap: 28px;
+            grid-template-columns: minmax(380px, 0.9fr) minmax(520px, 1.1fr);
+            padding: 26px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .inventory-card:last-child {
+            border-bottom: 0;
+        }
+
+        .inventory-card:hover {
+            background: #fbfdff;
+        }
+
+        .product-overview {
+            display: grid;
+            gap: 18px;
+            align-content: start;
+        }
+
+        .product-stat-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .product-stat {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .product-stat span {
+            color: #64748b;
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .product-stat strong {
+            color: #0f172a;
+            font-size: 18px;
+        }
+
+        .variant-panel {
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .variant-panel-title {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .variant-panel-title strong {
+            color: #0f172a;
+            font-size: 14px;
+        }
+
+        .variant-panel-title span {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
         .product-cell {
+            align-items: center;
+            display: grid;
+            gap: 13px;
+            grid-template-columns: 62px minmax(0, 1fr);
             min-width: 280px;
+        }
+
+        .product-thumb {
+            align-items: center;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            color: #0b66ff;
+            display: flex;
+            font-size: 15px;
+            font-weight: 900;
+            height: 62px;
+            justify-content: center;
+            overflow: hidden;
+            width: 62px;
+        }
+
+        .product-thumb img {
+            display: block;
+            height: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .product-copy {
+            min-width: 0;
         }
 
         .product-name {
@@ -328,6 +438,14 @@
         .sku-line {
             color: #64748b;
             font-size: 13px;
+        }
+
+        .brand-line {
+            color: #475569;
+            font-size: 12px;
+            font-weight: 800;
+            margin-top: 6px;
+            text-transform: uppercase;
         }
 
         .stock-number {
@@ -363,7 +481,7 @@
         .variant-editor {
             display: grid;
             gap: 10px;
-            min-width: 440px;
+            min-width: 520px;
         }
 
         .variant-head,
@@ -371,7 +489,7 @@
             align-items: center;
             display: grid;
             gap: 10px;
-            grid-template-columns: minmax(140px, 1fr) 86px 96px;
+            grid-template-columns: minmax(180px, 1fr) 90px 100px;
         }
 
         .variant-head {
@@ -385,7 +503,7 @@
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
-            padding: 8px;
+            padding: 7px;
         }
 
         .variant-row.is-low {
@@ -410,11 +528,14 @@
         }
 
         .product-threshold {
-            align-items: end;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
             display: grid;
             gap: 10px;
             grid-template-columns: minmax(140px, 1fr) 96px auto;
-            padding-top: 2px;
+            padding: 9px;
         }
 
         .product-threshold label {
@@ -471,6 +592,23 @@
             .variant-row,
             .product-threshold {
                 grid-template-columns: 1fr;
+            }
+
+            .inventory-card {
+                grid-template-columns: 1fr;
+            }
+
+            .product-stat-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-cell {
+                grid-template-columns: 52px minmax(0, 1fr);
+            }
+
+            .product-thumb {
+                height: 52px;
+                width: 52px;
             }
 
             .product-threshold .btn {
@@ -567,77 +705,88 @@
                 </div>
             </div>
 
-            <div class="inventory-table-wrap">
-                <table class="admin-table inventory-table">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Category</th>
-                            <th>Total Stock</th>
-                            <th>Reorder</th>
-                            <th>Status</th>
-                            <th>Variant Inventory</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($products as $product)
-                            <tr>
-                                <td>
-                                    <div class="product-cell">
-                                        <span class="product-name">{{ $product->name }}</span>
-                                        <span class="sku-line">{{ $product->sku ?: 'No SKU assigned' }}</span>
-                                    </div>
-                                </td>
-                                <td>{{ $product->category_name }}</td>
-                                <td><span class="stock-number">{{ number_format($product->stock) }}</span></td>
-                                <td><span class="reorder-number">{{ number_format($product->reorder_level ?? 5) }}</span></td>
-                                <td>
+            <div class="inventory-list">
+                @forelse($products as $product)
+                    <article class="inventory-card">
+                        <div class="product-overview">
+                            <div class="product-cell">
+                                <div class="product-thumb">
+                                    @if($product->image_url)
+                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                                    @else
+                                        {{ strtoupper(substr($product->name, 0, 2)) }}
+                                    @endif
+                                </div>
+                                <div class="product-copy">
+                                    <span class="product-name">{{ $product->name }}</span>
+                                    <span class="sku-line">{{ $product->sku ?: 'No SKU assigned' }}</span>
+                                    @if($product->brand)
+                                        <div class="brand-line">{{ $product->brand }}</div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="product-stat-grid">
+                                <div class="product-stat">
+                                    <span>Category</span>
+                                    <strong>{{ $product->category_name }}</strong>
+                                </div>
+                                <div class="product-stat">
+                                    <span>Total Stock</span>
+                                    <strong>{{ number_format($product->stock) }}</strong>
+                                </div>
+                                <div class="product-stat">
+                                    <span>Status</span>
                                     <span class="badge {{ $product->is_low_stock ? 'badge-red' : 'badge-green' }}">
                                         {{ $product->is_low_stock ? 'Restock' : 'Healthy' }}
                                     </span>
-                                </td>
-                                <td>
-                                    <form method="POST" action="{{ route('admin.inventory.update', $product) }}" class="inline-stock-form">
-                                        @csrf
-                                        @method('PATCH')
-                                        <div class="variant-editor">
-                                            @if($product->flavors->isNotEmpty())
-                                                <div class="variant-head">
-                                                    <span>Variant</span>
-                                                    <span>Stock</span>
-                                                    <span>Reorder</span>
-                                                </div>
-                                            @endif
+                                </div>
+                            </div>
+                        </div>
 
-                                            @forelse($product->flavors as $index => $flavor)
-                                                <div class="variant-row {{ $flavor->stock <= $flavor->reorder_level ? 'is-low' : '' }}">
-                                                    <input type="hidden" name="flavors[{{ $index }}][id]" value="{{ $flavor->id }}">
-                                                    <span class="variant-name">{{ $flavor->name }}</span>
-                                                    <input type="number" name="flavors[{{ $index }}][stock]" min="0" value="{{ $flavor->stock }}" aria-label="Stock for {{ $product->name }} {{ $flavor->name }}">
-                                                    <input type="number" name="flavors[{{ $index }}][reorder_level]" min="0" value="{{ $flavor->reorder_level }}" aria-label="Reorder level for {{ $product->name }} {{ $flavor->name }}">
-                                                </div>
-                                            @empty
-                                                <div class="muted">No variants configured for this product.</div>
-                                            @endforelse
+                        <div class="variant-panel">
+                            <div class="variant-panel-title">
+                                <strong>Variant Inventory</strong>
+                                <span>Product reorder: {{ number_format($product->reorder_level ?? 5) }}</span>
+                            </div>
 
-                                            @if($product->flavors->isNotEmpty())
-                                                <div class="product-threshold">
-                                                    <label for="product-reorder-{{ $product->id }}">Product reorder level</label>
-                                                    <input id="product-reorder-{{ $product->id }}" type="number" name="reorder_level" min="0" value="{{ $product->reorder_level ?? 5 }}" aria-label="Product reorder level for {{ $product->name }}">
-                                                    <button class="btn btn-primary" type="submit">Save</button>
-                                                </div>
-                                            @endif
+                            <form method="POST" action="{{ route('admin.inventory.update', $product) }}" class="inline-stock-form">
+                                @csrf
+                                @method('PATCH')
+                                <div class="variant-editor">
+                                    @if($product->flavors->isNotEmpty())
+                                        <div class="variant-head">
+                                            <span>Variant</span>
+                                            <span>Stock</span>
+                                            <span>Reorder</span>
                                         </div>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="empty-row">No products found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                    @endif
+
+                                    @forelse($product->flavors as $index => $flavor)
+                                        <div class="variant-row {{ $flavor->stock <= $flavor->reorder_level ? 'is-low' : '' }}">
+                                            <input type="hidden" name="flavors[{{ $index }}][id]" value="{{ $flavor->id }}">
+                                            <span class="variant-name">{{ $flavor->name }}</span>
+                                            <input type="number" name="flavors[{{ $index }}][stock]" min="0" value="{{ $flavor->stock }}" aria-label="Stock for {{ $product->name }} {{ $flavor->name }}">
+                                            <input type="number" name="flavors[{{ $index }}][reorder_level]" min="0" value="{{ $flavor->reorder_level }}" aria-label="Reorder level for {{ $product->name }} {{ $flavor->name }}">
+                                        </div>
+                                    @empty
+                                        <div class="muted">No variants configured for this product.</div>
+                                    @endforelse
+
+                                    @if($product->flavors->isNotEmpty())
+                                        <div class="product-threshold">
+                                            <label for="product-reorder-{{ $product->id }}">Product reorder level</label>
+                                            <input id="product-reorder-{{ $product->id }}" type="number" name="reorder_level" min="0" value="{{ $product->reorder_level ?? 5 }}" aria-label="Product reorder level for {{ $product->name }}">
+                                            <button class="btn btn-primary" type="submit">Save</button>
+                                        </div>
+                                    @endif
+                                </div>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <div class="empty-row">No products found.</div>
+                @endforelse
             </div>
 
             <div class="pagination">

@@ -94,7 +94,7 @@
         background: var(--bg-white);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 14px;
+        padding: 10px;
         cursor: pointer;
         transition: box-shadow var(--transition), transform var(--transition),
                     border-color var(--transition);
@@ -103,6 +103,32 @@
         gap: 8px;
         position: relative;
         overflow: hidden;
+    }
+
+    .product-thumb {
+        width: 100%;
+        aspect-ratio: 1 / 0.72;
+        border-radius: var(--radius);
+        background: var(--bg-light);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .product-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .product-thumb-placeholder {
+        font-family: 'Poppins', sans-serif;
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--primary);
     }
 
     .product-card:hover {
@@ -219,6 +245,13 @@
     }
 
     .order-line-price { font-size: 12px; color: var(--text-muted); }
+
+    .order-line-variant {
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+        line-height: 1.35;
+    }
 
     .order-line-controls {
         display: flex;
@@ -374,6 +407,86 @@
         font-size: 14px;
     }
 
+    .variant-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(15, 23, 42, 0.45);
+    }
+
+    .variant-modal.visible { display: flex; }
+
+    .variant-dialog {
+        width: min(460px, 100%);
+        background: var(--bg-white);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+        overflow: hidden;
+    }
+
+    .variant-head {
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 14px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .variant-head .product-thumb { aspect-ratio: 1 / 1; }
+
+    .variant-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--text-primary);
+        line-height: 1.25;
+    }
+
+    .variant-price {
+        margin-top: 6px;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .variant-body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .variant-field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        margin-bottom: 5px;
+    }
+
+    .variant-field select {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 8px 10px;
+        background: var(--bg-white);
+        color: var(--text-primary);
+        font-size: 14px;
+    }
+
+    .variant-actions {
+        padding: 14px 16px 16px;
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        border-top: 1px solid var(--border);
+    }
+
     /* ── Tracking timeline ── */
     .tracking-list {
         display: flex;
@@ -431,12 +544,19 @@
                      data-id="{{ $product->id }}"
                      data-name="{{ $product->name }}"
                      data-price="{{ $product->price }}"
-                     data-stock="{{ $product->stock }}"
-                     data-cat="{{ $product->category }}">
+                     data-stock="{{ $product->available_stock }}"
+                     data-cat="{{ $product->category_name }}">
                     <div class="add-ripple"></div>
+                    <div class="product-thumb">
+                        @if($product->image_url)
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
+                        @else
+                            <span class="product-thumb-placeholder">PC</span>
+                        @endif
+                    </div>
                     <div class="prod-name">{{ $product->name }}</div>
                     <div class="prod-price">₱{{ number_format($product->price, 2) }}</div>
-                    <div class="prod-stock">{{ $product->stock }} in stock</div>
+                    <div class="prod-stock">{{ $product->available_stock }} in stock</div>
                 </div>
             @empty
                 <div class="no-results">No products available.</div>
@@ -513,6 +633,33 @@
 </div>
 
 {{-- ── Walk-In Order History ── --}}
+<div class="variant-modal" id="variant-modal" aria-hidden="true">
+    <div class="variant-dialog" role="dialog" aria-modal="true" aria-labelledby="variant-title">
+        <div class="variant-head">
+            <div class="product-thumb" id="variant-thumb"></div>
+            <div>
+                <div class="variant-title" id="variant-title"></div>
+                <div class="variant-price" id="variant-price"></div>
+                <div class="prod-stock" id="variant-stock"></div>
+            </div>
+        </div>
+        <div class="variant-body">
+            <div class="variant-field" id="variant-flavor-field">
+                <label for="variant-flavor-select" id="variant-flavor-label">Flavor</label>
+                <select id="variant-flavor-select"></select>
+            </div>
+            <div class="variant-field" id="variant-color-field">
+                <label for="variant-color-select">Battery Color</label>
+                <select id="variant-color-select"></select>
+            </div>
+        </div>
+        <div class="variant-actions">
+            <button type="button" class="btn btn-secondary" id="variant-cancel">Cancel</button>
+            <button type="button" class="btn btn-primary" id="variant-add">Add to Order</button>
+        </div>
+    </div>
+</div>
+
 <section class="panel" style="margin-top: 24px;">
     <div class="section-title">
         <h2>Walk-In Order History</h2>
@@ -543,6 +690,16 @@
                             @foreach($order->items as $item)
                                 <div style="font-size:12px;color:var(--text-secondary);">
                                     {{ $item->product_name }}
+                                    @if($item->selected_flavor || $item->selected_battery_color)
+                                        <div style="font-size:11px;color:var(--text-muted);">
+                                            @if($item->selected_flavor)
+                                                Flavor: {{ $item->selected_flavor }}
+                                            @endif
+                                            @if($item->selected_battery_color)
+                                                {{ $item->selected_flavor ? ' / ' : '' }}Battery Color: {{ $item->selected_battery_color }}
+                                            @endif
+                                        </div>
+                                    @endif
                                     <span class="badge badge-gray" style="font-size:10px;">× {{ $item->quantity }}</span>
                                 </div>
                             @endforeach
@@ -575,8 +732,32 @@
 @endsection
 
 @push('scripts')
+@php
+    $walkInProducts = $products->mapWithKeys(function ($product) {
+        return [(string) $product->id => [
+            'id' => $product->id,
+            'name' => $product->name,
+            'price' => (float) $product->price,
+            'stock' => $product->available_stock,
+            'type' => $product->product_type,
+            'image' => $product->image_url,
+            'flavors' => $product->availableFlavorOptions->map(fn ($option) => [
+                'id' => $option->id,
+                'name' => $option->name,
+                'stock' => $option->stock,
+            ])->values(),
+            'colors' => $product->availableColorOptions->map(fn ($option) => [
+                'id' => $option->id,
+                'name' => $option->name,
+                'stock' => $option->stock,
+            ])->values(),
+        ]];
+    });
+@endphp
 <script>
 (function () {
+    return;
+
     const cart  = {};
     const cards = document.querySelectorAll('.product-card');
 
@@ -730,6 +911,206 @@
 
     function fmt(n)     { return n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
     function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+})();
+</script>
+<script>
+(function () {
+    const products = @json($walkInProducts);
+
+    const cart = {};
+    const orderItems = document.getElementById('order-items');
+    const orderEmpty = document.getElementById('order-empty');
+    const orderTotal = document.getElementById('order-total');
+    const orderInputs = document.getElementById('order-items-input');
+    const proceedBtn = document.getElementById('proceed-btn');
+    const modal = document.getElementById('variant-modal');
+    const modalThumb = document.getElementById('variant-thumb');
+    const modalTitle = document.getElementById('variant-title');
+    const modalPrice = document.getElementById('variant-price');
+    const modalStock = document.getElementById('variant-stock');
+    const flavorField = document.getElementById('variant-flavor-field');
+    const flavorLabel = document.getElementById('variant-flavor-label');
+    const flavorSelect = document.getElementById('variant-flavor-select');
+    const colorField = document.getElementById('variant-color-field');
+    const colorSelect = document.getElementById('variant-color-select');
+    let activeProduct = null;
+
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            const product = products[card.dataset.id];
+            if (!product) return;
+
+            card.classList.add('flash');
+            setTimeout(() => card.classList.remove('flash'), 250);
+
+            if (needsOptions(product)) {
+                openModal(product);
+                return;
+            }
+
+            addProduct(product);
+        }, true);
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', event => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        Object.keys(cart).forEach(key => delete cart[key]);
+        render();
+    }, true);
+
+    document.getElementById('variant-cancel').addEventListener('click', closeModal);
+    modal.addEventListener('click', event => {
+        if (event.target === modal) closeModal();
+    });
+
+    document.getElementById('variant-add').addEventListener('click', () => {
+        if (!activeProduct) return;
+
+        const product = activeProduct;
+        const isBattery = product.type === 'battery';
+        const isBundle = product.type === 'bundle';
+
+        if (isBattery) {
+            const color = product.colors.find(option => option.id === Number(flavorSelect.value));
+            if (!color) return;
+            addProduct(product, null, color);
+            closeModal();
+            return;
+        }
+
+        const flavor = product.flavors.find(option => option.id === Number(flavorSelect.value)) || null;
+        const color = product.colors.find(option => option.id === Number(colorSelect.value)) || null;
+
+        if (product.flavors.length && !flavor) return;
+        if (isBundle && !color) return;
+
+        addProduct(product, flavor, color);
+        closeModal();
+    });
+
+    function needsOptions(product) {
+        return product.type === 'battery' || product.type === 'bundle' || product.flavors.length > 0 || product.colors.length > 0;
+    }
+
+    function openModal(product) {
+        const isBattery = product.type === 'battery';
+        activeProduct = product;
+        modalTitle.textContent = product.name;
+        modalPrice.textContent = '₱' + money(product.price);
+        modalStock.textContent = `${product.stock} in stock`;
+        modalThumb.innerHTML = product.image
+            ? `<img src="${attr(product.image)}" alt="${attr(product.name)}">`
+            : '<span class="product-thumb-placeholder">PC</span>';
+
+        flavorLabel.textContent = isBattery ? 'Battery Color' : 'Flavor';
+        flavorField.style.display = (isBattery || product.flavors.length) ? '' : 'none';
+        colorField.style.display = product.type === 'bundle' ? '' : 'none';
+        fillSelect(flavorSelect, isBattery ? product.colors : product.flavors, isBattery ? 'Choose color' : 'Choose flavor');
+        fillSelect(colorSelect, product.colors, 'Choose battery color');
+        modal.classList.add('visible');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+        activeProduct = null;
+        modal.classList.remove('visible');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function fillSelect(select, options, label) {
+        select.innerHTML = `<option value="">${label}</option>`;
+        options.forEach(option => {
+            select.innerHTML += `<option value="${option.id}">${html(option.name)} (${option.stock} left)</option>`;
+        });
+    }
+
+    function addProduct(product, flavor = null, color = null) {
+        const key = [product.id, flavor?.id || 0, color?.id || 0].join(':');
+        const stock = Math.min(...[product.stock, flavor?.stock, color?.stock].filter(Number.isFinite));
+
+        if (!cart[key]) {
+            cart[key] = { id: product.id, name: product.name, price: product.price, type: product.type, flavor, color, stock, qty: 0 };
+        }
+
+        if (cart[key].qty < cart[key].stock) {
+            cart[key].qty++;
+            render();
+        }
+    }
+
+    function render() {
+        const keys = Object.keys(cart).filter(key => cart[key].qty > 0);
+        orderEmpty.style.display = keys.length ? 'none' : 'block';
+        orderItems.querySelectorAll('.order-line').forEach(line => line.remove());
+
+        let total = 0;
+        keys.forEach(key => {
+            const item = cart[key];
+            const subtotal = item.price * item.qty;
+            const variants = [
+                item.flavor ? `Flavor: ${item.flavor.name}` : '',
+                item.color ? `Battery Color: ${item.color.name}` : '',
+            ].filter(Boolean).join(' / ');
+            total += subtotal;
+
+            const line = document.createElement('div');
+            line.className = 'order-line';
+            line.innerHTML = `
+                <div>
+                    <div class="order-line-name" title="${html(item.name)}">${html(item.name)}</div>
+                    ${variants ? `<div class="order-line-variant">${html(variants)}</div>` : ''}
+                    <div class="order-line-price">₱${money(item.price)} × ${item.qty} = ₱${money(subtotal)}</div>
+                </div>
+                <div class="order-line-controls">
+                    <button type="button" class="qty-btn remove" data-key="${key}" title="Remove one">−</button>
+                    <span class="qty-display">${item.qty}</span>
+                    <button type="button" class="qty-btn add" data-key="${key}" title="Add one">+</button>
+                </div>`;
+            orderItems.appendChild(line);
+        });
+
+        orderItems.querySelectorAll('.qty-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = cart[button.dataset.key];
+                if (!item) return;
+
+                if (button.classList.contains('add') && item.qty < item.stock) item.qty++;
+                if (button.classList.contains('remove')) item.qty--;
+                if (item.qty <= 0) delete cart[button.dataset.key];
+                render();
+            });
+        });
+
+        orderTotal.textContent = '₱' + money(total);
+        orderInputs.innerHTML = '';
+        keys.forEach((key, index) => {
+            const item = cart[key];
+            const primaryOption = item.flavor?.id || (item.type === 'battery' ? item.color?.id || '' : '');
+            const batteryColor = item.type === 'battery' ? '' : item.color?.id || '';
+            orderInputs.innerHTML += `
+                <input type="hidden" name="items[${index}][id]" value="${item.id}">
+                <input type="hidden" name="items[${index}][qty]" value="${item.qty}">
+                <input type="hidden" name="items[${index}][product_flavor_id]" value="${primaryOption}">
+                <input type="hidden" name="items[${index}][battery_color_id]" value="${batteryColor}">`;
+        });
+        proceedBtn.disabled = keys.length === 0;
+    }
+
+    function money(value) {
+        return Number(value).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function html(value) {
+        return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function attr(value) {
+        return html(value).replace(/'/g, '&#039;');
+    }
 })();
 </script>
 @endpush

@@ -190,41 +190,70 @@
             border: 1px solid #d9e2ec;
             border-radius: 8px;
             box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
-            padding: 24px;
+            padding: 20px;
         }
 
         #product-form-section .section-title {
             border-bottom: 1px solid #e2e8f0;
-            margin: -4px 0 22px;
-            padding-bottom: 16px;
+            margin: -2px 0 16px;
+            padding-bottom: 14px;
         }
 
-        .form-grid {
+        #product-form-section form {
+            display: grid;
             gap: 16px;
         }
 
-        .form-group {
-            gap: 7px;
+        #product-form-section .form-grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+        }
+
+        #product-form-section .form-group {
+            gap: 5px;
+            grid-column: span 3;
+            min-width: 0;
+        }
+
+        #product-form-section .form-group:nth-child(1) {
+            grid-column: span 6;
+        }
+
+        #product-form-section .form-group:nth-child(3),
+        #product-form-section .form-group:nth-child(4) {
+            grid-column: span 6;
+        }
+
+        #product-form-section .form-group.full {
+            grid-column: 1 / -1;
         }
 
         .form-group label,
         .checkbox-row {
             color: #334155;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
         }
 
-        input,
-        textarea,
-        select {
+        #product-form-section input,
+        #product-form-section textarea,
+        #product-form-section select {
             border-color: #cbd5e1;
             border-radius: 8px;
             color: #0f172a;
+            font-size: 13px;
+            min-height: 38px;
+            padding: 8px 10px;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
+        #product-form-section textarea {
+            min-height: 86px;
+        }
+
+        #product-form-section input:focus,
+        #product-form-section textarea:focus,
+        #product-form-section select:focus {
             border-color: #0b66ff;
             box-shadow: 0 0 0 3px #dbeafe;
         }
@@ -466,8 +495,8 @@
 
         .flavor-inventory {
             display: grid;
-            gap: 12px;
-            padding: 14px;
+            gap: 10px;
+            padding: 12px;
         }
 
         .flavor-inventory-head {
@@ -479,14 +508,44 @@
 
         .flavor-rows {
             display: grid;
-            gap: 10px;
+            gap: 8px;
         }
 
         .flavor-row {
             align-items: end;
             display: grid;
-            gap: 10px;
+            gap: 8px;
             grid-template-columns: minmax(160px, 1fr) 110px 130px auto;
+        }
+
+        #product-form-section .flavor-row > .form-group {
+            grid-column: auto;
+        }
+
+        #product-form-section [data-remove-flavor] {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            grid-column: 1 / -1;
+            justify-self: center;
+            margin-left: 0;
+            min-height: 42px;
+            min-width: 220px;
+            padding: 10px 24px;
+            width: auto;
+        }
+
+        #product-form-section [data-remove-flavor]:hover {
+            background: #fff7f7;
+            border-color: #f3b4b4;
+            box-shadow: none;
+            color: #b91c1c;
+            transform: none;
+        }
+
+        #product-form-section > form > .actions {
+            margin-top: 0 !important;
+            justify-content: flex-end;
         }
 
         @media (max-width: 980px) {
@@ -502,6 +561,17 @@
                 grid-template-columns: 1fr;
             }
 
+            #product-form-section .form-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            #product-form-section .form-group,
+            #product-form-section .form-group:nth-child(1),
+            #product-form-section .form-group:nth-child(3),
+            #product-form-section .form-group:nth-child(4) {
+                grid-column: span 1;
+            }
+
             .catalog-grid-head {
                 display: none;
             }
@@ -512,6 +582,28 @@
 
             .catalog-row {
                 padding: 18px;
+            }
+
+            #product-form-section [data-remove-flavor] {
+                grid-column: 1 / -1;
+                justify-self: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #product-form-section {
+                padding: 16px;
+            }
+
+            #product-form-section .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #product-form-section .form-group,
+            #product-form-section .form-group:nth-child(1),
+            #product-form-section .form-group:nth-child(3),
+            #product-form-section .form-group:nth-child(4) {
+                grid-column: 1 / -1;
             }
         }
     </style>
@@ -574,15 +666,17 @@
                         @php
                             $categoryFilter = $makeCategoryFilter($category);
                         @endphp
-                        <option value="{{ $categoryFilter }}" @selected(request('filter') === $categoryFilter)>{{ $category->name }}</option>
+                        <option value="{{ $categoryFilter }}" data-name="{{ $category->name }}" @selected(request('filter') === $categoryFilter)>{{ $category->name }}</option>
                     @endforeach
                 </select>
-                <select class="filter-control" name="nicotine_type" aria-label="Filter products by nicotine type">
-                    <option value="">All nicotine types</option>
-                    @foreach(\App\Models\Product::NICOTINE_TYPE_LABELS as $value => $label)
-                        <option value="{{ $value }}" @selected(request('nicotine_type') === $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
+                <div id="catalog-nicotine-filter">
+                    <select id="catalog-nicotine-type" class="filter-control" name="nicotine_type" aria-label="Filter products by nicotine type">
+                        <option value="">All nicotine types</option>
+                        @foreach(\App\Models\Product::NICOTINE_TYPE_LABELS as $value => $label)
+                            <option value="{{ $value }}" @selected(request('nicotine_type') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </form>
         </section>
 
@@ -807,6 +901,7 @@
                     <div class="form-group">
                         <label for="image">Product Image</label>
                         <input id="image" type="file" name="image" accept="image/*">
+                        <div class="muted" style="font-size:12px;">Required for new products. Upload JPG, PNG, WEBP, or GIF up to 2MB.</div>
                     </div>
 
                     <div class="form-group full">
@@ -950,6 +1045,8 @@
             const section = document.getElementById('product-form-section');
             const filter = document.getElementById('category-filter');
             const filterForm = document.getElementById('product-filter-form');
+            const catalogNicotineFilter = document.getElementById('catalog-nicotine-filter');
+            const catalogNicotineType = document.getElementById('catalog-nicotine-type');
             const productType = document.getElementById('product_type');
             const flavor = document.getElementById('flavor');
             const bundlePods = document.getElementById('bundle_pods');
@@ -966,9 +1063,30 @@
                 });
             }
 
+            function syncCatalogNicotineFilter() {
+                if (!filter || !catalogNicotineFilter || !catalogNicotineType) return;
+
+                const selected = filter.options[filter.selectedIndex];
+                const categoryName = (selected?.dataset.name || selected?.text || '').toLowerCase();
+                const categoryValue = (filter.value || '').toLowerCase();
+                const isELiquid = categoryName.includes('e-liquid') || categoryValue.includes('e-liquid');
+
+                catalogNicotineFilter.style.display = isELiquid ? '' : 'none';
+                catalogNicotineType.disabled = !isELiquid;
+
+                if (!isELiquid && catalogNicotineType.value) {
+                    catalogNicotineType.value = '';
+                }
+            }
+
+            syncCatalogNicotineFilter();
+
             if(filterForm) {
                 filterForm.querySelectorAll('select').forEach(function (select) {
                     select.addEventListener('change', function () {
+                        if (select === filter) {
+                            syncCatalogNicotineFilter();
+                        }
                         filterForm.submit();
                     });
                 });

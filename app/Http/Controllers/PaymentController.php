@@ -142,11 +142,15 @@ class PaymentController extends Controller
                 $request->userAgent()
             );
 
+            $message = app()->environment('local')
+                ? $e->getMessage()
+                : 'Payment checkout could not be started. Please try again.';
+
             return $request->expectsJson()
-                ? response()->json(['error' => 'Failed to create checkout'], 500)
+                ? response()->json(['error' => $message], 500)
                 : redirect()
                     ->route('payment.show', $order)
-                    ->with('error', 'Payment checkout could not be started. Please try again.');
+                    ->with('error', $message);
         }
     }
 

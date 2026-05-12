@@ -9,9 +9,14 @@ class WalkinOrderItem extends Model
     protected $fillable = [
         'walkin_order_id',
         'product_id',
+        'product_flavor_id',
+        'battery_color_id',
         'product_name',
         'price',
         'quantity',
+        'selected_flavor',
+        'selected_battery_color',
+        'product_type',
         'subtotal',
     ];
 
@@ -23,5 +28,15 @@ class WalkinOrderItem extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function flavor()
+    {
+        return $this->belongsTo(ProductFlavor::class, 'product_flavor_id');
+    }
+
+    public function batteryColor()
+    {
+        return $this->belongsTo(ProductFlavor::class, 'battery_color_id');
     }
 }

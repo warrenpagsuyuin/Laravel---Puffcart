@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\WalkinOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
@@ -18,13 +18,20 @@ class AdminReportController extends Controller
         $from = Carbon::parse($request->get('from', now()->startOfMonth()->toDateString()))->startOfDay();
         $to = Carbon::parse($request->get('to', now()->toDateString()))->endOfDay();
 
-        $totalOrders = Schema::hasTable('orders')
+        $totalOrders = (Schema::hasTable('orders')
             ? Order::whereBetween('created_at', [$from, $to])->count()
-            : 0;
+            : 0)
+            + (Schema::hasTable('walkin_orders')
+                ? WalkinOrder::whereBetween('created_at', [$from, $to])->count()
+                : 0);
 
-        $totalRevenue = Schema::hasTable('payments')
+        $onlineRevenue = Schema::hasTable('payments')
             ? Payment::where('status', 'paid')->whereBetween('paid_at', [$from, $to])->sum('amount')
             : 0;
+        $walkInRevenue = Schema::hasTable('walkin_orders')
+            ? WalkinOrder::where('status', 'completed')->whereBetween('created_at', [$from, $to])->sum('total')
+            : 0;
+        $totalRevenue = $onlineRevenue + $walkInRevenue;
 
         $topProducts = Schema::hasTable('order_items')
             ? Product::withSum('orderItems as units_sold', 'quantity')
@@ -48,7 +55,24 @@ class AdminReportController extends Controller
                 ->groupBy('date')
                 ->orderBy('date')
                 ->get()
+                ->mapWithKeys(fn ($day) => [$day->date => (float) $day->total])
             : collect();
+
+        if (Schema::hasTable('walkin_orders')) {
+            WalkinOrder::where('status', 'completed')
+                ->whereBetween('created_at', [$from, $to])
+                ->selectRaw('date(created_at) as date, sum(total) as total')
+                ->groupBy('date')
+                ->get()
+                ->each(function ($day) use ($dailySales) {
+                    $dailySales[$day->date] = ($dailySales[$day->date] ?? 0) + (float) $day->total;
+                });
+        }
+
+        $dailySales = $dailySales
+            ->sortKeys()
+            ->map(fn ($total, $date) => (object) ['date' => $date, 'total' => $total])
+            ->values();
 
         return view('admin.reports', compact(
             'from',

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Models\WalkinOrder;
 use App\Services\AuthenticationService;
 use Illuminate\Http\Request;
 
@@ -33,7 +34,47 @@ class AdminUserController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.users', compact('users'));
+        $walkInCustomers = WalkinOrder::query()
+            ->selectRaw('customer_email, max(customer_name) as customer_name, count(*) as orders_count, sum(total) as total_spent, max(created_at) as last_order_at')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+
+                $query->where(function ($query) use ($search) {
+                    $query->where('customer_name', 'like', "%{$search}%")
+                        ->orWhere('customer_email', 'like', "%{$search}%");
+                });
+            })
+            ->groupBy('customer_email')
+            ->orderByDesc('last_order_at')
+            ->take(15)
+            ->get();
+
+        $walkInOrdersByEmail = WalkinOrder::with('items')
+            ->whereIn('customer_email', $walkInCustomers->pluck('customer_email'))
+            ->latest()
+            ->get()
+            ->groupBy('customer_email');
+
+        $walkInCustomers->each(function ($customer) use ($walkInOrdersByEmail) {
+            $customer->ordered_items = $walkInOrdersByEmail
+                ->get($customer->customer_email, collect())
+                ->flatMap->items
+                ->map(function ($item) {
+                    $variants = collect([
+                        $item->selected_flavor ? "Flavor: {$item->selected_flavor}" : null,
+                        $item->selected_battery_color ? "Battery Color: {$item->selected_battery_color}" : null,
+                    ])->filter()->implode(' / ');
+
+                    return (object) [
+                        'name' => $item->product_name,
+                        'quantity' => $item->quantity,
+                        'variants' => $variants,
+                    ];
+                })
+                ->values();
+        });
+
+        return view('admin.users', compact('users', 'walkInCustomers'));
     }
 
     public function show(User $user)

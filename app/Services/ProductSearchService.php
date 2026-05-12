@@ -110,7 +110,8 @@ class ProductSearchService
                 'price_desc' => $query->orderByDesc('price'),
                 'newest' => $query->latest(),
                 'rating' => $query->orderByDesc('rating'),
-                'popular' => $query->orderByDesc('sales_count'),
+                'top_sales' => $query->orderByDesc('sales_count'),
+                'popular' => $query->orderByDesc('views_count')->orderByDesc('sales_count'),
                 default => $query
                     ->orderByDesc('is_featured')
                     ->orderByDesc('sales_count')

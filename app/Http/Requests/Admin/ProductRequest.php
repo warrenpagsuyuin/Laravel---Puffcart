@@ -16,6 +16,7 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         $product = $this->route('product');
+        $isUpdating = $product instanceof Product;
 
         return [
             'name' => 'required|string|max:255',
@@ -68,7 +69,11 @@ class ProductRequest extends FormRequest
             'nicotine_type' => ['nullable', Rule::in(array_keys(Product::NICOTINE_TYPE_LABELS))],
             'nicotine_strengths' => 'nullable|string|max:255',
             'volume_ml' => 'nullable|integer|min:1|max:1000',
-            'image' => 'nullable|image|max:2048',
+            'image' => [
+                Rule::requiredIf(! $isUpdating),
+                'image',
+                'max:2048',
+            ],
             'is_featured' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
         ];

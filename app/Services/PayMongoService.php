@@ -15,9 +15,9 @@ class PayMongoService
 
     public function __construct()
     {
-        $this->publicKey = config('services.paymongo.public_key');
-        $this->secretKey = config('services.paymongo.secret_key');
-        $this->webhookSecret = config('services.paymongo.webhook_secret');
+        $this->publicKey = (string) config('services.paymongo.public_key', '');
+        $this->secretKey = (string) config('services.paymongo.secret_key', '');
+        $this->webhookSecret = (string) config('services.paymongo.webhook_secret', '');
     }
 
     /**
@@ -26,6 +26,8 @@ class PayMongoService
     public function createCheckoutSession(array $data): array
     {
         try {
+            $this->ensureSecretKeyConfigured();
+
             $response = Http::withBasicAuth($this->secretKey, '')
                 ->post("{$this->baseUrl}/checkout_sessions", [
                     'data' => [
@@ -64,6 +66,8 @@ class PayMongoService
     public function createPaymentIntent(array $data): array
     {
         try {
+            $this->ensureSecretKeyConfigured();
+
             $response = Http::withBasicAuth($this->secretKey, '')
                 ->post("{$this->baseUrl}/payment_intents", [
                     'data' => [
@@ -97,6 +101,8 @@ class PayMongoService
     public function getPaymentIntent(string $intentId): array
     {
         try {
+            $this->ensureSecretKeyConfigured();
+
             $response = Http::withBasicAuth($this->secretKey, '')
                 ->get("{$this->baseUrl}/payment_intents/{$intentId}");
 
@@ -121,6 +127,8 @@ class PayMongoService
     public function getPayment(string $paymentId): array
     {
         try {
+            $this->ensureSecretKeyConfigured();
+
             $response = Http::withBasicAuth($this->secretKey, '')
                 ->get("{$this->baseUrl}/payments/{$paymentId}");
 
@@ -144,9 +152,22 @@ class PayMongoService
      */
     public function verifyWebhookSignature(string $payload, string $signature): bool
     {
+        if ($this->webhookSecret === '') {
+            Log::warning('PayMongo webhook secret is not configured');
+
+            return false;
+        }
+
         $hash = hash_hmac('sha256', $payload, $this->webhookSecret);
 
         return hash_equals($hash, $signature);
+    }
+
+    protected function ensureSecretKeyConfigured(): void
+    {
+        if ($this->secretKey === '') {
+            throw new Exception('PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.');
+        }
     }
 
     /**

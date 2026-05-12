@@ -39,7 +39,21 @@
             <tbody>
                 @foreach($lines as $line)
                 <tr>
-                    <td><strong>{{ $line['product']->name }}</strong></td>
+                    <td>
+                        <strong>{{ $line['product']->name }}</strong>
+                        @if(($line['flavor'] ?? null) || ($line['battery_color'] ?? null))
+                            <div style="font-size:12px;color:#777;margin-top:3px;">
+                                @if(($line['flavor'] ?? null)?->option_type === \App\Models\ProductFlavor::TYPE_FLAVOR)
+                                    Flavor: {{ $line['flavor']->name }}
+                                @endif
+                                @if($line['battery_color'] ?? null)
+                                    {{ (($line['flavor'] ?? null)?->option_type === \App\Models\ProductFlavor::TYPE_FLAVOR) ? ' / ' : '' }}Battery Color: {{ $line['battery_color']->name }}
+                                @elseif(($line['flavor'] ?? null)?->option_type === \App\Models\ProductFlavor::TYPE_COLOR)
+                                    Battery Color: {{ $line['flavor']->name }}
+                                @endif
+                            </div>
+                        @endif
+                    </td>
                     <td style="text-align:right">{{ $line['qty'] }}</td>
                     <td style="text-align:right">₱{{ number_format($line['subtotal'], 2) }}</td>
                 </tr>
