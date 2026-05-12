@@ -9,22 +9,41 @@
         background: var(--bg-white);
         border-bottom: 1px solid var(--border);
         display: flex;
-        justify-content: flex-end;
-        padding: 16px 40px;
+        justify-content: space-between;
+        min-height: 72px;
+        padding: 0 48px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .logo {
+        color: var(--primary);
+        font-family: 'Poppins', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0;
     }
 
     .nav-links {
         display: flex;
-        flex-wrap: wrap;
-        gap: 22px;
+        align-items: center;
+        gap: 8px;
         justify-content: flex-end;
         margin-left: auto;
     }
 
     .nav-links a {
-        color: var(--text-secondary);
+        color: #475569;
         font-size: 14px;
         font-weight: 600;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: #eff6ff;
+        color: #0b66ff;
     }
 
     .product-shell {
@@ -270,6 +289,8 @@
 </style>
 
 <nav class="store-nav">
+    <a class="logo" href="{{ route('home') }}">Puffcart</a>
+
     <div class="nav-links">
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('shop') }}">Shop</a>

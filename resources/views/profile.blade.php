@@ -16,13 +16,76 @@
 @endphp
 
 <style>
+    :root {
+        --profile-bg: #f4f7fb;
+        --profile-nav-bg: rgba(255, 255, 255, 0.94);
+        --profile-surface: #ffffff;
+        --profile-surface-soft: #f8fbff;
+        --profile-surface-muted: #eef6ff;
+        --profile-border: #d9e4f2;
+        --profile-text: #0e1b2f;
+        --profile-heading: #081326;
+        --profile-muted: #5f718a;
+        --profile-subtle: #7b8aa0;
+        --profile-brand: #0b63f6;
+        --profile-brand-hover: #084ec1;
+        --profile-brand-soft: #eaf2ff;
+        --profile-accent: #00897b;
+        --profile-accent-soft: #e6fffa;
+        --profile-avatar-bg: #13243d;
+        --profile-shadow: 0 18px 40px rgba(20, 35, 58, 0.08);
+        --profile-shadow-soft: 0 8px 22px rgba(20, 35, 58, 0.06);
+        --profile-danger-bg: #fff1f2;
+        --profile-danger-text: #b4232a;
+        --profile-danger-border: #fecdd3;
+        --profile-success-bg: #edfdf7;
+        --profile-success-text: #057a55;
+        --profile-success-border: #9ce7c8;
+        --profile-warning-bg: #fff8e6;
+        --profile-warning-text: #9a5b00;
+        --profile-warning-border: #f7d875;
+    }
+
+    :root[data-theme="dark"] {
+        --profile-bg: #0b1220;
+        --profile-nav-bg: rgba(10, 16, 29, 0.94);
+        --profile-surface: #121b2b;
+        --profile-surface-soft: #162235;
+        --profile-surface-muted: #112b4f;
+        --profile-border: #26384f;
+        --profile-text: #dbe7f5;
+        --profile-heading: #f3f8ff;
+        --profile-muted: #a9bad0;
+        --profile-subtle: #8498b2;
+        --profile-brand: #7db7ff;
+        --profile-brand-hover: #a9ceff;
+        --profile-brand-soft: #102a4d;
+        --profile-accent: #5eead4;
+        --profile-accent-soft: #0f3a3b;
+        --profile-avatar-bg: #1d4ed8;
+        --profile-shadow: 0 22px 46px rgba(0, 0, 0, 0.34);
+        --profile-shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.24);
+        --profile-danger-bg: #351316;
+        --profile-danger-text: #fecaca;
+        --profile-danger-border: #7f1d1d;
+        --profile-success-bg: #0c2f26;
+        --profile-success-text: #86efac;
+        --profile-success-border: #177b59;
+        --profile-warning-bg: #332713;
+        --profile-warning-text: #fde68a;
+        --profile-warning-border: #8a610c;
+    }
+
     body {
-        background: #f8fafc;
+        background:
+            radial-gradient(circle at top left, rgba(11, 99, 246, 0.08), transparent 30%),
+            var(--profile-bg);
+        color: var(--profile-text);
     }
 
     .account-nav {
-        background: #ffffff;
-        border-bottom: 1px solid #e2e8f0;
+        background: var(--profile-nav-bg);
+        border-bottom: 1px solid var(--profile-border);
         padding: 0 48px;
         min-height: 72px;
         display: flex;
@@ -31,10 +94,11 @@
         position: sticky;
         top: 0;
         z-index: 20;
+        backdrop-filter: blur(16px);
     }
 
     .brand {
-        color: #0b66ff;
+        color: var(--profile-brand);
         font-family: 'Poppins', sans-serif;
         font-size: 20px;
         font-weight: 700;
@@ -48,7 +112,7 @@
     }
 
     .nav-links a {
-        color: #475569;
+        color: var(--profile-muted);
         font-size: 14px;
         font-weight: 600;
         padding: 10px 14px;
@@ -57,8 +121,42 @@
 
     .nav-links a:hover,
     .nav-links .active {
-        background: #eff6ff;
-        color: #0b66ff;
+        background: var(--profile-brand-soft);
+        color: var(--profile-brand);
+    }
+
+    .theme-toggle {
+        width: 44px;
+        height: 44px;
+        display: inline-grid;
+        place-items: center;
+        background: var(--profile-brand-soft);
+        color: var(--profile-brand);
+        border: 1px solid var(--profile-border);
+        border-radius: 8px;
+        flex: 0 0 auto;
+    }
+
+    .theme-toggle:hover {
+        background: var(--profile-surface-muted);
+        color: var(--profile-brand-hover);
+    }
+
+    .theme-toggle svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .theme-toggle .sun-icon {
+        display: none;
+    }
+
+    :root[data-theme="dark"] .theme-toggle .moon-icon {
+        display: none;
+    }
+
+    :root[data-theme="dark"] .theme-toggle .sun-icon {
+        display: block;
     }
 
     .account-shell {
@@ -76,7 +174,7 @@
     }
 
     .eyebrow {
-        color: #0f766e;
+        color: var(--profile-accent);
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.08em;
@@ -86,12 +184,12 @@
 
     .page-heading h1 {
         font-size: 34px;
-        color: #0f172a;
+        color: var(--profile-heading);
         margin-bottom: 8px;
     }
 
     .page-heading p {
-        color: #64748b;
+        color: var(--profile-muted);
         font-size: 15px;
     }
 
@@ -116,25 +214,25 @@
     }
 
     .btn-primary {
-        background: #0b66ff;
+        background: var(--profile-brand);
         color: #ffffff;
-        box-shadow: 0 8px 18px rgba(11, 102, 255, 0.16);
+        box-shadow: 0 10px 22px rgba(11, 99, 246, 0.18);
     }
 
     .btn-primary:hover {
-        background: #0954d6;
+        background: var(--profile-brand-hover);
         color: #ffffff;
     }
 
     .btn-secondary {
-        background: #ffffff;
-        color: #334155;
-        border-color: #cbd5e1;
+        background: var(--profile-surface);
+        color: var(--profile-text);
+        border-color: var(--profile-border);
     }
 
     .btn-secondary:hover {
-        background: #f8fafc;
-        color: #0f172a;
+        background: var(--profile-surface-soft);
+        color: var(--profile-heading);
     }
 
     .account-grid {
@@ -145,10 +243,10 @@
     }
 
     .panel {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
+        background: var(--profile-surface);
+        border: 1px solid var(--profile-border);
         border-radius: 8px;
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+        box-shadow: var(--profile-shadow-soft);
     }
 
     .identity-panel {
@@ -161,8 +259,8 @@
         gap: 18px;
         align-items: center;
         padding: 28px;
-        border-bottom: 1px solid #e2e8f0;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border-bottom: 1px solid var(--profile-border);
+        background: linear-gradient(180deg, var(--profile-surface) 0%, var(--profile-surface-soft) 100%);
     }
 
     .avatar {
@@ -171,7 +269,7 @@
         border-radius: 8px;
         display: grid;
         place-items: center;
-        background: #0f172a;
+        background: linear-gradient(135deg, var(--profile-avatar-bg), #1d4ed8);
         color: #ffffff;
         font-size: 22px;
         font-weight: 800;
@@ -183,14 +281,14 @@
     }
 
     .identity-copy h2 {
-        color: #0f172a;
+        color: var(--profile-heading);
         font-size: 24px;
         margin-bottom: 6px;
         overflow-wrap: anywhere;
     }
 
     .identity-copy p {
-        color: #64748b;
+        color: var(--profile-muted);
         font-size: 14px;
         overflow-wrap: anywhere;
     }
@@ -210,21 +308,21 @@
     }
 
     .status-approved {
-        background: #ecfdf5;
-        color: #047857;
-        border: 1px solid #a7f3d0;
+        background: var(--profile-success-bg);
+        color: var(--profile-success-text);
+        border: 1px solid var(--profile-success-border);
     }
 
     .status-pending {
-        background: #fffbeb;
-        color: #b45309;
-        border: 1px solid #fde68a;
+        background: var(--profile-warning-bg);
+        color: var(--profile-warning-text);
+        border: 1px solid var(--profile-warning-border);
     }
 
     .status-rejected {
-        background: #fef2f2;
-        color: #b91c1c;
-        border: 1px solid #fecaca;
+        background: var(--profile-danger-bg);
+        color: var(--profile-danger-text);
+        border: 1px solid var(--profile-danger-border);
     }
 
     .detail-grid {
@@ -235,15 +333,15 @@
 
     .detail-item {
         padding: 24px 28px;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--profile-border);
     }
 
     .detail-item:nth-child(odd) {
-        border-right: 1px solid #e2e8f0;
+        border-right: 1px solid var(--profile-border);
     }
 
     .detail-label {
-        color: #64748b;
+        color: var(--profile-subtle);
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.08em;
@@ -252,7 +350,7 @@
     }
 
     .detail-value {
-        color: #0f172a;
+        color: var(--profile-heading);
         font-size: 15px;
         font-weight: 600;
         overflow-wrap: anywhere;
@@ -268,13 +366,13 @@
     }
 
     .panel-heading h2 {
-        color: #0f172a;
+        color: var(--profile-heading);
         font-size: 18px;
         margin-bottom: 6px;
     }
 
     .panel-heading p {
-        color: #64748b;
+        color: var(--profile-muted);
         font-size: 14px;
     }
 
@@ -291,17 +389,17 @@
         min-height: 48px;
         padding: 12px 14px;
         border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        background: #ffffff;
-        color: #334155;
+        border: 1px solid var(--profile-border);
+        background: var(--profile-surface);
+        color: var(--profile-text);
         font-weight: 700;
         font-size: 14px;
     }
 
     .action-link:hover {
-        border-color: #93c5fd;
-        background: #f8fbff;
-        color: #0b66ff;
+        border-color: color-mix(in srgb, var(--profile-brand) 45%, var(--profile-border));
+        background: var(--profile-surface-soft);
+        color: var(--profile-brand);
     }
 
     .logout-form {
@@ -311,17 +409,28 @@
     .logout-btn {
         width: 100%;
         min-height: 44px;
-        border: 1px solid #fecaca;
-        background: #fff5f5;
-        color: #991b1b;
+        border: 1px solid var(--profile-danger-border);
+        background: var(--profile-danger-bg);
+        color: var(--profile-danger-text);
         border-radius: 8px;
         font-size: 14px;
         font-weight: 800;
     }
 
     .logout-btn:hover {
-        background: #fee2e2;
-        border-color: #fca5a5;
+        background: color-mix(in srgb, var(--profile-danger-bg) 82%, var(--profile-danger-text));
+        border-color: var(--profile-danger-text);
+    }
+
+    :root[data-theme="dark"] body {
+        background:
+            radial-gradient(circle at top left, rgba(94, 234, 212, 0.1), transparent 30%),
+            radial-gradient(circle at top right, rgba(125, 183, 255, 0.1), transparent 26%),
+            var(--profile-bg);
+    }
+
+    :root[data-theme="dark"] .panel {
+        box-shadow: var(--profile-shadow);
     }
 
     @media (max-width: 860px) {
@@ -390,6 +499,22 @@
         <a href="{{ route('shop') }}">Shop</a>
         <a href="{{ route('cart') }}">Cart</a>
         <a href="{{ route('profile') }}" class="active">{{ $user->name }}</a>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" aria-pressed="false" title="Toggle dark mode">
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.9 15.1A8.5 8.5 0 0 1 8.9 3.1a7 7 0 1 0 12 12z"></path>
+            </svg>
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2"></path>
+                <path d="M12 20v2"></path>
+                <path d="m4.93 4.93 1.41 1.41"></path>
+                <path d="m17.66 17.66 1.41 1.41"></path>
+                <path d="M2 12h2"></path>
+                <path d="M20 12h2"></path>
+                <path d="m6.34 17.66-1.41 1.41"></path>
+                <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>
+        </button>
     </div>
 </nav>
 
@@ -482,4 +607,39 @@
         </aside>
     </section>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('themeToggle');
+        var storageKey = 'puffcart-theme';
+
+        function getTheme() {
+            return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        }
+
+        function saveTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+
+            try {
+                localStorage.setItem(storageKey, theme);
+            } catch (error) {
+                // Ignore storage failures and still update the current page.
+            }
+
+            if (toggle) {
+                var isDark = theme === 'dark';
+                toggle.setAttribute('aria-pressed', String(isDark));
+                toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+            }
+        }
+
+        saveTheme(getTheme());
+
+        if (toggle) {
+            toggle.addEventListener('click', function () {
+                saveTheme(getTheme() === 'dark' ? 'light' : 'dark');
+            });
+        }
+    });
+</script>
 @endsection

@@ -14,13 +14,15 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminVerificationController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Mail\PasswordResetMail;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -128,6 +130,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
+| Password Reset Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])->name('password.forgot');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.send-reset-link');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset-form');
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+
+/*
+|--------------------------------------------------------------------------
 | Payment Routes (PayMongo)
 |--------------------------------------------------------------------------
 */
@@ -200,4 +213,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
     });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Test Email Route (Development Only)
+|--------------------------------------------------------------------------
+*/
+Route::get('/test-email', function () {
+    $user = \App\Models\User::first();
+    if (!$user) {
+        return 'No users found in database';
+    }
+    
+    try {
+        Mail::send(new PasswordResetMail($user, 'test-token-12345'));
+        return 'Email sent successfully to ' . $user->email;
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
 });

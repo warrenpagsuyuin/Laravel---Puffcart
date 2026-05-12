@@ -176,6 +176,10 @@
                 <input type="password" name="password" placeholder="Enter your password" required>
             </div>
 
+            <div style="text-align: right; font-size: 13px; margin-bottom: 16px;">
+                <a href="{{ route('password.forgot') }}" style="color: var(--primary); text-decoration: none;">Forgot Password?</a>
+            </div>
+
             <button type="submit" class="auth-submit">Sign In</button>
         </form>
 

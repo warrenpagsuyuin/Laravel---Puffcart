@@ -10,26 +10,38 @@
         border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-        padding: 16px 40px;
+        min-height: 72px;
+        padding: 0 48px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
 
     .logo {
         color: var(--primary);
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 700;
+        letter-spacing: 0;
     }
 
     .nav-links {
         display: flex;
-        flex-wrap: wrap;
-        gap: 22px;
+        align-items: center;
+        gap: 8px;
     }
 
     .nav-links a {
-        color: var(--text-secondary);
+        color: #475569;
         font-size: 14px;
         font-weight: 600;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: #eff6ff;
+        color: #0b66ff;
     }
 
     .checkout-shell {

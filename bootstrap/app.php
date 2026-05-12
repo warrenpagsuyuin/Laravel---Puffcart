@@ -18,6 +18,7 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\RouteServiceProvider::class);
 
 return $app;

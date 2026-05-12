@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Forgot Password')
+@section('title', 'Reset Password')
 
 @section('content')
 <style>
@@ -72,6 +72,12 @@
         color: var(--text-muted);
     }
 
+    .password-requirement {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
     .auth-submit {
         width: 100%;
         padding: 11px 12px;
@@ -133,28 +139,14 @@
     .auth-footer a:hover {
         color: var(--primary-hover);
     }
-
-    .info-text {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        border-radius: var(--radius);
-        padding: 12px 14px;
-        font-size: 13px;
-        color: #1e40af;
-        margin-bottom: 20px;
-    }
 </style>
 
 <div class="auth-container">
     <div class="auth-box">
         <div class="auth-header">
-            <h1>Forgot Password?</h1>
-            <p>Enter your email address and we'll send you a link to reset your password.</p>
+            <h1>Reset Your Password</h1>
+            <p>Enter your new password below</p>
         </div>
-
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
 
         @if(session('error'))
             <div class="alert alert-error">{{ session('error') }}</div>
@@ -168,24 +160,32 @@
             </div>
         @endif
 
-        <div class="info-text">
-            💡 Please enter the email address associated with your Puffcart account.
-        </div>
-
-        <form method="POST" action="{{ route('password.send-reset-link') }}">
+        <form method="POST" action="{{ route('password.update') }}">
             @csrf
+
+            <input type="hidden" name="token" value="{{ $token }}">
 
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" name="email" value="{{ old('email') }}" placeholder="your@email.com" required autofocus>
+                <input type="email" name="email" value="{{ old('email') }}" placeholder="your@email.com" required>
             </div>
 
-            <button type="submit" class="auth-submit">Send Reset Link</button>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" name="password" placeholder="Enter new password" required>
+                <div class="password-requirement">At least 8 characters</div>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" name="password_confirmation" placeholder="Confirm password" required>
+            </div>
+
+            <button type="submit" class="auth-submit">Reset Password</button>
         </form>
 
         <div class="auth-footer">
             <p><a href="{{ route('login') }}">← Back to Login</a></p>
-            <p>Don't have an account? <a href="/register">Create one</a></p>
         </div>
     </div>
 </div>
