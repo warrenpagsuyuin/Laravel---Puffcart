@@ -2,7 +2,6 @@
 
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard')
-@section('page-subtitle', 'Store performance and operational alerts')
 
 @section('content')
     <div class="grid grid-4">
@@ -24,7 +23,7 @@
         </div>
     </div>
 
-    <div class="grid grid-3" style="margin-top:16px;">
+    <div class="grid grid-2" style="margin-top:16px;">
         <div class="stat-card">
             <div class="stat-label">Total Orders</div>
             <div class="stat-value">{{ number_format($totalOrders) }}</div>
@@ -32,10 +31,6 @@
         <div class="stat-card">
             <div class="stat-label">Low Stock Products</div>
             <div class="stat-value">{{ number_format($lowStockProducts->count()) }}</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Admin Session</div>
-            <div class="stat-value" style="font-size:24px;">Active</div>
         </div>
     </div>
 

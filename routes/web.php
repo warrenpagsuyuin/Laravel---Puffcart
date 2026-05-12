@@ -5,7 +5,6 @@ use App\Events\TestNotification;
 use App\Http\Controllers\Admin\AdminAuditLogController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminMLInsightController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminReportController;
@@ -58,7 +57,7 @@ Route::middleware('auth')->group(function () {
 */
 
 Route::get('/test-websocket', function () {
-    broadcast(new TestNotification('WebSocket is working on Puffcart!'));
+    broadcast(new TestNotification('WebSocket is working on PuffCart!'));
 
     return 'WebSocket event sent!';
 })->name('test.websocket');
@@ -72,7 +71,7 @@ Route::post('/chatbot/send', function (Request $request) {
     $reply = "I'm sorry, I don't understand yet. You can ask about delivery, payment, products, tracking, age verification, returns, or support.";
 
     if (str_contains($message, 'hello') || str_contains($message, 'hi')) {
-        $reply = 'Hello! Welcome to Puffcart. How can I help you today?';
+        $reply = 'Hello! Welcome to PuffCart. How can I help you today?';
     } elseif (str_contains($message, 'delivery') || str_contains($message, 'shipping')) {
         $reply = 'We offer same-day delivery in Metro Manila. Shipping time may vary depending on your location.';
     } elseif (str_contains($message, 'payment') || str_contains($message, 'pay')) {
@@ -82,15 +81,15 @@ Route::post('/chatbot/send', function (Request $request) {
     } elseif (str_contains($message, 'tracking') || str_contains($message, 'track')) {
         $reply = 'You can track your order by clicking the Tracking link in the navigation menu.';
     } elseif (str_contains($message, 'age') || str_contains($message, '18') || str_contains($message, 'verify')) {
-        $reply = 'Puffcart requires 18+ age verification before account approval and purchasing.';
+        $reply = 'PuffCart requires 18+ age verification before account approval and purchasing.';
     } elseif (str_contains($message, 'return') || str_contains($message, 'refund')) {
         $reply = 'Returns and refunds are reviewed based on product condition and order details. Please contact support for assistance.';
     } elseif (str_contains($message, 'support') || str_contains($message, 'contact')) {
-        $reply = 'You can contact Puffcart support through the Support or Login page.';
+        $reply = 'You can contact PuffCart support through the Support or Login page.';
     } elseif (str_contains($message, 'cart')) {
         $reply = 'You can view your selected products by clicking Cart in the navigation menu.';
     } elseif (str_contains($message, 'shop')) {
-        $reply = 'Click Shop in the navigation menu to browse all available Puffcart products.';
+        $reply = 'Click Shop in the navigation menu to browse all available PuffCart products.';
     }
 
     broadcast(new ChatbotMessage($reply, 'bot'));
@@ -187,6 +186,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/unlock', [AdminUserController::class, 'unlock'])->name('users.unlock');
 
         Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
+        Route::get('/verifications/{user}', [AdminVerificationController::class, 'show'])->name('verifications.show');
         Route::post('/verifications/{user}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
         Route::post('/verifications/{user}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
 
@@ -194,6 +194,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/audit-logs/{auditLog}', [AdminAuditLogController::class, 'show'])->name('audit-logs.show');
 
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
-        Route::get('/ml-insights', [AdminMLInsightController::class, 'index'])->name('ml-insights.index');
     });
 });
