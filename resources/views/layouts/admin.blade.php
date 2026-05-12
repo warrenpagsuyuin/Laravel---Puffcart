@@ -817,6 +817,16 @@
                 </span>
             </a>
 
+            <a class="sidebar-link {{ request()->routeIs('admin.walk-in.*') ? 'active' : '' }}"
+                href="{{ route('admin.walk-in.index') }}">
+                 <span class="link-inner">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                        Walk-In
+                 </span>
+            </a>
+
             <a class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
                href="{{ route('admin.users.index') }}">
                 <span class="link-inner">
