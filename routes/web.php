@@ -21,11 +21,8 @@ use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
-<<<<<<< HEAD
 use App\Mail\PasswordResetMail;
 use Illuminate\Support\Facades\Mail;
-=======
->>>>>>> 79ebfef (Update staging features and product management)
 
 /*
 |--------------------------------------------------------------------------
@@ -152,15 +149,19 @@ Route::prefix('payment')->name('payment.')->group(function () {
     Route::get('{order}', [PaymentController::class, 'show'])
         ->middleware('auth')
         ->name('show');
+
     Route::post('checkout/{order}', [PaymentController::class, 'initiateCheckout'])
         ->middleware('auth')
         ->name('checkout');
+
     Route::get('success/{order}', [PaymentController::class, 'paymentSuccess'])
         ->middleware('auth')
         ->name('success');
+
     Route::get('cancel/{order}', [PaymentController::class, 'paymentCancel'])
         ->middleware('auth')
         ->name('cancel');
+
     Route::post('webhook', [PaymentController::class, 'webhook'])
         ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
         ->name('webhook');
@@ -169,11 +170,12 @@ Route::prefix('payment')->name('payment.')->group(function () {
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
-|-----------------------------------------------------------------a---------
+|--------------------------------------------------------------------------
 */
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
+
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
 
@@ -220,25 +222,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
     });
 });
-<<<<<<< HEAD
 
 /*
 |--------------------------------------------------------------------------
 | Test Email Route (Development Only)
 |--------------------------------------------------------------------------
 */
+
 Route::get('/test-email', function () {
     $user = \App\Models\User::first();
+
     if (!$user) {
         return 'No users found in database';
     }
-    
+
     try {
         Mail::send(new PasswordResetMail($user, 'test-token-12345'));
+
         return 'Email sent successfully to ' . $user->email;
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }
 });
-=======
->>>>>>> 79ebfef (Update staging features and product management)
