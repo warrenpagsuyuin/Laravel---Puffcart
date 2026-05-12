@@ -17,6 +17,11 @@ class AdminVerificationController extends Controller
         return view('admin.verifications', compact('pendingUsers'));
     }
 
+    public function show(User $user)
+    {
+        return view('admin.verifications-show', compact('user'));
+    }
+
     public function approve(User $user)
     {
         $user->update([
