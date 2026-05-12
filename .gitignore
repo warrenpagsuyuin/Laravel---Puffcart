@@ -24,7 +24,6 @@ yarn-error.log
 /.idea
 /.vscode
 
-/storage/app/public/products/*
 /storage/app/public/valid-ids/*
 /storage/logs/*.log
 .phpunit.result.cache
