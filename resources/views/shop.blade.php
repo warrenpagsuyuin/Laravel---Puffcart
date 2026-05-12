@@ -278,6 +278,17 @@
         margin-top: auto;
     }
 
+    .card-actions form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 178px;
+    }
+
+    .card-actions form .btn-primary {
+        margin-top: auto;
+    }
+
     .card-actions .btn-primary {
         width: 100%;
         padding: 12px 14px;

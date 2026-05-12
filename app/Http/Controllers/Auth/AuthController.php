@@ -22,8 +22,12 @@ class AuthController extends Controller
 
     public function verifyAgePost(Request $request)
     {
-        $request->validate(['confirmed' => 'required|accepted']);
+        $request->validate([
+            'confirmed' => 'required|accepted',
+        ]);
+
         session(['age_verified' => true]);
+
         return redirect()->intended(route('home'));
     }
 
@@ -38,18 +42,23 @@ class AuthController extends Controller
                 : redirect()->route('home');
         }
 
+        $this->prepareRegistrationCaptcha();
+
         return view('login');
     }
 
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
+
         $key = Str::lower($credentials['login']) . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
 
-            return back()->with('error', "Too many login attempts. Try again in {$seconds} seconds.");
+            return back()
+                ->with('error', "Too many login attempts. Try again in {$seconds} seconds.")
+                ->withInput($request->only('login'));
         }
 
         $query = User::where('email', $credentials['login']);
@@ -66,7 +75,9 @@ class AuthController extends Controller
             (!Schema::hasColumn('users', 'is_active') || $user->is_active)
         ) {
             Auth::login($user, $request->boolean('remember'));
+
             RateLimiter::clear($key);
+
             $request->session()->regenerate();
 
             return $user->role === 'admin'
@@ -78,18 +89,12 @@ class AuthController extends Controller
 
         return back()
             ->with('error', 'Invalid username/email or password.')
-            ->onlyInput('login');
+            ->withInput($request->only('login'));
     }
 
     public function showRegister()
     {
-        $captchaA = rand(1, 9);
-        $captchaB = rand(1, 9);
-
-        session([
-            'captcha_answer' => $captchaA + $captchaB,
-            'captcha_question' => "{$captchaA} + {$captchaB}",
-        ]);
+        $this->prepareRegistrationCaptcha();
 
         return view('register');
     }
@@ -98,18 +103,47 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        if ((int) $data['captcha'] !== (int) session('captcha_answer')) {
+        $correctCaptchaAnswer = session('captcha_answer');
+        $submittedCaptchaAnswer = trim((string) $request->input('captcha'));
+
+        if ($correctCaptchaAnswer === null) {
+            $this->prepareRegistrationCaptcha(true);
+
             return back()
-                ->withErrors(['captcha' => 'Captcha answer is incorrect.'])
-                ->withInput();
+                ->withErrors([
+                    'captcha' => 'Captcha expired. Please answer the new captcha.',
+                ])
+                ->withInput($request->except([
+                    'password',
+                    'password_confirmation',
+                    'valid_id',
+                    'captcha',
+                ]));
+        }
+
+        if ((string) $submittedCaptchaAnswer !== (string) $correctCaptchaAnswer) {
+            $this->prepareRegistrationCaptcha(true);
+
+            return back()
+                ->withErrors([
+                    'captcha' => 'Captcha answer is incorrect.',
+                ])
+                ->withInput($request->except([
+                    'password',
+                    'password_confirmation',
+                    'valid_id',
+                    'captcha',
+                ]));
         }
 
         $idPath = $request->file('valid_id')->store('valid-ids', 'public');
 
         User::create([
             'name' => $data['name'],
-            'username' => $data['username'] ?? null,
+            'username' => $data['username'],
             'email' => $data['email'],
+            'phone' => $data['contact_number'],
+            'address' => $data['address'],
             'date_of_birth' => $data['date_of_birth'],
             'valid_id_path' => $idPath,
             'age_verified' => false,
@@ -121,6 +155,11 @@ class AuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
+        session()->forget([
+            'captcha_answer',
+            'captcha_question',
+        ]);
+
         return redirect()
             ->route('login')
             ->with('success', 'Account created. Your ID is pending verification.');
@@ -129,8 +168,29 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
+    }
+
+    private function prepareRegistrationCaptcha(bool $force = false): void
+    {
+        if (
+            !$force &&
+            session()->has('captcha_answer') &&
+            session()->has('captcha_question')
+        ) {
+            return;
+        }
+
+        $captchaA = random_int(1, 9);
+        $captchaB = random_int(1, 9);
+
+        session([
+            'captcha_answer' => $captchaA + $captchaB,
+            'captcha_question' => "{$captchaA} + {$captchaB}",
+        ]);
     }
 }

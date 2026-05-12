@@ -146,6 +146,9 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 */
 
 Route::prefix('payment')->name('payment.')->group(function () {
+    Route::get('{order}', [PaymentController::class, 'show'])
+        ->middleware('auth')
+        ->name('show');
     Route::post('checkout/{order}', [PaymentController::class, 'initiateCheckout'])
         ->middleware('auth')
         ->name('checkout');

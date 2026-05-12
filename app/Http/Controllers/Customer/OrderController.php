@@ -12,10 +12,12 @@ class OrderController extends Controller
 {
     public function checkout(Request $request, CheckoutService $checkoutService)
     {
-        $summary = $checkoutService->preview(auth()->user(), $request->get('promo_code'));
+        $cartItemIds = $request->input('cart_item_ids');
+        $cartItemIds = is_array($cartItemIds) ? $cartItemIds : null;
+        $summary = $checkoutService->preview(auth()->user(), $request->get('promo_code'), $cartItemIds);
 
         if ($summary['items']->isEmpty()) {
-            return redirect()->route('cart')->with('error', 'Your cart is empty.');
+            return redirect()->route('cart')->with('error', 'Please select at least one item to checkout.');
         }
 
         if (!empty($summary['stock_errors'])) {
@@ -28,6 +30,12 @@ class OrderController extends Controller
     public function placeOrder(CheckoutRequest $request, CheckoutService $checkoutService)
     {
         $order = $checkoutService->placeOrder(auth()->user(), $request->validated(), $request);
+
+        if ($order->requiresOnlinePayment()) {
+            return redirect()
+                ->route('payment.show', $order)
+                ->with('success', 'Order created. Please complete payment before tracking can proceed.');
+        }
 
         return redirect()
             ->route('orders.show', $order)
@@ -55,6 +63,12 @@ class OrderController extends Controller
         abort_unless($order->user_id === auth()->id(), 403);
 
         $order->load('items.flavor', 'items.batteryColor', 'payment', 'tracking');
+
+        if (!$order->isPaymentComplete()) {
+            return redirect()
+                ->route('payment.show', $order)
+                ->with('error', 'Please complete payment before tracking this order.');
+        }
 
         return view('orders.track', compact('order'));
     }

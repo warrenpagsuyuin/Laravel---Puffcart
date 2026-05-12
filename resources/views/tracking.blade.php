@@ -117,6 +117,20 @@
         padding: 9px 13px;
     }
 
+    .btn-primary {
+        align-items: center;
+        background: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: var(--radius);
+        color: white;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 800;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 13px;
+    }
+
     .empty {
         border: 1px solid var(--border);
         border-radius: var(--radius);
@@ -179,7 +193,11 @@
                     </div>
                     <span class="badge {{ $statusClass }}">{{ $order->status_label }}</span>
                     <strong>PHP {{ number_format($order->total, 2) }}</strong>
-                    <a class="btn-secondary" href="{{ route('orders.track', $order) }}">Track</a>
+                    @if($order->isPaymentComplete())
+                        <a class="btn-secondary" href="{{ route('orders.track', $order) }}">Track</a>
+                    @else
+                        <a class="btn-primary" href="{{ route('payment.show', $order) }}">Pay Now</a>
+                    @endif
                 </div>
             @endforeach
         </div>
