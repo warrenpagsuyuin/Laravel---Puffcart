@@ -161,7 +161,7 @@
             align-items: center;
             display: grid;
             gap: 12px;
-            grid-template-columns: minmax(260px, 1fr) 220px 190px;
+            grid-template-columns: minmax(260px, 1fr) 220px 190px 112px;
             justify-content: stretch;
         }
 
@@ -183,6 +183,22 @@
             border-color: #0b66ff;
             box-shadow: 0 0 0 3px #dbeafe;
             outline: none;
+        }
+
+        .toolbar-form .search-control.is-searching {
+            background-image: linear-gradient(90deg, transparent, rgba(11, 102, 255, 0.08), transparent);
+            background-size: 220% 100%;
+            animation: searchPulse 0.9s ease infinite;
+        }
+
+        @keyframes searchPulse {
+            0% {
+                background-position: 160% 0;
+            }
+
+            100% {
+                background-position: -60% 0;
+            }
         }
 
         #product-form-section {
@@ -659,7 +675,7 @@
             </div>
 
             <form id="product-filter-form" method="GET" action="{{ route('admin.products.index') }}" class="toolbar-form">
-                <input class="search-control" name="search" value="{{ request('search') }}" placeholder="Search products or SKU">
+                <input id="product-search" class="search-control" name="search" value="{{ request('search') }}" placeholder="Search products or SKU" autocomplete="off">
                 <select id="category-filter" class="filter-control" name="filter" aria-label="Filter products by category">
                     <option value="">All categories</option>
                     @foreach($categories as $category)
@@ -677,6 +693,10 @@
                         @endforeach
                     </select>
                 </div>
+                <select id="product-per-page" class="filter-control" name="per_page" aria-label="Products per page">
+                    <option value="5" @selected((int) request('per_page', 5) === 5)>5 rows</option>
+                    <option value="10" @selected((int) request('per_page', 5) === 10)>10 rows</option>
+                </select>
             </form>
         </section>
 
@@ -1045,6 +1065,7 @@
             const section = document.getElementById('product-form-section');
             const filter = document.getElementById('category-filter');
             const filterForm = document.getElementById('product-filter-form');
+            const productSearch = document.getElementById('product-search');
             const catalogNicotineFilter = document.getElementById('catalog-nicotine-filter');
             const catalogNicotineType = document.getElementById('catalog-nicotine-type');
             const productType = document.getElementById('product_type');
@@ -1082,12 +1103,32 @@
             syncCatalogNicotineFilter();
 
             if(filterForm) {
+                let filterTimer = null;
+
+                function submitProductFilters(delay = 0) {
+                    window.clearTimeout(filterTimer);
+
+                    if (productSearch && delay > 0) {
+                        productSearch.classList.add('is-searching');
+                    }
+
+                    filterTimer = window.setTimeout(function () {
+                        filterForm.requestSubmit();
+                    }, delay);
+                }
+
+                if (productSearch) {
+                    productSearch.addEventListener('input', function () {
+                        submitProductFilters(450);
+                    });
+                }
+
                 filterForm.querySelectorAll('select').forEach(function (select) {
                     select.addEventListener('change', function () {
                         if (select === filter) {
                             syncCatalogNicotineFilter();
                         }
-                        filterForm.submit();
+                        submitProductFilters();
                     });
                 });
             }

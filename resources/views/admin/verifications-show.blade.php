@@ -64,7 +64,7 @@
                         <td><strong>Valid ID</strong></td>
                         <td>
                             @if($user->valid_id_path)
-                                <a href="{{ asset('storage/' . $user->valid_id_path) }}" target="_blank" class="btn btn-secondary">Open ID</a>
+                                <a href="{{ route('admin.verifications.document', $user) }}" target="_blank" rel="noopener" class="btn btn-secondary">Open ID</a>
                             @else
                                 <span class="muted">No file uploaded</span>
                             @endif

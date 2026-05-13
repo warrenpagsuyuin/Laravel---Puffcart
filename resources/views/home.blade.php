@@ -14,6 +14,77 @@
             radial-gradient(circle at 10% 8%, rgba(11, 99, 246, 0.08), transparent 28%),
             linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 42%, #FFFFFF 100%);
         min-height: 100vh;
+        overflow: visible;
+        position: relative;
+    }
+
+    .vapor-bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .vapor-bg::before,
+    .vapor-bg::after,
+    .vapor-layer {
+        content: "";
+        position: absolute;
+        width: 58vw;
+        height: 24vw;
+        min-width: 420px;
+        min-height: 170px;
+        border-radius: 999px;
+        filter: blur(28px);
+        opacity: 0.5;
+        transform: translate3d(0, 0, 0);
+        animation: vaporDrift 18s ease-in-out infinite alternate;
+    }
+
+    .vapor-bg::before {
+        left: -18%;
+        top: 8%;
+        background:
+            radial-gradient(circle at 18% 50%, rgba(255, 255, 255, 0.92), transparent 34%),
+            radial-gradient(circle at 56% 46%, rgba(207, 231, 255, 0.78), transparent 36%),
+            radial-gradient(circle at 86% 58%, rgba(235, 246, 255, 0.72), transparent 32%);
+    }
+
+    .vapor-bg::after {
+        right: -20%;
+        bottom: 4%;
+        background:
+            radial-gradient(circle at 18% 56%, rgba(223, 241, 255, 0.68), transparent 34%),
+            radial-gradient(circle at 52% 48%, rgba(255, 255, 255, 0.82), transparent 38%),
+            radial-gradient(circle at 86% 50%, rgba(178, 214, 255, 0.46), transparent 34%);
+        animation-duration: 22s;
+        animation-delay: -6s;
+    }
+
+    .vapor-layer {
+        right: 15%;
+        top: 16%;
+        width: 38vw;
+        height: 15vw;
+        min-width: 300px;
+        min-height: 120px;
+        background:
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.72), transparent 34%),
+            radial-gradient(circle at 60% 48%, rgba(191, 224, 255, 0.58), transparent 38%),
+            radial-gradient(circle at 90% 52%, rgba(234, 242, 255, 0.58), transparent 32%);
+        animation-duration: 20s;
+        animation-delay: -10s;
+    }
+
+    @keyframes vaporDrift {
+        0% {
+            transform: translate3d(-16px, 8px, 0) scale(1);
+        }
+
+        100% {
+            transform: translate3d(42px, -18px, 0) scale(1.08);
+        }
     }
 
     .nav {
@@ -66,6 +137,14 @@
         gap: 72px;
         align-items: center;
         border-bottom: 1px solid #E5E7EB;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content,
+    .hero-visual {
+        position: relative;
+        z-index: 1;
     }
 
     .hero-content h1 {
@@ -176,7 +255,7 @@
     .hero-visual {
         background:
             radial-gradient(circle at 50% 46%, rgba(11, 99, 246, 0.14), transparent 34%),
-            linear-gradient(135deg, #EAF2FF 0%, #FFFFFF 58%, #F7FBFF 100%);
+            linear-gradient(135deg, rgba(234, 242, 255, 0.9) 0%, rgba(255, 255, 255, 0.86) 58%, rgba(247, 251, 255, 0.88) 100%);
         border: 1px solid #DDE8F7;
         border-radius: var(--radius-lg);
         padding: 60px;
@@ -185,12 +264,118 @@
         justify-content: center;
         min-height: 400px;
         position: relative;
+        overflow: hidden;
         box-shadow: 0 22px 44px rgba(15, 23, 42, 0.08);
     }
 
-    .hero-emoji {
-        font-size: 120px;
-        filter: drop-shadow(0 14px 24px rgba(11, 99, 246, 0.2));
+    .hero-visual .vapor-bg::before,
+    .hero-visual .vapor-bg::after,
+    .hero-visual .vapor-layer {
+        width: 420px;
+        height: 160px;
+        min-width: 0;
+        min-height: 0;
+        filter: blur(22px);
+        opacity: 0.64;
+    }
+
+    .hero-product-card {
+        display: block;
+        width: min(100%, 320px);
+        padding: 26px;
+        border: 1px solid rgba(183, 210, 244, 0.72);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 24px 48px rgba(11, 99, 246, 0.14);
+        backdrop-filter: blur(18px);
+        position: relative;
+        z-index: 1;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .hero-product-image {
+        height: 178px;
+        border-radius: 16px;
+        background:
+            radial-gradient(circle at 50% 42%, rgba(11, 99, 246, 0.22), transparent 36%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(222, 238, 255, 0.78));
+        display: grid;
+        place-items: center;
+        color: #0B63F6;
+        font-size: 82px;
+        margin-bottom: 18px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+        overflow: hidden;
+    }
+
+    .hero-product-image img {
+        width: 100%;
+        height: 100% !important;
+        object-fit: contain;
+        display: block;
+        padding: 12px;
+        filter: drop-shadow(0 18px 24px rgba(11, 99, 246, 0.18));
+    }
+
+    .hero-product-fallback {
+        display: grid;
+        place-items: center;
+        width: 132px;
+        height: 132px;
+        border-radius: 28px;
+        background: linear-gradient(135deg, #0B63F6, #4A93FF);
+        color: #FFFFFF;
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1.05;
+        text-align: center;
+        box-shadow: 0 18px 28px rgba(11, 99, 246, 0.22);
+    }
+
+    .hero-product-kicker {
+        color: #0B63F6;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .hero-product-card h3 {
+        font-size: 18px;
+        line-height: 1.28;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .hero-product-card p {
+        font-size: 13px;
+        line-height: 1.6;
+        margin-bottom: 16px;
+        min-height: 62px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .hero-product-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: #0B63F6;
+        font-weight: 800;
+    }
+
+    .hero-product-meta span:last-child {
+        color: #64748B;
+        font-size: 12px;
+        font-weight: 700;
     }
 
     .feature-badge {
@@ -456,8 +641,32 @@
     :root[data-theme="dark"] .site {
         background:
             radial-gradient(circle at 10% 8%, rgba(125, 183, 255, 0.12), transparent 28%),
-            radial-gradient(circle at 88% 14%, rgba(94, 234, 212, 0.08), transparent 24%),
-            linear-gradient(180deg, #0B1220 0%, #0F172A 48%, #0B1220 100%);
+            radial-gradient(circle at 88% 14%, rgba(139, 92, 246, 0.12), transparent 24%),
+            linear-gradient(180deg, #07111F 0%, #0F172A 48%, #08111F 100%);
+    }
+
+    :root[data-theme="dark"] .vapor-bg::before {
+        background:
+            radial-gradient(circle at 18% 50%, rgba(91, 157, 255, 0.34), transparent 34%),
+            radial-gradient(circle at 56% 46%, rgba(168, 85, 247, 0.22), transparent 36%),
+            radial-gradient(circle at 86% 58%, rgba(215, 233, 255, 0.18), transparent 32%);
+        opacity: 0.42;
+    }
+
+    :root[data-theme="dark"] .vapor-bg::after {
+        background:
+            radial-gradient(circle at 18% 56%, rgba(71, 121, 255, 0.22), transparent 34%),
+            radial-gradient(circle at 52% 48%, rgba(148, 163, 255, 0.2), transparent 38%),
+            radial-gradient(circle at 86% 50%, rgba(216, 180, 254, 0.18), transparent 34%);
+        opacity: 0.48;
+    }
+
+    :root[data-theme="dark"] .vapor-layer {
+        background:
+            radial-gradient(circle at 20% 50%, rgba(215, 233, 255, 0.18), transparent 34%),
+            radial-gradient(circle at 60% 48%, rgba(80, 165, 255, 0.24), transparent 38%),
+            radial-gradient(circle at 90% 52%, rgba(167, 139, 250, 0.2), transparent 32%);
+        opacity: 0.5;
     }
 
     :root[data-theme="dark"] .nav {
@@ -548,13 +757,31 @@
     :root[data-theme="dark"] .hero-visual {
         background:
             radial-gradient(circle at 50% 46%, rgba(125, 183, 255, 0.16), transparent 34%),
-            linear-gradient(135deg, #112B4F 0%, #121B2B 58%, #0F172A 100%);
+            linear-gradient(135deg, rgba(17, 43, 79, 0.88) 0%, rgba(18, 27, 43, 0.9) 58%, rgba(15, 23, 42, 0.92) 100%);
         border-color: #2F4562;
         box-shadow: 0 24px 48px rgba(0, 0, 0, 0.34);
     }
 
-    :root[data-theme="dark"] .hero-emoji {
-        filter: drop-shadow(0 16px 26px rgba(125, 183, 255, 0.2));
+    :root[data-theme="dark"] .hero-product-card {
+        background: rgba(12, 22, 38, 0.72);
+        border-color: rgba(91, 157, 255, 0.28);
+        box-shadow: 0 26px 52px rgba(0, 0, 0, 0.34);
+    }
+
+    :root[data-theme="dark"] .hero-product-image {
+        background:
+            radial-gradient(circle at 50% 42%, rgba(125, 183, 255, 0.26), transparent 36%),
+            linear-gradient(180deg, rgba(20, 39, 66, 0.88), rgba(10, 18, 31, 0.82));
+        color: #D7E9FF;
+    }
+
+    :root[data-theme="dark"] .hero-product-kicker,
+    :root[data-theme="dark"] .hero-product-meta {
+        color: #7DB7FF;
+    }
+
+    :root[data-theme="dark"] .hero-product-meta span:last-child {
+        color: #8EA2BC;
     }
 
     :root[data-theme="dark"] .category-card:hover,
@@ -632,6 +859,18 @@
         cursor: pointer;
         font-size: 18px;
         line-height: 1;
+    }
+
+    .chatbot-bot-icon {
+        display: none;
+        width: 42px;
+        height: 42px;
+    }
+
+    .chatbot-toggle-symbol {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .chatbot-body {
@@ -715,10 +954,62 @@
         display: none;
     }
 
+    .chatbot-widget.closed {
+        width: 76px;
+        height: 76px;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    .chatbot-widget.closed .chatbot-header {
+        width: 76px;
+        height: 76px;
+        padding: 0;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 0 18px 36px rgba(11, 99, 246, 0.28);
+    }
+
+    .chatbot-widget.closed .chatbot-title {
+        display: none;
+    }
+
+    .chatbot-widget.closed .chatbot-toggle {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: #0B63F6;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    }
+
+    .chatbot-widget.closed .chatbot-toggle:hover {
+        background: #084EC1;
+        transform: translateY(-2px);
+    }
+
+    .chatbot-widget.closed .chatbot-bot-icon {
+        display: block;
+    }
+
+    .chatbot-widget.closed .chatbot-toggle-symbol {
+        display: none;
+    }
+
     :root[data-theme="dark"] .chatbot-widget {
         background: #121B2B;
         border-color: #26384F;
         box-shadow: 0 18px 46px rgba(0, 0, 0, 0.38);
+    }
+
+    :root[data-theme="dark"] .chatbot-widget.closed {
+        background: transparent;
+        box-shadow: none;
     }
 
     :root[data-theme="dark"] .chatbot-header,
@@ -839,6 +1130,13 @@
             right: 16px;
             bottom: 16px;
         }
+
+        .chatbot-widget.closed,
+        .chatbot-widget.closed .chatbot-header,
+        .chatbot-widget.closed .chatbot-toggle {
+            width: 72px;
+            height: 72px;
+        }
     }
 </style>
 
@@ -859,6 +1157,10 @@
     </nav>
 
     <section class="hero">
+        <div class="vapor-bg" aria-hidden="true">
+            <span class="vapor-layer"></span>
+        </div>
+
         <div class="hero-content">
             <div class="tagline">Premium Vaping Products</div>
 
@@ -893,8 +1195,29 @@
         </div>
 
         <div class="hero-visual">
+            <div class="vapor-bg" aria-hidden="true">
+                <span class="vapor-layer"></span>
+            </div>
             <div class="feature-badge">Featured</div>
-            <div class="hero-emoji">💨</div>
+            @php
+                $heroProduct = $heroDeviceProduct ?? null;
+            @endphp
+            <a class="hero-product-card" href="{{ $heroProduct ? route('product.show', $heroProduct) : route('shop') }}">
+                <div class="hero-product-image">
+                    @if($heroProduct?->image_url)
+                        <img src="{{ $heroProduct->image_url }}" alt="{{ $heroProduct->name }}">
+                    @else
+                        <span class="hero-product-fallback">E<br>Devices</span>
+                    @endif
+                </div>
+                <div class="hero-product-kicker">E-Devices</div>
+                <h3>{{ $heroProduct?->name ?? 'Featured E-Devices' }}</h3>
+                <p>{{ $heroProduct?->brand ? $heroProduct->brand . ' device ready for verified adult shoppers.' : 'Browse authentic pods, batteries, and device bundles from Puffcart.' }}</p>
+                <div class="hero-product-meta">
+                    <span>{{ $heroProduct ? 'PHP ' . number_format($heroProduct->price, 2) : 'Shop Devices' }}</span>
+                    <span>{{ $heroProduct ? number_format((float) $heroProduct->rating, 1) . ' / 5' : '18+ only' }}</span>
+                </div>
+            </a>
         </div>
     </section>
 
@@ -1129,10 +1452,22 @@
     </div>
 </div>
 
-<div class="chatbot-widget" id="chatbotWidget">
+<div class="chatbot-widget closed" id="chatbotWidget">
     <div class="chatbot-header">
-        <span>Puffcart Assistant</span>
-        <button type="button" class="chatbot-toggle" id="chatbotToggle">-</button>
+        <span class="chatbot-title">Puffcart Assistant</span>
+        <button type="button" class="chatbot-toggle" id="chatbotToggle" aria-label="Open Puffcart Assistant">
+            <svg class="chatbot-bot-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 27C13 17.1 21.1 9 31 9H33C42.9 9 51 17.1 51 27V37C51 46.9 42.9 55 33 55H31C21.1 55 13 46.9 13 37V27Z" fill="white"/>
+                <path d="M12 28C7.6 29.4 4.5 33.6 4.5 38.6C4.5 43.6 7.7 47.9 12.2 49.2C10.7 42.2 10.6 35.2 12 28Z" fill="white"/>
+                <path d="M52 28C56.4 29.4 59.5 33.6 59.5 38.6C59.5 43.6 56.3 47.9 51.8 49.2C53.3 42.2 53.4 35.2 52 28Z" fill="white"/>
+                <path d="M17 15C20.4 9.8 25.8 7 32 7C38.2 7 43.6 9.8 47 15" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <path d="M24 34C25.8 31.8 29.2 31.8 31 34" stroke="#0B63F6" stroke-width="4" stroke-linecap="round"/>
+                <path d="M37 34C38.8 31.8 42.2 31.8 44 34" stroke="#0B63F6" stroke-width="4" stroke-linecap="round"/>
+                <path d="M28.5 42C30.4 44.3 33.6 44.3 35.5 42" stroke="#0B63F6" stroke-width="4" stroke-linecap="round"/>
+                <path d="M14 49L9 55C12.9 54.5 15.8 53 18 50.5L14 49Z" fill="white"/>
+            </svg>
+            <span class="chatbot-toggle-symbol">-</span>
+        </button>
     </div>
 
     <div class="chatbot-body" id="chatbotMessages">
@@ -1193,7 +1528,7 @@
                 return;
             }
 
-            addMessage(cleanMessage, 'user');art
+            addMessage(cleanMessage, 'user');
             input.value = '';
             setSending(true);
 
@@ -1229,7 +1564,14 @@
 
         toggle.addEventListener('click', () => {
             widget.classList.toggle('closed');
-            toggle.textContent = widget.classList.contains('closed') ? '+' : '-';
+            const toggleSymbol = toggle.querySelector('.chatbot-toggle-symbol');
+            const isClosed = widget.classList.contains('closed');
+
+            if (toggleSymbol) {
+                toggleSymbol.textContent = isClosed ? '+' : '-';
+            }
+
+            toggle.setAttribute('aria-label', isClosed ? 'Open Puffcart Assistant' : 'Close Puffcart Assistant');
         });
 
         form.addEventListener('submit', (event) => {

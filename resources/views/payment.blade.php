@@ -115,6 +115,12 @@
         color: #991b1b;
     }
 
+    .notice-info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+    }
+
     .btn-primary,
     .btn-secondary {
         align-items: center;
@@ -132,6 +138,11 @@
         background: #0b66ff;
         border: 1px solid #0b66ff;
         color: #ffffff;
+    }
+
+    .btn-primary[disabled] {
+        cursor: wait;
+        opacity: 0.72;
     }
 
     .btn-secondary {
@@ -201,16 +212,35 @@
         </div>
 
         <div class="notice notice-error">
-            Payment required. Please pay now to continue with this order.
+            Payment required. Your order stays pending until PayMongo confirms payment through a secure webhook.
+        </div>
+
+        <div class="notice notice-info">
+            You will be redirected to PayMongo Hosted Checkout. Puffcart never handles or stores your card or wallet credentials.
         </div>
 
         <div class="actions">
-            <form method="POST" action="{{ route('payment.checkout', $order) }}">
+            <form method="POST" action="{{ route('payment.checkout', $order) }}" id="paymongoCheckoutForm">
                 @csrf
-                <button class="btn-primary" type="submit" style="width:100%;">Pay Now</button>
+                <button class="btn-primary" type="submit" style="width:100%;" id="paymongoCheckoutButton">Pay Securely with PayMongo</button>
             </form>
             <a class="btn-secondary" href="{{ route('orders.show', $order) }}">View Order</a>
         </div>
     </section>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('paymongoCheckoutForm');
+        const button = document.getElementById('paymongoCheckoutButton');
+
+        form?.addEventListener('submit', () => {
+            if (!button) {
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'Redirecting to PayMongo...';
+        });
+    });
+</script>
 @endsection

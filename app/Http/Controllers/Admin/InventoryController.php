@@ -10,6 +10,10 @@ class InventoryController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = in_array((int) $request->input('per_page', 5), [5, 10], true)
+            ? (int) $request->input('per_page', 5)
+            : 5;
+
         $products = Product::query()
             ->with('flavors')
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -41,7 +45,7 @@ class InventoryController extends Controller
             })
             ->when($request->boolean('low_stock') && !$request->filled('filter'), fn ($query) => $query->lowStock())
             ->orderBy('stock')
-            ->paginate(20)
+            ->paginate($perPage)
             ->withQueryString();
 
         $lowStockCount = Product::lowStock()->count();

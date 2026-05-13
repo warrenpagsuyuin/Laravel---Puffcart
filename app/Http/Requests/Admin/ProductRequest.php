@@ -72,6 +72,8 @@ class ProductRequest extends FormRequest
             'image' => [
                 Rule::requiredIf(! $isUpdating),
                 'image',
+                'mimes:jpg,jpeg,png,webp',
+                'mimetypes:image/jpeg,image/png,image/webp',
                 'max:2048',
             ],
             'is_featured' => 'nullable|boolean',

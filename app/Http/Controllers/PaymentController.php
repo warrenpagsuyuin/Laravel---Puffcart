@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Models\AuditLog;
 use App\Services\PayMongoService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
@@ -64,18 +65,8 @@ class PaymentController extends Controller
         }
 
         try {
-            $order->loadMissing('items.product');
-
-            // Prepare line items for PayMongo
-            $lineItems = $order->items->map(function ($item) {
-                return [
-                    'currency' => 'PHP',
-                    'amount' => (int) ($item->price * 100),
-                    'description' => $item->product->name,
-                    'quantity' => $item->quantity,
-                    'name' => $item->product->name,
-                ];
-            })->toArray();
+            $order->loadMissing('items.product', 'user', 'payment');
+            $lineItems = $this->paymongoLineItems($order);
 
             // Create checkout session
             $checkout = $this->payMongoService->createCheckoutSession([
@@ -84,8 +75,10 @@ class PaymentController extends Controller
                 'success_url' => route('payment.success', ['order' => $order->id]),
                 'cancel_url' => route('payment.cancel', ['order' => $order->id]),
                 'description' => "Puffcart Order #{$order->order_number}",
-                'customer_email' => auth()->user()->email,
-                'customer_name' => auth()->user()->name,
+                'reference_number' => $order->order_number,
+                'customer_email' => $order->user?->email,
+                'customer_name' => $order->user?->name,
+                'customer_phone' => $order->delivery_phone,
             ]);
 
             $checkoutId = $checkout['data']['id'] ?? null;
@@ -98,11 +91,13 @@ class PaymentController extends Controller
                 ['order_id' => $order->id],
                 [
                     'paymongo_checkout_id' => $checkoutId,
+                    'reference_number' => $order->order_number,
+                    'status' => 'pending',
                     'payment_status' => 'pending',
                     'amount' => $order->total,
                     'currency' => 'PHP',
                     'method' => $order->payment_method,
-                    'payment_method' => 'paymongo',
+                    'payment_method' => $order->payment_method,
                 ]
             );
 
@@ -155,7 +150,9 @@ class PaymentController extends Controller
     }
 
     /**
-     * Payment success callback
+     * Payment success return page.
+     *
+     * This page does not mark the order as paid. PayMongo webhooks are the source of truth.
      */
     public function paymentSuccess(Request $request, Order $order)
     {
@@ -164,33 +161,10 @@ class PaymentController extends Controller
             return redirect()->route('home')->with('error', 'Unauthorized');
         }
 
-        // Get the most recent payment for this order
+        $order->load('payment');
         $payment = $order->payment;
         if (!$payment || !$payment->paymongo_checkout_id) {
             return redirect()->route('home')->with('error', 'No payment found');
-        }
-
-        // In a real implementation, you would query PayMongo to verify payment status
-        // PayMongo only returns to the success URL after the hosted checkout succeeds.
-        $wasPaid = $payment->isPaid();
-
-        $payment->update([
-            'status' => 'paid',
-            'payment_status' => 'paid',
-            'paid_at' => now(),
-        ]);
-
-        if ($order->status === 'pending') {
-            $order->update(['status' => 'processing']);
-        }
-
-        if (!$wasPaid) {
-            OrderTracking::create([
-                'order_id' => $order->id,
-                'status' => 'processing',
-                'message' => 'Payment confirmed. Order is now being processed.',
-                'occurred_at' => now(),
-            ]);
         }
 
         return view('payment-success', ['order' => $order, 'payment' => $payment]);
@@ -206,12 +180,12 @@ class PaymentController extends Controller
             return redirect()->route('home')->with('error', 'Unauthorized');
         }
 
-        // Update payment status
+        // Keep status pending unless PayMongo has already confirmed a terminal state by webhook.
         $payment = $order->payment;
-        if ($payment) {
+        if ($payment && !$payment->isPaid()) {
             $payment->update([
-                'status' => 'failed',
                 'payment_status' => 'cancelled',
+                'status' => 'failed',
             ]);
 
             AuditLog::log(
@@ -232,7 +206,7 @@ class PaymentController extends Controller
     public function webhook(Request $request)
     {
         $payload = $request->getContent();
-        $signature = $request->header('X-Paymongo-Signature');
+        $signature = $request->header('Paymongo-Signature') ?: $request->header('X-Paymongo-Signature');
 
         if (!$signature) {
             Log::warning('PayMongo webhook received without signature');
@@ -247,7 +221,12 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Invalid signature'], 401);
         }
 
-        $event = $request->json()->all();
+        $event = json_decode($payload, true);
+
+        if (!is_array($event)) {
+            return response()->json(['error' => 'Invalid JSON'], 400);
+        }
+
         $this->handleWebhookEvent($event);
 
         return response()->json(['status' => 'received']);
@@ -258,137 +237,237 @@ class PaymentController extends Controller
      */
     protected function handleWebhookEvent(array $event): void
     {
-        $type = $event['type'] ?? null;
-        $data = $event['data']['attributes'] ?? [];
+        $type = data_get($event, 'data.attributes.type') ?? data_get($event, 'type');
+        $resource = data_get($event, 'data.attributes.data') ?? data_get($event, 'data');
+        $resource = is_array($resource) ? $resource : [];
 
         Log::info('Processing PayMongo webhook event', ['type' => $type]);
 
         match ($type) {
-            'payment_intent.succeeded' => $this->handlePaymentIntentSucceeded($data, $event),
-            'payment_intent.payment_failed' => $this->handlePaymentIntentFailed($data, $event),
-            'checkout_session.completed' => $this->handleCheckoutCompleted($data, $event),
+            'checkout_session.payment.paid',
+            'checkout_session.payment.success',
+            'checkout_session.completed',
+            'payment.paid',
+            'payment_intent.succeeded' => $this->handlePayMongoPaid($resource, $event),
+
+            'checkout_session.payment.failed',
+            'payment.failed',
+            'payment_intent.payment_failed',
+            'payment_intent.payment_attempt.failed' => $this->handlePayMongoFailed($resource, $event, 'failed'),
+
+            'checkout_session.expired',
+            'source.expired' => $this->handlePayMongoFailed($resource, $event, 'expired'),
+
+            'checkout_session.cancelled',
+            'source.cancelled' => $this->handlePayMongoFailed($resource, $event, 'cancelled'),
+
             default => Log::warning('Unknown webhook type: ' . $type),
         };
     }
 
-    /**
-     * Handle successful payment intent
-     */
-    protected function handlePaymentIntentSucceeded(array $data, array $event): void
+    protected function handlePayMongoPaid(array $resource, array $event): void
     {
-        $intentId = $event['data']['id'] ?? null;
-        if (!$intentId) {
-            return;
-        }
-
-        // Find payment by PayMongo intent ID
-        $payment = Payment::where('paymongo_payment_intent_id', $intentId)->first();
+        $payment = $this->paymentFromPayMongoResource($resource, $event);
         if (!$payment) {
-            Log::warning('Payment not found for intent: ' . $intentId);
+            Log::warning('PayMongo paid webhook could not be matched to a payment', [
+                'resource_id' => data_get($resource, 'id'),
+                'event_id' => data_get($event, 'data.id'),
+            ]);
 
             return;
         }
 
-        // Update payment status
-        $payment->update([
-            'status' => 'paid',
-            'payment_status' => 'paid',
-            'transaction_reference' => $intentId,
-            'paid_at' => now(),
-        ]);
+        DB::transaction(function () use ($payment, $resource) {
+            $payment->refresh();
 
-        // Update order status
-        $order = $payment->order;
-        if ($order && $order->status === 'pending') {
-            $order->update(['status' => 'processing']);
-        }
+            if ($payment->isPaid()) {
+                return;
+            }
 
-        AuditLog::log(
-            'payment_success',
-            "PayMongo payment successful for order #{$order->order_number}",
-            $order->user_id,
-            null,
-            'webhook'
-        );
-    }
+            $order = $payment->order()->lockForUpdate()->first();
 
-    /**
-     * Handle failed payment intent
-     */
-    protected function handlePaymentIntentFailed(array $data, array $event): void
-    {
-        $intentId = $event['data']['id'] ?? null;
-        if (!$intentId) {
-            return;
-        }
-
-        // Find payment by PayMongo intent ID
-        $payment = Payment::where('paymongo_payment_intent_id', $intentId)->first();
-        if (!$payment) {
-            Log::warning('Payment not found for intent: ' . $intentId);
-
-            return;
-        }
-
-        // Update payment status
-        $payment->update(['payment_status' => 'failed']);
-
-        AuditLog::log(
-            'payment_failed',
-            "PayMongo payment failed for order #{$payment->order->order_number}",
-            $payment->order->user_id,
-            null,
-            'webhook'
-        );
-    }
-
-    /**
-     * Handle completed checkout session
-     */
-    protected function handleCheckoutCompleted(array $data, array $event): void
-    {
-        $checkoutId = $event['data']['id'] ?? null;
-        if (!$checkoutId) {
-            return;
-        }
-
-        // Find payment by checkout ID
-        $payment = Payment::where('paymongo_checkout_id', $checkoutId)->first();
-        if (!$payment) {
-            Log::warning('Payment not found for checkout: ' . $checkoutId);
-
-            return;
-        }
-
-        // Extract payment information from webhook data
-        $paymentId = $data['payments'][0]['id'] ?? null;
-        if ($paymentId) {
-            $payment->update(['paymongo_payment_id' => $paymentId]);
-        }
-
-        // Update payment status based on data
-        $paymentStatus = $data['payment_intent']['attributes']['status'] ?? 'unknown';
-        if ($paymentStatus === 'succeeded') {
             $payment->update([
                 'status' => 'paid',
                 'payment_status' => 'paid',
+                'paymongo_payment_id' => data_get($resource, 'id', $payment->paymongo_payment_id),
+                'paymongo_payment_intent_id' => data_get($resource, 'attributes.payment_intent_id', $payment->paymongo_payment_intent_id),
+                'transaction_reference' => data_get($resource, 'attributes.reference_number', data_get($resource, 'id')),
                 'paid_at' => now(),
             ]);
 
-            // Update order status
-            $order = $payment->order;
             if ($order && $order->status === 'pending') {
                 $order->update(['status' => 'processing']);
             }
 
+            if ($order) {
+                OrderTracking::create([
+                    'order_id' => $order->id,
+                    'status' => 'processing',
+                    'message' => 'Payment confirmed by PayMongo. Order is now being processed.',
+                    'occurred_at' => now(),
+                ]);
+
+                AuditLog::log(
+                    'payment_success',
+                    "PayMongo payment successful for order #{$order->order_number}",
+                    $order->user_id,
+                    null,
+                    'webhook'
+                );
+            }
+        });
+    }
+
+    protected function handlePayMongoFailed(array $resource, array $event, string $status): void
+    {
+        $payment = $this->paymentFromPayMongoResource($resource, $event);
+        if (!$payment) {
+            Log::warning('PayMongo failed webhook could not be matched to a payment', [
+                'resource_id' => data_get($resource, 'id'),
+                'event_id' => data_get($event, 'data.id'),
+                'status' => $status,
+            ]);
+
+            return;
+        }
+
+        if ($payment->isPaid()) {
+            return;
+        }
+
+        $payment->update([
+            'status' => 'failed',
+            'payment_status' => $status,
+            'paymongo_payment_id' => data_get($resource, 'id', $payment->paymongo_payment_id),
+            'transaction_reference' => data_get($resource, 'id', $payment->transaction_reference),
+        ]);
+
+        $order = $payment->order;
+
+        if ($order) {
             AuditLog::log(
-                'payment_success',
-                "PayMongo checkout completed for order #{$order->order_number}",
+                'payment_' . $status,
+                "PayMongo payment {$status} for order #{$order->order_number}",
                 $order->user_id,
                 null,
                 'webhook'
             );
         }
+    }
+
+    public function paymentFailed(Request $request, Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            return redirect()->route('home')->with('error', 'Unauthorized');
+        }
+
+        $order->load('payment');
+
+        return view('payment-failed', ['order' => $order, 'payment' => $order->payment]);
+    }
+
+    private function paymentFromPayMongoResource(array $resource, array $event): ?Payment
+    {
+        $checkoutId = data_get($resource, 'id');
+
+        if (is_string($checkoutId) && str_starts_with($checkoutId, 'cs_')) {
+            return Payment::where('paymongo_checkout_id', $checkoutId)->first();
+        }
+
+        $paymentId = data_get($resource, 'id');
+        if ($paymentId) {
+            $payment = Payment::where('paymongo_payment_id', $paymentId)->first();
+            if ($payment) {
+                return $payment;
+            }
+        }
+
+        $checkoutIds = collect([
+            data_get($resource, 'attributes.checkout_session_id'),
+            data_get($resource, 'attributes.checkout_session'),
+            data_get($resource, 'attributes.metadata.checkout_session_id'),
+            data_get($resource, 'attributes.payments.0.attributes.checkout_session_id'),
+            data_get($resource, 'attributes.payments.0.id'),
+            data_get($event, 'data.id'),
+        ])->filter(fn ($id) => is_string($id) && str_starts_with($id, 'cs_'));
+
+        foreach ($checkoutIds as $id) {
+            $payment = Payment::where('paymongo_checkout_id', $id)->first();
+            if ($payment) {
+                return $payment;
+            }
+        }
+
+        $reference = data_get($resource, 'attributes.reference_number')
+            ?: data_get($resource, 'attributes.metadata.reference_number');
+
+        if ($reference) {
+            return Payment::where('reference_number', $reference)->first();
+        }
+
+        return null;
+    }
+
+    private function paymongoLineItems(Order $order): array
+    {
+        $totalCents = $this->toCentavos((float) $order->total);
+        $deliveryCents = $this->toCentavos((float) $order->delivery_fee);
+        $productTotalCents = max(0, $totalCents - $deliveryCents);
+        $subtotalCents = max(1, $this->toCentavos((float) $order->subtotal));
+        $allocatedProductCents = 0;
+        $items = [];
+
+        $orderItems = $order->items->values();
+
+        foreach ($orderItems as $index => $item) {
+            $lineSubtotalCents = $this->toCentavos((float) $item->subtotal);
+            $amount = (int) floor($lineSubtotalCents * $productTotalCents / $subtotalCents);
+
+            if ($index === $orderItems->count() - 1) {
+                $amount = $productTotalCents - $allocatedProductCents;
+            }
+
+            $allocatedProductCents += $amount;
+
+            if ($amount <= 0) {
+                continue;
+            }
+
+            $items[] = [
+                'currency' => 'PHP',
+                'amount' => $amount,
+                'description' => "Qty {$item->quantity} - {$item->product_name}",
+                'quantity' => 1,
+                'name' => $item->product_name,
+            ];
+        }
+
+        if ($deliveryCents > 0) {
+            $items[] = [
+                'currency' => 'PHP',
+                'amount' => $deliveryCents,
+                'description' => 'Delivery fee',
+                'quantity' => 1,
+                'name' => 'Delivery Fee',
+            ];
+        }
+
+        if (array_sum(array_column($items, 'amount')) !== $totalCents) {
+            $items[] = [
+                'currency' => 'PHP',
+                'amount' => max(1, $totalCents - array_sum(array_column($items, 'amount'))),
+                'description' => 'Order total adjustment',
+                'quantity' => 1,
+                'name' => 'Order Adjustment',
+            ];
+        }
+
+        return $items;
+    }
+
+    private function toCentavos(float $amount): int
+    {
+        return (int) round($amount * 100);
     }
 
     private function paymongoMethodsFor(string $method): array

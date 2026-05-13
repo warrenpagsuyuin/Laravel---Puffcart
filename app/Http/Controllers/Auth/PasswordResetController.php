@@ -23,16 +23,18 @@ class PasswordResetController extends Controller
     public function sendResetLink(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ], [
-            'email.exists' => 'No account found with this email address.',
+            'email' => 'required|email',
         ]);
 
         $user = User::where('email', $request->email)->first();
+        $genericResponse = back()->with('success', 'If this email belongs to an active account, a password reset link will be sent.');
 
-        // Only send if user account is active
         if (!$user || !$user->is_active) {
-            return back()->with('error', 'This account is not active or does not exist.');
+            Log::info('Password reset requested for non-existent or inactive account.', [
+                'email_hash' => hash('sha256', Str::lower((string) $request->email)),
+            ]);
+
+            return $genericResponse;
         }
 
         // Generate reset token
@@ -57,12 +59,10 @@ class PasswordResetController extends Controller
                 'message' => $exception->getMessage(),
             ]);
 
-            return back()
-                ->withInput($request->only('email'))
-                ->with('error', 'We could not send the password reset email. Please check the Gmail SMTP settings and try again.');
+            return $genericResponse;
         }
 
-        return back()->with('success', 'Password reset link has been sent to your email.');
+        return $genericResponse;
     }
 
     public function showResetForm($token)

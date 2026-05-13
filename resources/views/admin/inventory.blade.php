@@ -168,7 +168,7 @@
             align-items: end;
             display: grid;
             gap: 12px;
-            grid-template-columns: minmax(240px, 1fr) 190px auto auto;
+            grid-template-columns: minmax(240px, 1fr) 190px 112px auto auto;
         }
 
         .field {
@@ -191,6 +191,22 @@
             color: #0f172a;
             min-height: 42px;
             padding: 9px 12px;
+        }
+
+        .field input.is-searching {
+            background-image: linear-gradient(90deg, transparent, rgba(11, 102, 255, 0.08), transparent);
+            background-size: 220% 100%;
+            animation: searchPulse 0.9s ease infinite;
+        }
+
+        @keyframes searchPulse {
+            0% {
+                background-position: 160% 0;
+            }
+
+            100% {
+                background-position: -60% 0;
+            }
         }
 
         .field input:focus,
@@ -665,10 +681,10 @@
                 <span>Filter the catalog and update stock thresholds from one workspace.</span>
             </div>
 
-            <form method="GET" action="{{ route('admin.inventory.index') }}" class="toolbar-form">
+            <form method="GET" action="{{ route('admin.inventory.index') }}" class="toolbar-form" id="inventoryFilterForm">
                 <div class="field">
                     <label for="inventory-search">Search Inventory</label>
-                    <input id="inventory-search" name="search" value="{{ request('search') }}" placeholder="Product, SKU, flavor, category">
+                    <input id="inventory-search" name="search" value="{{ request('search') }}" placeholder="Product, SKU, flavor, category" autocomplete="off">
                 </div>
                 <div class="field">
                     <label for="inventory-filter">Category</label>
@@ -681,12 +697,18 @@
                         <option value="low_stock" @selected(request('filter') === 'low_stock')>Low Stock</option>
                     </select>
                 </div>
+                <div class="field">
+                    <label for="inventory-per-page">Show</label>
+                    <select id="inventory-per-page" name="per_page">
+                        <option value="5" @selected((int) request('per_page', 5) === 5)>5 rows</option>
+                        <option value="10" @selected((int) request('per_page', 5) === 10)>10 rows</option>
+                    </select>
+                </div>
                 <label class="checkbox-row">
                     <input type="checkbox" name="low_stock" value="1" @checked(request()->boolean('low_stock'))>
                     Low stock only
                 </label>
                 <div class="actions">
-                    <button class="btn btn-primary" type="submit">Apply</button>
                     @if(request()->filled('search') || request()->filled('filter') || request()->boolean('low_stock'))
                         <a class="btn btn-secondary" href="{{ route('admin.inventory.index') }}">Clear</a>
                     @endif
@@ -795,3 +817,36 @@
         </section>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('inventoryFilterForm');
+            const search = document.getElementById('inventory-search');
+
+            if (!form) {
+                return;
+            }
+
+            let timer = null;
+
+            function submitFilters(delay = 0) {
+                window.clearTimeout(timer);
+
+                if (search && delay > 0) {
+                    search.classList.add('is-searching');
+                }
+
+                timer = window.setTimeout(() => {
+                    form.requestSubmit();
+                }, delay);
+            }
+
+            search?.addEventListener('input', () => submitFilters(450));
+
+            form.querySelectorAll('select, input[type="checkbox"]').forEach((control) => {
+                control.addEventListener('change', () => submitFilters());
+            });
+        });
+    </script>
+@endpush

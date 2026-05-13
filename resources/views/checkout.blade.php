@@ -26,52 +26,23 @@
         display: flex;
         justify-content: space-between;
         min-height: 72px;
-<<<<<<< HEAD
-        padding: 0 48px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-=======
         padding: 14px 48px;
         position: sticky;
         top: 0;
         z-index: 20;
->>>>>>> 39a8d5667957c4ee89318e534e51c21bcdbd68e9
     }
 
     .logo {
         color: #0b66ff;
         font-family: 'Poppins', sans-serif;
-<<<<<<< HEAD
-        font-size: 20px;
-        font-weight: 700;
-=======
         font-size: 18px;
         font-weight: 800;
->>>>>>> 39a8d5667957c4ee89318e534e51c21bcdbd68e9
         letter-spacing: 0;
     }
 
     .nav-links {
         align-items: center;
         display: flex;
-<<<<<<< HEAD
-        align-items: center;
-        gap: 8px;
-    }
-
-    .nav-links a {
-        color: #475569;
-        font-size: 14px;
-        font-weight: 600;
-        padding: 10px 14px;
-        border-radius: 8px;
-    }
-
-    .nav-links a:hover {
-        background: #eff6ff;
-        color: #0b66ff;
-=======
         flex-wrap: wrap;
         gap: 24px;
     }
@@ -80,7 +51,6 @@
         color: #4b5563;
         font-size: 14px;
         font-weight: 700;
->>>>>>> 39a8d5667957c4ee89318e534e51c21bcdbd68e9
     }
 
     .checkout-shell {
@@ -310,6 +280,11 @@
         color: #ffffff;
     }
 
+    .btn-primary[disabled] {
+        cursor: wait;
+        opacity: 0.72;
+    }
+
     .btn-secondary {
         background: #ffffff;
         border: 1px solid #cfd7e3;
@@ -479,7 +454,7 @@
                 <p class="muted">Use accurate contact information so the rider or support team can reach you.</p>
             </div>
 
-            <form class="checkout-form" method="POST" action="{{ route('checkout.place') }}">
+            <form class="checkout-form" method="POST" action="{{ route('checkout.place') }}" id="checkoutForm">
                 @csrf
                 <input type="hidden" name="promo_code" value="{{ $promoValue }}">
                 @foreach($cart_item_ids as $cartItemId)
@@ -539,7 +514,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn-primary" type="submit">Place Order</button>
+                    <button class="btn-primary" type="submit" id="checkoutSubmit">Place Order</button>
                     <a class="btn-secondary" href="{{ route('cart') }}">Back to Cart</a>
                 </div>
             </form>
@@ -621,6 +596,22 @@
                 this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
             });
         }
+
+        const checkoutForm = document.getElementById('checkoutForm');
+        const checkoutSubmit = document.getElementById('checkoutSubmit');
+
+        checkoutForm?.addEventListener('submit', function () {
+            if (!checkoutSubmit) {
+                return;
+            }
+
+            const selectedPayment = checkoutForm.querySelector('input[name="payment_method"]:checked')?.value;
+
+            checkoutSubmit.disabled = true;
+            checkoutSubmit.textContent = selectedPayment === 'cod'
+                ? 'Placing order...'
+                : 'Creating secure checkout...';
+        });
     });
 </script>
 @endsection

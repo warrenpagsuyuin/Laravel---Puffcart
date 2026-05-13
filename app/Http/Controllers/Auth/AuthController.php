@@ -103,15 +103,14 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        $correctCaptchaAnswer = session('captcha_answer');
-        $submittedCaptchaAnswer = trim((string) $request->input('captcha'));
+        $submittedCaptchaAnswer = $this->normalizeCaptchaAnswer($request->input('captcha'));
 
-        if ($correctCaptchaAnswer === null) {
+        if (!$this->captchaIsValid($submittedCaptchaAnswer)) {
             $this->prepareRegistrationCaptcha(true);
 
             return back()
                 ->withErrors([
-                    'captcha' => 'Captcha expired. Please answer the new captcha.',
+                    'captcha' => 'Captcha is incorrect or expired. Please answer the new captcha.',
                 ])
                 ->withInput($request->except([
                     'password',
@@ -121,22 +120,7 @@ class AuthController extends Controller
                 ]));
         }
 
-        if ((string) $submittedCaptchaAnswer !== (string) $correctCaptchaAnswer) {
-            $this->prepareRegistrationCaptcha(true);
-
-            return back()
-                ->withErrors([
-                    'captcha' => 'Captcha answer is incorrect.',
-                ])
-                ->withInput($request->except([
-                    'password',
-                    'password_confirmation',
-                    'valid_id',
-                    'captcha',
-                ]));
-        }
-
-        $idPath = $request->file('valid_id')->store('valid-ids', 'public');
+        $idPath = $request->file('valid_id')->store('valid-ids', 'local');
 
         User::create([
             'name' => $data['name'],
@@ -156,7 +140,8 @@ class AuthController extends Controller
         ]);
 
         session()->forget([
-            'captcha_answer',
+            'captcha_answer_hash',
+            'captcha_expires_at',
             'captcha_question',
         ]);
 
@@ -177,20 +162,54 @@ class AuthController extends Controller
 
     private function prepareRegistrationCaptcha(bool $force = false): void
     {
-        if (
-            !$force &&
-            session()->has('captcha_answer') &&
-            session()->has('captcha_question')
-        ) {
+        if (!$force && $this->captchaSessionIsFresh()) {
             return;
         }
 
-        $captchaA = random_int(1, 9);
-        $captchaB = random_int(1, 9);
+        $answer = $this->generateCaptchaAnswer();
 
         session([
-            'captcha_answer' => $captchaA + $captchaB,
-            'captcha_question' => "{$captchaA} + {$captchaB}",
+            'captcha_answer_hash' => $this->captchaHash($answer),
+            'captcha_expires_at' => now()->addMinutes(10)->timestamp,
+            'captcha_question' => $answer,
         ]);
+    }
+
+    private function captchaIsValid(string $answer): bool
+    {
+        if ($answer === '' || !$this->captchaSessionIsFresh()) {
+            return false;
+        }
+
+        return hash_equals((string) session('captcha_answer_hash'), $this->captchaHash($answer));
+    }
+
+    private function captchaSessionIsFresh(): bool
+    {
+        return session()->has('captcha_answer_hash')
+            && session()->has('captcha_question')
+            && (int) session('captcha_expires_at') >= now()->timestamp;
+    }
+
+    private function captchaHash(string $answer): string
+    {
+        return hash_hmac('sha256', $this->normalizeCaptchaAnswer($answer), (string) config('app.key'));
+    }
+
+    private function generateCaptchaAnswer(): string
+    {
+        $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $answer = '';
+
+        for ($i = 0; $i < 6; $i++) {
+            $answer .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+        }
+
+        return $answer;
+    }
+
+    private function normalizeCaptchaAnswer(mixed $answer): string
+    {
+        return Str::upper(preg_replace('/\s+/', '', trim((string) $answer)));
     }
 }

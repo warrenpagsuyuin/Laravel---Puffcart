@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PaymentController;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Services\CheckoutService;
@@ -32,9 +33,7 @@ class OrderController extends Controller
         $order = $checkoutService->placeOrder(auth()->user(), $request->validated(), $request);
 
         if ($order->requiresOnlinePayment()) {
-            return redirect()
-                ->route('payment.show', $order)
-                ->with('success', 'Order created. Please complete payment before tracking can proceed.');
+            return app(PaymentController::class)->initiateCheckout($request, $order);
         }
 
         return redirect()

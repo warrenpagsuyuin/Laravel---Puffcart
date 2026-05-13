@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::get('/checkout', [CustomerOrderController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout', [CustomerOrderController::class, 'placeOrder'])->name('checkout.place');
+    Route::post('/checkout', [CustomerOrderController::class, 'placeOrder'])->middleware('throttle:checkout')->name('checkout.place');
 
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
@@ -60,11 +60,13 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/test-websocket', function () {
-    broadcast(new TestNotification('WebSocket is working on PuffCart!'));
+if (app()->environment('local')) {
+    Route::get('/test-websocket', function () {
+        broadcast(new TestNotification('WebSocket is working on PuffCart!'));
 
-    return 'WebSocket event sent!';
-})->name('test.websocket');
+        return 'WebSocket event sent!';
+    })->middleware('throttle:mail-tests')->name('test.websocket');
+}
 
 Route::post('/chatbot/send', function (Request $request) {
     $request->validate([
@@ -102,7 +104,7 @@ Route::post('/chatbot/send', function (Request $request) {
         'status' => 'sent',
         'reply' => $reply,
     ]);
-})->name('chatbot.send');
+})->middleware('throttle:chatbot')->name('chatbot.send');
 
 /*
 |--------------------------------------------------------------------------
@@ -111,7 +113,7 @@ Route::post('/chatbot/send', function (Request $request) {
 */
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:registration');
 
 /*
 |--------------------------------------------------------------------------
@@ -120,7 +122,7 @@ Route::post('/register', [AuthController::class, 'register']);
 */
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
 
 Route::get('/profile', function () {
     return view('profile');
@@ -135,9 +137,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 
 Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])->name('password.forgot');
-Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.send-reset-link');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->middleware('throttle:password-reset')->name('password.send-reset-link');
 Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset-form');
-Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->middleware('throttle:password-reset')->name('password.update');
 
 /*
 |--------------------------------------------------------------------------
@@ -151,12 +153,16 @@ Route::prefix('payment')->name('payment.')->group(function () {
         ->name('show');
 
     Route::post('checkout/{order}', [PaymentController::class, 'initiateCheckout'])
-        ->middleware('auth')
+        ->middleware(['auth', 'throttle:checkout'])
         ->name('checkout');
 
     Route::get('success/{order}', [PaymentController::class, 'paymentSuccess'])
         ->middleware('auth')
         ->name('success');
+
+    Route::get('failed/{order}', [PaymentController::class, 'paymentFailed'])
+        ->middleware('auth')
+        ->name('failed');
 
     Route::get('cancel/{order}', [PaymentController::class, 'paymentCancel'])
         ->middleware('auth')
@@ -177,11 +183,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
 
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('throttle:admin-login')->name('login.submit');
 
     // MFA Routes
     Route::get('/mfa', [AdminAuthController::class, 'showMFA'])->name('mfa.show');
-    Route::post('/mfa/verify', [AdminAuthController::class, 'verifyMFA'])->name('mfa.verify');
+    Route::post('/mfa/verify', [AdminAuthController::class, 'verifyMFA'])->middleware('throttle:admin-login')->name('mfa.verify');
 
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
@@ -213,6 +219,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
         Route::get('/verifications/{user}', [AdminVerificationController::class, 'show'])->name('verifications.show');
+        Route::get('/verifications/{user}/document', [AdminVerificationController::class, 'document'])->name('verifications.document');
         Route::post('/verifications/{user}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
         Route::post('/verifications/{user}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
 
@@ -229,18 +236,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/test-email', function () {
-    $user = \App\Models\User::first();
+if (app()->environment('local')) {
+    Route::get('/test-email', function () {
+        $user = \App\Models\User::first();
 
-    if (!$user) {
-        return 'No users found in database';
-    }
+        if (!$user) {
+            return 'No users found in database';
+        }
 
-    try {
-        Mail::send(new PasswordResetMail($user, 'test-token-12345'));
+        try {
+            Mail::send(new PasswordResetMail($user, 'test-token-12345'));
 
-        return 'Email sent successfully to ' . $user->email;
-    } catch (\Exception $e) {
-        return 'Error: ' . $e->getMessage();
-    }
-});
+            return 'Email sent successfully to ' . $user->email;
+        } catch (\Exception $e) {
+            return 'Error: ' . $e->getMessage();
+        }
+    })->middleware('throttle:mail-tests');
+}

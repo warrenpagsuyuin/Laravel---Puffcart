@@ -253,6 +253,31 @@
         flex: 0 0 auto;
     }
 
+    .login-options {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .login-options .consent-check {
+        margin-bottom: 0;
+    }
+
+    .forgot-link {
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .forgot-link:hover {
+        color: var(--primary-hover);
+        text-decoration: underline;
+    }
+
     .auth-footer {
         text-align: center;
         margin-top: 20px;
@@ -360,10 +385,14 @@
                     @endif
                 </div>
 
-                <label class="consent-check" for="remember">
-                    <input id="remember" type="checkbox" name="remember" value="1">
-                    <span>Keep me signed in on this device</span>
-                </label>
+                <div class="login-options">
+                    <label class="consent-check" for="remember">
+                        <input id="remember" type="checkbox" name="remember" value="1">
+                        <span>Keep me signed in on this device</span>
+                    </label>
+
+                    <a class="forgot-link" href="{{ route('password.forgot') }}">Forgot password?</a>
+                </div>
 
                 <button type="submit" class="auth-submit">Sign In</button>
             </form>
@@ -380,19 +409,6 @@
                 <h1>Create Account</h1>
                 <p>Register with a valid ID so an admin can review and approve your account.</p>
             </div>
-
-<<<<<<< HEAD
-            <div style="text-align: right; font-size: 13px; margin-bottom: 16px;">
-                <a href="{{ route('password.forgot') }}" style="color: var(--primary); text-decoration: none;">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="auth-submit">Sign In</button>
-        </form>
-=======
-            @if(session('error') && $hasRegisterErrors)
-                <div class="alert alert-error">{{ session('error') }}</div>
-            @endif
->>>>>>> 39a8d5667957c4ee89318e534e51c21bcdbd68e9
 
             @if($hasRegisterErrors && $errors->any())
                 <div class="alert alert-error">
@@ -571,13 +587,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="captcha">Captcha: What is {{ session('captcha_question') }}?</label>
+                    <label for="captcha">Captcha: Type {{ session('captcha_question') }}</label>
                     <input
                         id="captcha"
-                        type="number"
+                        type="text"
                         name="captcha"
-                        placeholder="Enter captcha answer"
+                        placeholder="Enter the 6-character code"
                         class="{{ $errors->has('captcha') ? 'is-invalid' : '' }}"
+                        maxlength="6"
+                        autocomplete="off"
                         required
                     >
                     @error('captcha')

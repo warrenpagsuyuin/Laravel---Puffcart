@@ -29,6 +29,7 @@ class PayMongoService
             $this->ensureSecretKeyConfigured();
 
             $response = Http::withBasicAuth($this->secretKey, '')
+                ->acceptJson()
                 ->post("{$this->baseUrl}/checkout_sessions", [
                     'data' => [
                         'attributes' => [
@@ -37,9 +38,14 @@ class PayMongoService
                             'success_url' => $data['success_url'],
                             'cancel_url' => $data['cancel_url'],
                             'description' => $data['description'] ?? 'Puffcart Order',
+                            'reference_number' => $data['reference_number'] ?? null,
+                            'send_email_receipt' => true,
+                            'show_description' => true,
+                            'show_line_items' => true,
                             'customer' => [
                                 'email' => $data['customer_email'] ?? null,
                                 'name' => $data['customer_name'] ?? null,
+                                'phone' => $data['customer_phone'] ?? null,
                             ],
                         ],
                     ],
@@ -147,6 +153,31 @@ class PayMongoService
         }
     }
 
+    public function getCheckoutSession(string $checkoutId): array
+    {
+        try {
+            $this->ensureSecretKeyConfigured();
+
+            $response = Http::withBasicAuth($this->secretKey, '')
+                ->acceptJson()
+                ->get("{$this->baseUrl}/checkout_sessions/{$checkoutId}");
+
+            if ($response->failed()) {
+                Log::error('PayMongo get checkout session failed', [
+                    'checkout_id' => $checkoutId,
+                    'response' => $response->json(),
+                ]);
+
+                throw new Exception('Failed to retrieve checkout session');
+            }
+
+            return $response->json();
+        } catch (Exception $e) {
+            Log::error('PayMongo service error: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
     /**
      * Verify webhook signature
      */
@@ -158,9 +189,45 @@ class PayMongoService
             return false;
         }
 
-        $hash = hash_hmac('sha256', $payload, $this->webhookSecret);
+        $expected = hash_hmac('sha256', $payload, $this->webhookSecret);
 
-        return hash_equals($hash, $signature);
+        foreach ($this->signatureCandidates($signature) as $candidate) {
+            if (hash_equals($expected, $candidate)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function signatureCandidates(string $signature): array
+    {
+        $signature = trim($signature);
+
+        if ($signature === '') {
+            return [];
+        }
+
+        $candidates = [$signature];
+
+        foreach (preg_split('/[,;]/', $signature) ?: [] as $part) {
+            $part = trim($part);
+
+            if ($part === '') {
+                continue;
+            }
+
+            if (str_contains($part, '=')) {
+                [, $value] = array_pad(explode('=', $part, 2), 2, '');
+                $value = trim($value);
+
+                if ($value !== '') {
+                    $candidates[] = $value;
+                }
+            }
+        }
+
+        return array_values(array_unique($candidates));
     }
 
     protected function ensureSecretKeyConfigured(): void

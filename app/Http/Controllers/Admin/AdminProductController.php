@@ -16,6 +16,10 @@ class AdminProductController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = in_array((int) $request->input('per_page', 5), [5, 10], true)
+            ? (int) $request->input('per_page', 5)
+            : 5;
+
         $products = Product::query()
             ->with('flavors')
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -48,7 +52,7 @@ class AdminProductController extends Controller
                 $query->where('nicotine_type', $request->string('nicotine_type')->toString());
             })
             ->latest()
-            ->paginate(12)
+            ->paginate($perPage)
             ->withQueryString();
 
         $editingProduct = null;
@@ -59,7 +63,7 @@ class AdminProductController extends Controller
 
     public function create()
     {
-        $products = Product::with('flavors')->latest()->paginate(12);
+        $products = Product::with('flavors')->latest()->paginate(5);
         $editingProduct = null;
         $categories = $this->categories();
         $showProductForm = true;
@@ -69,7 +73,7 @@ class AdminProductController extends Controller
 
     public function edit(Product $product)
     {
-        $products = Product::with('flavors')->latest()->paginate(12);
+        $products = Product::with('flavors')->latest()->paginate(5);
         $editingProduct = $product->load('flavors');
         $categories = $this->categories();
 
