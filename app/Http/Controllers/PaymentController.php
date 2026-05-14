@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PaymentSuccessfulMail;
 use App\Models\Order;
 use App\Models\OrderTracking;
 use App\Models\Payment;
@@ -10,6 +11,7 @@ use App\Services\PayMongoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
@@ -277,11 +279,11 @@ class PaymentController extends Controller
             return;
         }
 
-        DB::transaction(function () use ($payment, $resource) {
+        $paidOrder = DB::transaction(function () use ($payment, $resource) {
             $payment->refresh();
 
             if ($payment->isPaid()) {
-                return;
+                return null;
             }
 
             $order = $payment->order()->lockForUpdate()->first();
@@ -315,7 +317,23 @@ class PaymentController extends Controller
                     'webhook'
                 );
             }
+
+            return $order;
         });
+
+        if ($paidOrder?->user?->email) {
+            try {
+                $paidOrder->loadMissing('user', 'items.flavor', 'items.batteryColor', 'payment');
+                Mail::to($paidOrder->user->email, $paidOrder->user->name)
+                    ->send(new PaymentSuccessfulMail($paidOrder));
+            } catch (\Throwable $e) {
+                Log::warning('Payment success email could not be sent', [
+                    'order_id' => $paidOrder->id,
+                    'email' => $paidOrder->user->email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
     }
 
     protected function handlePayMongoFailed(array $resource, array $event, string $status): void

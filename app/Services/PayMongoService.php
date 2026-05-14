@@ -39,7 +39,7 @@ class PayMongoService
                             'cancel_url' => $data['cancel_url'],
                             'description' => $data['description'] ?? 'Puffcart Order',
                             'reference_number' => $data['reference_number'] ?? null,
-                            'send_email_receipt' => true,
+                            'send_email_receipt' => false,
                             'show_description' => true,
                             'show_line_items' => true,
                             'customer' => [
