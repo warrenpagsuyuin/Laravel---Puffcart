@@ -624,7 +624,6 @@
             color: var(--danger);
         }
 
-<<<<<<< HEAD
         /* Small icon-style action buttons */
         .icon-btn {
             display: inline-flex;
@@ -654,11 +653,9 @@
 
         .actions { display: flex; gap: 8px; align-items: center; }
 
-=======
         .btn-danger:hover { background: #fecaca; }
 
         /* ── Forms ── */
->>>>>>> origin/feat/admin-fix1
         .form-grid {
             display: grid;
             gap: 14px;
@@ -703,7 +700,91 @@
         .checkbox-row { align-items: center; display: flex; gap: 8px; }
         .checkbox-row input { min-height: auto; width: auto; }
 
-        .pagination { margin-top: 16px; }
+        .pagination {
+            margin-top: 16px;
+        }
+
+        .puff-pagination {
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: var(--radius);
+            display: flex;
+            gap: 14px;
+            justify-content: space-between;
+            padding: 14px 16px;
+            width: 100%;
+        }
+
+        .puff-pagination__summary {
+            color: #64748b;
+            display: block !important;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .puff-pagination__summary strong {
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .puff-pagination__controls,
+        .puff-pagination__pages {
+            align-items: center;
+            display: flex !important;
+            gap: 6px;
+        }
+
+        .puff-pagination__button,
+        .puff-pagination__page,
+        .puff-pagination__ellipsis {
+            align-items: center;
+            border-radius: 7px;
+            display: inline-flex;
+            font-size: 13px;
+            font-weight: 800;
+            justify-content: center;
+            min-height: 36px;
+        }
+
+        .puff-pagination__button,
+        .puff-pagination__page {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            min-width: 36px;
+            padding: 8px 12px;
+        }
+
+        .puff-pagination__button:hover,
+        .puff-pagination__page:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            color: #0b66ff;
+        }
+
+        .puff-pagination__page.is-active {
+            background: #0b66ff;
+            border-color: #0b66ff;
+            color: #ffffff;
+        }
+
+        .puff-pagination__button.is-disabled,
+        .puff-pagination__ellipsis {
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .puff-pagination__button.is-disabled {
+            background: #f8fafc;
+            border-color: #d9e2ec;
+        }
+
+        .puff-pagination__ellipsis {
+            min-width: 28px;
+            padding: 8px 4px;
+        }
 
         /* ── Responsive ── */
         @media (max-width: 980px) {
@@ -718,15 +799,11 @@
             .sidebar-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .nav-section { display: none; }
 
-<<<<<<< HEAD
             .grid-2,
             .grid-3,
             .grid-4,
             .metric-strip,
             .form-grid {
-=======
-            .grid-2, .grid-3, .grid-4, .form-grid {
->>>>>>> origin/feat/admin-fix1
                 grid-template-columns: 1fr;
             }
 
@@ -753,6 +830,19 @@
             }
 
             .content { padding: 18px; }
+
+            .puff-pagination {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .puff-pagination__summary {
+                white-space: normal;
+            }
+
+            .puff-pagination__controls {
+                flex-wrap: wrap;
+            }
         }
     </style>
     @stack('styles')

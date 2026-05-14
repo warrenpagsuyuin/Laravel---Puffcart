@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\PaymentController;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
+use App\Models\ProductReview;
 use App\Services\CheckoutService;
 use Illuminate\Http\Request;
 
@@ -53,8 +54,48 @@ class OrderController extends Controller
         abort_unless($order->user_id === auth()->id(), 403);
 
         $order->load('items.product', 'items.flavor', 'items.batteryColor', 'payment', 'tracking');
+        $reviewedProductIds = ProductReview::where('user_id', auth()->id())
+            ->whereIn('product_id', $order->items->pluck('product_id')->filter()->unique())
+            ->get()
+            ->keyBy('product_id');
 
-        return view('orders.show', compact('order'));
+        return view('orders.show', compact('order', 'reviewedProductIds'));
+    }
+
+    public function storeReview(Request $request, Order $order)
+    {
+        abort_unless($order->user_id === auth()->id(), 403);
+        abort_unless(in_array($order->status, ['completed', 'delivered'], true), 403);
+
+        $data = $request->validate([
+            'product_id' => ['required', 'integer'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $productIds = $order->items()->pluck('product_id')->filter()->unique();
+
+        if (!$productIds->contains((int) $data['product_id'])) {
+            return back()->with('error', 'You can only review products from this completed order.');
+        }
+
+        $alreadyReviewed = ProductReview::where('user_id', auth()->id())
+            ->where('product_id', $data['product_id'])
+            ->exists();
+
+        if ($alreadyReviewed) {
+            return back()->with('error', 'You already reviewed this product.');
+        }
+
+        ProductReview::create([
+            'product_id' => $data['product_id'],
+            'user_id' => auth()->id(),
+            'rating' => $data['rating'],
+            'comment' => $data['comment'] ?? null,
+            'is_approved' => true,
+        ]);
+
+        return back()->with('success', 'Thank you. Your review has been posted.');
     }
 
     public function track(Order $order)

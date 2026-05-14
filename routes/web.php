@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/reviews', [CustomerOrderController::class, 'storeReview'])->name('orders.reviews.store');
     Route::get('/orders/{order}/tracking', [CustomerOrderController::class, 'track'])->name('orders.track');
     Route::get('/tracking', [CustomerOrderController::class, 'trackingIndex'])->name('tracking');
 });

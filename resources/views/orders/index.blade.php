@@ -154,7 +154,11 @@
                         <td>{{ strtoupper(str_replace('_', ' ', $order->payment_method)) }}</td>
                         <td>PHP {{ number_format($order->total, 2) }}</td>
                         <td>{{ $order->created_at?->format('M d, Y') }}</td>
-                        <td><a class="btn-secondary" href="{{ route('orders.show', $order) }}">View</a></td>
+                        <td>
+                            <a class="btn-secondary" href="{{ route('orders.show', $order) }}">
+                                {{ in_array($order->status, ['completed', 'delivered'], true) ? 'Review' : 'View' }}
+                            </a>
+                        </td>
                     </tr>
                 @empty
                     <tr>

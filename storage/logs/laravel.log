@@ -6064,3 +6064,7 @@ Content-Transfer-Encoding: quoted-printable
 [2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
 [2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
 [2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
+[2026-05-15 02:00:24] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-15 02:00:24] local.ERROR: PayMongo checkout creation failed {"order_id":13,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-15 02:00:27] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-15 02:00:27] local.ERROR: PayMongo checkout creation failed {"order_id":13,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 

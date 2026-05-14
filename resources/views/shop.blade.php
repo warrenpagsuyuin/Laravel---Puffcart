@@ -214,65 +214,6 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .page-controls {
-        align-items: center;
-        background: transparent;
-        border: 0;
-        border-radius: 0;
-        box-shadow: none;
-        display: flex;
-        gap: 0;
-        padding: 0;
-    }
-
-    .product-page-controls {
-        justify-content: center;
-        margin-top: 24px;
-    }
-
-    .page-btn {
-        align-items: center;
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 0;
-        color: #111827;
-        display: inline-flex;
-        font-size: 18px;
-        font-weight: 800;
-        justify-content: center;
-        min-height: 40px;
-        min-width: 48px;
-        padding: 8px 12px;
-    }
-
-    .page-btn:hover {
-        background: #f8fafc;
-        color: #111827;
-    }
-
-    .page-btn.is-disabled {
-        cursor: not-allowed;
-        opacity: 0.45;
-        pointer-events: none;
-    }
-
-    .page-count {
-        border: 0;
-        color: #111827;
-        font-size: 14px;
-        font-weight: 700;
-        line-height: 1.35;
-        min-width: 64px;
-        padding: 0 16px;
-        text-align: center;
-    }
-
-    .page-count strong {
-        color: var(--primary);
-        display: inline;
-        font-size: 14px;
-    }
-
     .product-card {
         background: var(--bg-white);
         border: 1px solid var(--border);
@@ -680,23 +621,6 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .page-controls {
-            align-items: stretch;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        .page-btn {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .page-count {
-            border: 0;
-            order: -1;
-            width: 100%;
-        }
-
         .pagination nav > div:last-child {
             align-items: flex-start;
             flex-direction: column;
@@ -830,23 +754,6 @@
                 </select>
             </div>
 
-            @if($products->hasPages())
-                <div class="page-controls" aria-label="Product page controls">
-                    <span class="page-count"><strong>{{ $products->currentPage() }}</strong>/{{ $products->lastPage() }}</span>
-                    <a class="page-btn {{ $products->onFirstPage() ? 'is-disabled' : '' }}"
-                       href="{{ $products->previousPageUrl() ?: '#' }}"
-                       aria-label="Previous page"
-                       aria-disabled="{{ $products->onFirstPage() ? 'true' : 'false' }}">
-                        ‹
-                    </a>
-                    <a class="page-btn {{ $products->hasMorePages() ? '' : 'is-disabled' }}"
-                       href="{{ $products->nextPageUrl() ?: '#' }}"
-                       aria-label="Next page"
-                       aria-disabled="{{ $products->hasMorePages() ? 'false' : 'true' }}">
-                        ›
-                    </a>
-                </div>
-            @endif
         </div>
 
         @if($products->isNotEmpty())
@@ -886,6 +793,12 @@
                 </article>
                 @endforeach
             </div>
+
+            @if($products->hasPages())
+                <div class="pagination">
+                    {{ $products->links() }}
+                </div>
+            @endif
         @else
             <p class="muted">No products match your filters.</p>
         @endif

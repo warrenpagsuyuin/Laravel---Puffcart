@@ -175,6 +175,103 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
         }
+
+        .puff-pagination {
+            align-items: center;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            gap: 14px;
+            justify-content: space-between;
+            padding: 14px 16px;
+            width: 100%;
+        }
+
+        .puff-pagination__summary {
+            color: var(--text-secondary);
+            display: block !important;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .puff-pagination__summary strong {
+            color: var(--text-primary);
+            font-weight: 800;
+        }
+
+        .puff-pagination__controls,
+        .puff-pagination__pages {
+            align-items: center;
+            display: flex !important;
+            gap: 6px;
+        }
+
+        .puff-pagination__button,
+        .puff-pagination__page,
+        .puff-pagination__ellipsis {
+            align-items: center;
+            border-radius: 7px;
+            display: inline-flex;
+            font-size: 13px;
+            font-weight: 700;
+            justify-content: center;
+            min-height: 36px;
+        }
+
+        .puff-pagination__button,
+        .puff-pagination__page {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: var(--text-primary);
+            min-width: 36px;
+            padding: 8px 12px;
+        }
+
+        .puff-pagination__button:hover,
+        .puff-pagination__page:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .puff-pagination__page.is-active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .puff-pagination__button.is-disabled,
+        .puff-pagination__ellipsis {
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .puff-pagination__button.is-disabled {
+            background: #f8fafc;
+            border-color: var(--border);
+        }
+
+        .puff-pagination__ellipsis {
+            min-width: 28px;
+            padding: 8px 4px;
+        }
+
+        @media (max-width: 720px) {
+            .puff-pagination {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .puff-pagination__summary {
+                white-space: normal;
+            }
+
+            .puff-pagination__controls {
+                flex-wrap: wrap;
+            }
+        }
     </style>
 </head>
 <body>

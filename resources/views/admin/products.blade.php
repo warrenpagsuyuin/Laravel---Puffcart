@@ -1180,6 +1180,7 @@
                     rows.appendChild(row);
                     nextIndex += 1;
                     refreshRemoveButtons();
+                    syncFlavorInventoryLabels();
                 }
 
                 if (addButton) {
