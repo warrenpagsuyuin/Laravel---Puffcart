@@ -5,63 +5,167 @@
 @section('content')
 <style>
     body {
-        background: #f6f8fb;
+        background: #F8FAFC;
+    }
+
+    .payment-page {
+        background:
+            radial-gradient(circle at 10% 8%, rgba(11, 99, 246, 0.08), transparent 28%),
+            linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 45%, #FFFFFF 100%);
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .vapor-bg {
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        position: absolute;
+        z-index: 0;
+    }
+
+    .vapor-bg::before,
+    .vapor-bg::after,
+    .vapor-layer {
+        animation: vaporDrift 18s ease-in-out infinite alternate;
+        border-radius: 999px;
+        content: "";
+        filter: blur(28px);
+        height: 24vw;
+        min-height: 170px;
+        min-width: 420px;
+        opacity: 0.5;
+        position: absolute;
+        transform: translate3d(0, 0, 0);
+        width: 58vw;
+    }
+
+    .vapor-bg::before {
+        background:
+            radial-gradient(circle at 18% 50%, rgba(255, 255, 255, 0.92), transparent 34%),
+            radial-gradient(circle at 56% 46%, rgba(207, 231, 255, 0.78), transparent 36%),
+            radial-gradient(circle at 86% 58%, rgba(235, 246, 255, 0.72), transparent 32%);
+        left: -18%;
+        top: 8%;
+    }
+
+    .vapor-bg::after {
+        animation-delay: -6s;
+        animation-duration: 22s;
+        background:
+            radial-gradient(circle at 18% 56%, rgba(223, 241, 255, 0.68), transparent 34%),
+            radial-gradient(circle at 52% 48%, rgba(255, 255, 255, 0.82), transparent 38%),
+            radial-gradient(circle at 86% 50%, rgba(178, 214, 255, 0.46), transparent 34%);
+        bottom: 4%;
+        right: -20%;
+    }
+
+    .vapor-layer {
+        animation-delay: -10s;
+        animation-duration: 20s;
+        background:
+            radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.72), transparent 34%),
+            radial-gradient(circle at 60% 48%, rgba(191, 224, 255, 0.58), transparent 38%),
+            radial-gradient(circle at 90% 52%, rgba(234, 242, 255, 0.58), transparent 32%);
+        height: 15vw;
+        min-height: 120px;
+        min-width: 300px;
+        right: 15%;
+        top: 16%;
+        width: 38vw;
+    }
+
+    @keyframes vaporDrift {
+        0% {
+            transform: translate3d(-16px, 8px, 0) scale(1);
+        }
+
+        100% {
+            transform: translate3d(42px, -18px, 0) scale(1.08);
+        }
     }
 
     .store-nav {
         align-items: center;
-        background: #ffffff;
-        border-bottom: 1px solid #e3e8f0;
+        backdrop-filter: blur(16px);
+        background: rgba(255, 255, 255, 0.94);
+        border-bottom: 1px solid #E5E7EB;
         display: flex;
         justify-content: space-between;
         min-height: 72px;
-        padding: 14px 48px;
+        padding: 0 48px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
 
     .logo {
-        color: #0b66ff;
+        color: #0B63F6;
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
-        font-weight: 800;
+        font-size: 20px;
+        font-weight: 700;
     }
 
     .nav-links {
         display: flex;
         flex-wrap: wrap;
-        gap: 24px;
+        gap: 8px;
     }
 
     .nav-links a {
-        color: #4b5563;
+        border-radius: var(--radius);
+        color: #334155;
         font-size: 14px;
-        font-weight: 700;
+        font-weight: 600;
+        padding: 10px 14px;
+    }
+
+    .nav-links a:hover {
+        background: #EAF2FF;
+        color: #0B63F6;
     }
 
     .payment-shell {
         margin: 0 auto;
-        max-width: 860px;
-        padding: 48px 24px 72px;
+        max-width: 960px;
+        padding: 56px 24px 72px;
+        position: relative;
+        z-index: 1;
     }
 
     .panel {
-        background: #ffffff;
-        border: 1px solid #dfe5ef;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+        background:
+            radial-gradient(circle at 92% 10%, rgba(11, 99, 246, 0.1), transparent 24%),
+            rgba(255, 255, 255, 0.94);
+        border: 1px solid #E4ECF7;
+        border-radius: var(--radius-lg);
+        box-shadow: 0 22px 44px rgba(15, 23, 42, 0.08);
         display: grid;
-        gap: 22px;
-        padding: 30px;
+        gap: 24px;
+        overflow: hidden;
+        padding: 34px;
     }
 
     .payment-header {
-        border-bottom: 1px solid #e8edf5;
-        padding-bottom: 20px;
+        background:
+            radial-gradient(circle at 86% 18%, rgba(255, 255, 255, 0.2), transparent 26%),
+            linear-gradient(135deg, #0B63F6 0%, #0F3A8A 100%);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 20px 42px rgba(11, 99, 246, 0.18);
+        color: #FFFFFF;
+        margin: -10px -10px 0;
+        padding: 32px;
     }
 
     .payment-header h1 {
-        color: #111827;
+        color: #FFFFFF;
         font-size: 32px;
         margin: 0 0 8px;
+    }
+
+    .payment-header .muted {
+        color: rgba(255, 255, 255, 0.86);
     }
 
     .muted {
@@ -77,10 +181,11 @@
     }
 
     .summary-box {
-        background: #f8fafc;
-        border: 1px solid #e3e8f0;
-        border-radius: 8px;
-        padding: 14px;
+        background: #FFFFFF;
+        border: 1px solid #DDE8F7;
+        border-radius: var(--radius);
+        box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+        padding: 16px;
     }
 
     .summary-box span {
@@ -94,7 +199,7 @@
 
     .summary-box strong {
         color: #111827;
-        font-size: 16px;
+        font-size: 17px;
     }
 
     .notice {
@@ -135,9 +240,15 @@
     }
 
     .btn-primary {
-        background: #0b66ff;
-        border: 1px solid #0b66ff;
+        background: #0B63F6;
+        border: 1px solid #0B63F6;
         color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background: #084EC1;
+        box-shadow: 0 12px 24px rgba(11, 99, 246, 0.22);
+        color: #FFFFFF;
     }
 
     .btn-primary[disabled] {
@@ -147,8 +258,14 @@
 
     .btn-secondary {
         background: #ffffff;
-        border: 1px solid #cfd7e3;
-        color: #111827;
+        border: 1px solid #D6E0EE;
+        color: #0B63F6;
+    }
+
+    .btn-secondary:hover {
+        background: #EAF2FF;
+        border-color: #9BBDFB;
+        color: #0B63F6;
     }
 
     .actions {
@@ -157,36 +274,129 @@
         grid-template-columns: minmax(0, 1fr) 180px;
     }
 
+    :root[data-theme="dark"] .payment-page {
+        background:
+            radial-gradient(circle at 10% 8%, rgba(125, 183, 255, 0.12), transparent 28%),
+            radial-gradient(circle at 88% 14%, rgba(139, 92, 246, 0.12), transparent 24%),
+            linear-gradient(180deg, #07111F 0%, #0F172A 48%, #08111F 100%);
+    }
+
+    :root[data-theme="dark"] .vapor-bg::before {
+        background:
+            radial-gradient(circle at 18% 50%, rgba(91, 157, 255, 0.34), transparent 34%),
+            radial-gradient(circle at 56% 46%, rgba(168, 85, 247, 0.22), transparent 36%),
+            radial-gradient(circle at 86% 58%, rgba(215, 233, 255, 0.18), transparent 32%);
+        opacity: 0.42;
+    }
+
+    :root[data-theme="dark"] .vapor-bg::after,
+    :root[data-theme="dark"] .vapor-layer {
+        background:
+            radial-gradient(circle at 18% 56%, rgba(71, 121, 255, 0.22), transparent 34%),
+            radial-gradient(circle at 52% 48%, rgba(148, 163, 255, 0.2), transparent 38%),
+            radial-gradient(circle at 86% 50%, rgba(216, 180, 254, 0.18), transparent 34%);
+        opacity: 0.48;
+    }
+
+    :root[data-theme="dark"] .store-nav {
+        background: rgba(10, 16, 29, 0.94);
+        border-bottom-color: #203047;
+    }
+
+    :root[data-theme="dark"] .logo {
+        color: #7DB7FF;
+    }
+
+    :root[data-theme="dark"] .nav-links a {
+        color: #CBD5E1;
+    }
+
+    :root[data-theme="dark"] .nav-links a:hover {
+        background: #112B4F;
+        color: #D7E9FF;
+    }
+
+    :root[data-theme="dark"] .panel,
+    :root[data-theme="dark"] .summary-box {
+        background: rgba(18, 27, 43, 0.92);
+        border-color: #26384F;
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    :root[data-theme="dark"] .payment-header {
+        box-shadow: 0 20px 42px rgba(47, 124, 246, 0.18);
+    }
+
+    :root[data-theme="dark"] .summary-box strong {
+        color: #F3F8FF;
+    }
+
+    :root[data-theme="dark"] .summary-box span,
+    :root[data-theme="dark"] .muted {
+        color: #B7C6DA;
+    }
+
+    :root[data-theme="dark"] .btn-secondary {
+        background: #121B2B;
+        border-color: #2F4562;
+        color: #D7E9FF;
+    }
+
+    :root[data-theme="dark"] .btn-secondary:hover {
+        background: #112B4F;
+        border-color: #5B9DFF;
+    }
+
     @media (max-width: 720px) {
         .store-nav {
             align-items: flex-start;
             flex-direction: column;
             gap: 14px;
             padding: 16px 22px;
+            position: static;
         }
 
         .summary-grid,
         .actions {
             grid-template-columns: 1fr;
         }
+
+        .payment-shell {
+            padding: 28px 18px 56px;
+        }
+
+        .panel {
+            padding: 20px;
+        }
+
+        .payment-header {
+            margin: 0;
+            padding: 26px 22px;
+        }
     }
 </style>
 
-<nav class="store-nav">
-    <a class="logo" href="{{ route('home') }}">Puffcart</a>
-    <div class="nav-links">
-        <a href="{{ route('shop') }}">Shop</a>
-        <a href="{{ route('cart') }}">Cart</a>
-        <a href="{{ route('orders.index') }}">Orders</a>
+<div class="payment-page">
+    <div class="vapor-bg" aria-hidden="true">
+        <span class="vapor-layer"></span>
     </div>
-</nav>
 
-<main class="payment-shell">
-    <section class="panel">
-        <div class="payment-header">
-            <h1>Complete Payment</h1>
-            <p class="muted">Your order is saved, but it will not proceed to tracking or processing until payment is confirmed.</p>
+    <nav class="store-nav">
+        <a class="logo" href="{{ route('home') }}">Puffcart</a>
+        <div class="nav-links">
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('shop') }}">Shop</a>
+            <a href="{{ route('cart') }}">Cart</a>
+            <a href="{{ route('orders.index') }}">Orders</a>
         </div>
+    </nav>
+
+    <main class="payment-shell">
+        <section class="panel">
+            <div class="payment-header">
+                <h1>Complete Payment</h1>
+                <p class="muted">Your order is saved, but it will not proceed to tracking or processing until payment is confirmed.</p>
+            </div>
 
         @if(session('success'))
             <div class="notice notice-success">{{ session('success') }}</div>
@@ -226,8 +436,9 @@
             </form>
             <a class="btn-secondary" href="{{ route('orders.show', $order) }}">View Order</a>
         </div>
-    </section>
-</main>
+        </section>
+    </main>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('paymongoCheckoutForm');
