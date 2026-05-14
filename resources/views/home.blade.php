@@ -280,33 +280,33 @@
     }
 
     .hero-product-card {
-        display: block;
-        width: min(100%, 320px);
-        padding: 26px;
-        border: 1px solid rgba(183, 210, 244, 0.72);
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.78);
-        box-shadow: 0 24px 48px rgba(11, 99, 246, 0.14);
-        backdrop-filter: blur(18px);
+        display: grid;
+        place-items: center;
+        width: min(100%, 430px);
+        min-height: 340px;
+        padding: 20px;
         position: relative;
         z-index: 1;
         color: inherit;
         text-decoration: none;
+        perspective: 1000px;
     }
 
     .hero-product-image {
-        height: 178px;
-        border-radius: 16px;
+        width: min(100%, 360px);
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
         background:
-            radial-gradient(circle at 50% 42%, rgba(11, 99, 246, 0.22), transparent 36%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(222, 238, 255, 0.78));
+            radial-gradient(circle at 50% 54%, rgba(255, 255, 255, 0.94), transparent 34%),
+            radial-gradient(circle at 50% 50%, rgba(11, 99, 246, 0.16), transparent 58%);
         display: grid;
         place-items: center;
         color: #0B63F6;
         font-size: 82px;
-        margin-bottom: 18px;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+        margin: 0;
         overflow: hidden;
+        transform-style: preserve-3d;
+        animation: heroProductSpin 7s ease-in-out infinite;
     }
 
     .hero-product-image img {
@@ -314,8 +314,41 @@
         height: 100% !important;
         object-fit: contain;
         display: block;
-        padding: 12px;
-        filter: drop-shadow(0 18px 24px rgba(11, 99, 246, 0.18));
+        padding: 18px;
+        filter: drop-shadow(0 28px 32px rgba(11, 99, 246, 0.24));
+        transform: translateZ(36px);
+    }
+
+    .hero-product-card::after {
+        background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.22), transparent 64%);
+        bottom: 18px;
+        content: "";
+        height: 34px;
+        left: 18%;
+        position: absolute;
+        right: 18%;
+        transform: rotateX(70deg);
+        z-index: -1;
+    }
+
+    @keyframes heroProductSpin {
+        0% {
+            transform: rotateY(-18deg) rotateX(4deg) translateY(0);
+        }
+
+        50% {
+            transform: rotateY(20deg) rotateX(-3deg) translateY(-8px);
+        }
+
+        100% {
+            transform: rotateY(-18deg) rotateX(4deg) translateY(0);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hero-product-image {
+            animation: none;
+        }
     }
 
     .hero-product-fallback {
@@ -478,6 +511,8 @@
         background: #FFFFFF;
         border: 1px solid #E5E7EB;
         border-radius: var(--radius-lg);
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
@@ -490,7 +525,9 @@
     }
 
     .product-image {
-        background: linear-gradient(180deg, #F3F7FC 0%, #FFFFFF 100%);
+        background:
+            radial-gradient(circle at 50% 38%, rgba(11, 99, 246, 0.12), transparent 34%),
+            linear-gradient(180deg, #F3F7FC 0%, #FFFFFF 100%);
         height: 200px;
         display: flex;
         align-items: center;
@@ -498,6 +535,29 @@
         font-size: 64px;
         border-bottom: 1px solid #E5E7EB;
         position: relative;
+    }
+
+    .product-image img {
+        display: block;
+        height: 100%;
+        object-fit: contain;
+        padding: 18px;
+        width: 100%;
+    }
+
+    .product-image-fallback {
+        align-items: center;
+        background: linear-gradient(135deg, #0B63F6, #4A93FF);
+        border-radius: 18px;
+        color: #FFFFFF;
+        display: inline-flex;
+        font-family: 'Poppins', sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        height: 96px;
+        justify-content: center;
+        letter-spacing: 0;
+        width: 96px;
     }
 
     .product-badge {
@@ -514,6 +574,7 @@
     }
 
     .product-body {
+        flex: 1;
         padding: 20px;
     }
 
@@ -763,15 +824,13 @@
     }
 
     :root[data-theme="dark"] .hero-product-card {
-        background: rgba(12, 22, 38, 0.72);
-        border-color: rgba(91, 157, 255, 0.28);
-        box-shadow: 0 26px 52px rgba(0, 0, 0, 0.34);
+        box-shadow: none;
     }
 
     :root[data-theme="dark"] .hero-product-image {
         background:
-            radial-gradient(circle at 50% 42%, rgba(125, 183, 255, 0.26), transparent 36%),
-            linear-gradient(180deg, rgba(20, 39, 66, 0.88), rgba(10, 18, 31, 0.82));
+            radial-gradient(circle at 50% 54%, rgba(215, 233, 255, 0.18), transparent 34%),
+            radial-gradient(circle at 50% 50%, rgba(125, 183, 255, 0.18), transparent 58%);
         color: #D7E9FF;
     }
 
@@ -1198,7 +1257,6 @@
             <div class="vapor-bg" aria-hidden="true">
                 <span class="vapor-layer"></span>
             </div>
-            <div class="feature-badge">Featured</div>
             @php
                 $heroProduct = $heroDeviceProduct ?? null;
             @endphp
@@ -1209,13 +1267,6 @@
                     @else
                         <span class="hero-product-fallback">E<br>Devices</span>
                     @endif
-                </div>
-                <div class="hero-product-kicker">E-Devices</div>
-                <h3>{{ $heroProduct?->name ?? 'Featured E-Devices' }}</h3>
-                <p>{{ $heroProduct?->brand ? $heroProduct->brand . ' device ready for verified adult shoppers.' : 'Browse authentic pods, batteries, and device bundles from Puffcart.' }}</p>
-                <div class="hero-product-meta">
-                    <span>{{ $heroProduct ? 'PHP ' . number_format($heroProduct->price, 2) : 'Shop Devices' }}</span>
-                    <span>{{ $heroProduct ? number_format((float) $heroProduct->rating, 1) . ' / 5' : '18+ only' }}</span>
                 </div>
             </a>
         </div>
@@ -1324,9 +1375,9 @@
                         @endif
 
                         @if($product->image_url)
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" style="height:100%;width:100%;object-fit:cover;">
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" loading="lazy" decoding="async">
                         @else
-                            PC
+                            <span class="product-image-fallback">PC</span>
                         @endif
                     </div>
 

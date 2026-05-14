@@ -693,10 +693,6 @@
                         @endforeach
                     </select>
                 </div>
-                <select id="product-per-page" class="filter-control" name="per_page" aria-label="Products per page">
-                    <option value="5" @selected((int) request('per_page', 5) === 5)>5 rows</option>
-                    <option value="10" @selected((int) request('per_page', 5) === 10)>10 rows</option>
-                </select>
             </form>
         </section>
 
@@ -844,11 +840,19 @@
                     </div>
 
                     <div class="form-group full" data-option-panel="flavors">
-                        <div class="flavor-inventory" data-option-builder data-field-name="flavors" data-option-label="Flavor" data-placeholder="Mint, mango, tobacco">
+                        <div class="flavor-inventory"
+                             data-option-builder
+                             data-field-name="flavors"
+                             data-option-label="Flavor"
+                             data-default-option-label="Flavor"
+                             data-ohm-option-label="Ohm"
+                             data-placeholder="Mint, mango, tobacco"
+                             data-default-placeholder="Mint, mango, tobacco"
+                             data-ohm-placeholder="0.6 ohm, 0.8 ohm, 1.2 ohm">
                             <div class="flavor-inventory-head">
                                 <div>
-                                    <label>Flavor Inventory</label>
-                                    <div class="muted" style="font-size:12px;">Customers can only choose flavors with stock above zero.</div>
+                                    <label data-option-title>Flavor Inventory</label>
+                                    <div class="muted" style="font-size:12px;" data-option-help>Customers can only choose flavors with stock above zero.</div>
                                 </div>
                                 <button type="button" class="btn btn-secondary btn-compact" data-add-flavor>Add Flavor</button>
                             </div>
@@ -858,8 +862,8 @@
                                     <div class="flavor-row" data-flavor-row>
                                         <input type="hidden" name="flavors[{{ $index }}][id]" value="{{ $flavor['id'] ?? '' }}">
                                         <div class="form-group">
-                                            <label>Flavor</label>
-                                            <input name="flavors[{{ $index }}][name]" value="{{ $flavor['name'] ?? '' }}" required placeholder="Mint, mango, tobacco">
+                                            <label data-option-row-label>Flavor</label>
+                                            <input name="flavors[{{ $index }}][name]" value="{{ $flavor['name'] ?? '' }}" required placeholder="Mint, mango, tobacco" data-option-name-input>
                                         </div>
                                         <div class="form-group">
                                             <label>Stock</label>
@@ -1030,7 +1034,6 @@
                             <span class="catalog-label">Stock Status</span>
                             <span style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
                                 <span class="badge {{ $product->stock <= ($product->reorder_level ?? 5) ? 'badge-red' : 'badge-green' }}">{{ $product->stock }} in stock</span>
-                                <span class="badge {{ $product->is_active ? 'badge-green' : 'badge-gray' }}">{{ $product->is_active ? 'Active' : 'Inactive' }}</span>
                             </span>
                             {{-- Per-option list removed; keep stock badges above. --}}
                         </div>
@@ -1072,6 +1075,8 @@
             const flavor = document.getElementById('flavor');
             const bundlePods = document.getElementById('bundle_pods');
             const bundleBattery = document.getElementById('bundle_battery');
+            const categorySelect = document.getElementById('category_id');
+            const newCategoryInput = document.getElementById('category');
 
             if(btn && section) {
                 btn.addEventListener('click', function () {
@@ -1137,8 +1142,6 @@
                 const rows = builder.querySelector('[data-flavor-rows]');
                 const addButton = builder.querySelector('[data-add-flavor]');
                 const fieldName = builder.dataset.fieldName || 'flavors';
-                const optionLabel = builder.dataset.optionLabel || 'Flavor';
-                const placeholder = builder.dataset.placeholder || 'Mint, mango, tobacco';
                 let nextIndex = rows ? rows.querySelectorAll('[data-flavor-row]').length : 0;
 
                 function refreshRemoveButtons() {
@@ -1156,11 +1159,13 @@
                     const row = document.createElement('div');
                     row.className = 'flavor-row';
                     row.setAttribute('data-flavor-row', '');
+                    const optionLabel = builder.dataset.optionLabel || 'Flavor';
+                    const placeholder = builder.dataset.placeholder || 'Mint, mango, tobacco';
                     row.innerHTML = `
                         <input type="hidden" name="${fieldName}[${nextIndex}][id]" value="">
                         <div class="form-group">
-                            <label>${optionLabel}</label>
-                            <input name="${fieldName}[${nextIndex}][name]" required placeholder="${placeholder}">
+                            <label data-option-row-label>${optionLabel}</label>
+                            <input name="${fieldName}[${nextIndex}][name]" required placeholder="${placeholder}" data-option-name-input>
                         </div>
                         <div class="form-group">
                             <label>Stock</label>
@@ -1196,6 +1201,54 @@
                 refreshRemoveButtons();
             });
 
+            function categoryText() {
+                const selectedText = categorySelect?.options[categorySelect.selectedIndex]?.text || '';
+                const newCategoryText = newCategoryInput?.value || '';
+
+                return `${selectedText} ${newCategoryText}`.toLowerCase();
+            }
+
+            function isCoilsPodsCategory() {
+                const text = categoryText();
+
+                return text.includes('coils') && text.includes('pods');
+            }
+
+            function syncFlavorInventoryLabels() {
+                const flavorBuilder = document.querySelector('[data-option-panel="flavors"] [data-option-builder]');
+                if (!flavorBuilder) return;
+
+                const useOhm = isCoilsPodsCategory() || productType?.value === 'pods';
+                const optionLabel = useOhm
+                    ? (flavorBuilder.dataset.ohmOptionLabel || 'Ohm')
+                    : (flavorBuilder.dataset.defaultOptionLabel || 'Flavor');
+                const placeholder = useOhm
+                    ? (flavorBuilder.dataset.ohmPlaceholder || '0.6 ohm, 0.8 ohm, 1.2 ohm')
+                    : (flavorBuilder.dataset.defaultPlaceholder || 'Mint, mango, tobacco');
+
+                flavorBuilder.dataset.optionLabel = optionLabel;
+                flavorBuilder.dataset.placeholder = placeholder;
+
+                const title = flavorBuilder.querySelector('[data-option-title]');
+                const help = flavorBuilder.querySelector('[data-option-help]');
+                const addButton = flavorBuilder.querySelector('[data-add-flavor]');
+
+                if (title) title.textContent = `${optionLabel} Inventory`;
+                if (help) {
+                    help.textContent = useOhm
+                        ? 'Customers can only choose ohm options with stock above zero.'
+                        : 'Customers can only choose flavors with stock above zero.';
+                }
+                if (addButton) addButton.textContent = `Add ${optionLabel}`;
+
+                flavorBuilder.querySelectorAll('[data-option-row-label]').forEach((label) => {
+                    label.textContent = optionLabel;
+                });
+                flavorBuilder.querySelectorAll('[data-option-name-input]').forEach((input) => {
+                    input.placeholder = placeholder;
+                });
+            }
+
             function syncProductTypeFields() {
                 if (!productType) return;
 
@@ -1224,6 +1277,7 @@
 
                 setPanel(flavorPanel, type !== 'battery');
                 setPanel(colorPanel, type === 'battery' || type === 'bundle');
+                syncFlavorInventoryLabels();
 
                 if (flavor) {
                     flavor.required = type === 'pods' || type === 'bundle';
@@ -1253,14 +1307,10 @@
             }
 
                 // Toggle nicotine fields when category is E-liquids
-                const categorySelect = document.getElementById('category_id');
-                const newCategoryInput = document.getElementById('category');
                 const nicotineFields = document.querySelectorAll('[data-product-field="e-liquid"]');
 
                 function syncNicotineFields() {
-                    const selectedText = categorySelect?.options[categorySelect.selectedIndex]?.text || '';
-                    const newCategoryText = newCategoryInput?.value || '';
-                    const categoryIsELiquid = /e-?liquids?/i.test(selectedText) || /e-?liquids?/i.test(newCategoryText);
+                    const categoryIsELiquid = /e-?liquids?/i.test(categoryText());
 
                     if (categoryIsELiquid && productType?.value === 'other') {
                         productType.value = 'e_liquid';
@@ -1279,13 +1329,17 @@
 
                 if (categorySelect) {
                     categorySelect.addEventListener('change', syncNicotineFields);
+                    categorySelect.addEventListener('change', syncFlavorInventoryLabels);
                 }
                 if (newCategoryInput) {
                     newCategoryInput.addEventListener('input', syncNicotineFields);
+                    newCategoryInput.addEventListener('input', syncFlavorInventoryLabels);
                 }
                 if (productType) {
                     productType.addEventListener('change', syncNicotineFields);
+                    productType.addEventListener('change', syncFlavorInventoryLabels);
                 }
+                syncFlavorInventoryLabels();
                 syncNicotineFields();
         })();
     </script>

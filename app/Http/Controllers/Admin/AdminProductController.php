@@ -16,9 +16,7 @@ class AdminProductController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = in_array((int) $request->input('per_page', 5), [5, 10], true)
-            ? (int) $request->input('per_page', 5)
-            : 5;
+        $perPage = 10;
 
         $products = Product::query()
             ->with('flavors')

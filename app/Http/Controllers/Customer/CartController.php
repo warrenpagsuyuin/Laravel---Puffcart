@@ -29,6 +29,7 @@ class CartController extends Controller
         $productType = $product->product_type ?: Product::TYPE_OTHER;
         $isBattery = $productType === Product::TYPE_BATTERY;
         $isBundle = $productType === Product::TYPE_BUNDLE;
+        $optionLabel = $this->selectableOptionLabel($product);
 
         $flavor = ProductFlavor::inStock()
             ->where('product_id', $product->id)
@@ -46,7 +47,7 @@ class CartController extends Controller
             }
         } else {
             if (!$flavor || $flavor->option_type !== ProductFlavor::TYPE_FLAVOR) {
-                return back()->with('error', 'Please select an available flavor.');
+                return back()->with('error', "Please select an available {$optionLabel}.");
             }
         }
 
@@ -88,8 +89,6 @@ class CartController extends Controller
         $neededFlavorQuantity = $isBundle ? $existingFlavorQuantity + $quantity : $existingQuantity + $quantity;
 
         if ($flavor->stock < $neededFlavorQuantity) {
-            $optionLabel = $isBattery ? 'battery color' : 'flavor';
-
             return back()->with('error', "{$product->name} ({$flavor->name}) only has {$flavor->stock} {$optionLabel} item(s) left.");
         }
 
@@ -146,6 +145,7 @@ class CartController extends Controller
         }
 
         if ($item->product_type === Product::TYPE_BUNDLE) {
+            $optionLabel = $this->selectableOptionLabel($item->product);
             $otherFlavorQuantity = CartItem::where('user_id', auth()->id())
                 ->where('id', '!=', $item->id)
                 ->where('product_id', $item->product_id)
@@ -162,12 +162,12 @@ class CartController extends Controller
             }
 
             if ($item->flavor->stock < ($otherFlavorQuantity + $quantity)) {
-                return back()->with('error', "{$item->product->name} ({$item->flavor->name}) only has {$item->flavor->stock} flavor item(s) left.");
+                return back()->with('error', "{$item->product->name} ({$item->flavor->name}) only has {$item->flavor->stock} {$optionLabel} item(s) left.");
             }
         } elseif ($item->battery_color_id && $item->batteryColor->stock < $quantity) {
             return back()->with('error', "{$item->product->name} ({$item->batteryColor->name}) only has {$item->batteryColor->stock} battery color item(s) left.");
         } elseif ($item->flavor->stock < $quantity) {
-            $optionLabel = $item->product_type === Product::TYPE_BATTERY ? 'battery color' : 'flavor';
+            $optionLabel = $this->selectableOptionLabel($item->product);
 
             return back()->with('error', "{$item->product->name} ({$item->flavor->name}) only has {$item->flavor->stock} {$optionLabel} item(s) left.");
         }
@@ -184,5 +184,20 @@ class CartController extends Controller
         $item->delete();
 
         return back()->with('success', 'Item removed from cart.');
+    }
+
+    private function selectableOptionLabel(Product $product): string
+    {
+        if (($product->product_type ?: Product::TYPE_OTHER) === Product::TYPE_BATTERY) {
+            return 'battery color';
+        }
+
+        $category = strtolower((string) $product->category_name);
+
+        if ($product->product_type === Product::TYPE_PODS || (str_contains($category, 'coils') && str_contains($category, 'pods'))) {
+            return 'ohm';
+        }
+
+        return 'flavor';
     }
 }

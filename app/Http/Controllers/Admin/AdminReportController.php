@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
 use App\Models\WalkinOrder;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +19,22 @@ class AdminReportController extends Controller
         $from = Carbon::parse($request->get('from', now()->startOfMonth()->toDateString()))->startOfDay();
         $to = Carbon::parse($request->get('to', now()->toDateString()))->endOfDay();
 
+        return view('admin.reports', $this->reportData($from, $to));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $from = Carbon::parse($request->get('from', now()->startOfMonth()->toDateString()))->startOfDay();
+        $to = Carbon::parse($request->get('to', now()->toDateString()))->endOfDay();
+        $data = $this->reportData($from, $to);
+
+        $pdf = Pdf::loadView('admin.reports-pdf', $data)->setPaper('a4', 'portrait');
+
+        return $pdf->download('puffcart-report-' . $from->toDateString() . '-to-' . $to->toDateString() . '.pdf');
+    }
+
+    private function reportData(Carbon $from, Carbon $to): array
+    {
         $totalOrders = (Schema::hasTable('orders')
             ? Order::whereBetween('created_at', [$from, $to])->count()
             : 0)
@@ -74,7 +91,7 @@ class AdminReportController extends Controller
             ->map(fn ($total, $date) => (object) ['date' => $date, 'total' => $total])
             ->values();
 
-        return view('admin.reports', compact(
+        return compact(
             'from',
             'to',
             'totalOrders',
@@ -83,6 +100,6 @@ class AdminReportController extends Controller
             'statusCounts',
             'recentPayments',
             'dailySales'
-        ));
+        );
     }
 }

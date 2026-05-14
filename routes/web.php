@@ -227,6 +227,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/audit-logs/{auditLog}', [AdminAuditLogController::class, 'show'])->name('audit-logs.show');
 
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/export/pdf', [AdminReportController::class, 'exportPdf'])->name('reports.export-pdf');
     });
 });
 

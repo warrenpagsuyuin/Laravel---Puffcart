@@ -4,16 +4,92 @@
 @section('page-title', 'Audit Logs')
 
 @section('content')
+    <style>
+        .audit-filter-panel {
+            padding: 18px 20px;
+        }
+
+        .audit-filter-header {
+            align-items: center;
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .audit-filter-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .audit-filter-header .muted {
+            font-size: 13px;
+        }
+
+        .audit-filter-grid {
+            align-items: end;
+            display: grid;
+            gap: 14px;
+            grid-template-columns: minmax(260px, 1.4fr) minmax(190px, 0.8fr) minmax(160px, 0.6fr) minmax(160px, 0.6fr) auto;
+        }
+
+        .audit-filter-grid .form-group {
+            display: grid;
+            gap: 6px;
+        }
+
+        .audit-filter-grid label {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .audit-filter-grid input,
+        .audit-filter-grid select {
+            min-height: 42px;
+        }
+
+        .audit-reset {
+            min-height: 42px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 1100px) {
+            .audit-filter-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .audit-reset {
+                justify-self: start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .audit-filter-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .audit-filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 
     {{-- Filters --}}
-    <section class="panel">
-        <div class="section-title">
-            <h2>Filters</h2>
+    <section class="panel audit-filter-panel">
+        <div class="audit-filter-header">
+            <div>
+                <h2>Filters</h2>
+                <div class="muted">Results update automatically as you type or change filters.</div>
+            </div>
         </div>
 
-        <form method="GET" action="{{ route('admin.audit-logs.index') }}">
+        <form id="audit-filter-form" method="GET" action="{{ route('admin.audit-logs.index') }}">
 
-            <div class="form-grid">
+            <div class="audit-filter-grid">
 
                 <div class="form-group">
                     <label>Search</label>
@@ -63,19 +139,13 @@
                     >
                 </div>
 
-            </div>
-
-            <div class="actions" style="margin-top:16px;">
-                <button type="submit" class="btn btn-primary">
-                    Apply Filters
-                </button>
-
                 <a
                     href="{{ route('admin.audit-logs.index') }}"
-                    class="btn btn-secondary"
+                    class="btn btn-secondary audit-reset"
                 >
                     Reset
                 </a>
+
             </div>
 
         </form>
@@ -198,5 +268,33 @@
         </div>
 
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('audit-filter-form');
+            if (!form) return;
+
+            let searchTimer = null;
+
+            function submitFilters(delay = 0) {
+                window.clearTimeout(searchTimer);
+                searchTimer = window.setTimeout(function () {
+                    form.requestSubmit();
+                }, delay);
+            }
+
+            form.querySelectorAll('input[type="text"]').forEach(function (input) {
+                input.addEventListener('input', function () {
+                    submitFilters(450);
+                });
+            });
+
+            form.querySelectorAll('select, input[type="date"]').forEach(function (field) {
+                field.addEventListener('change', function () {
+                    submitFilters();
+                });
+            });
+        });
+    </script>
 
 @endsection

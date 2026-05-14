@@ -101,8 +101,10 @@ class CheckoutService
                 }
 
                 if (!$isBattery && $flavor->option_type !== ProductFlavor::TYPE_FLAVOR) {
+                    $optionLabel = $this->selectableOptionLabel($product);
+
                     throw ValidationException::withMessages([
-                        'cart' => "{$product->name} is no longer available in the selected flavor.",
+                        'cart' => "{$product->name} is no longer available in the selected {$optionLabel}.",
                     ]);
                 }
 
@@ -141,7 +143,7 @@ class CheckoutService
                     $product = $products->get($flavor?->product_id);
                     $name = $product?->name ?? 'One of your products';
                     $flavorName = $flavor?->name ?? 'selected option';
-                    $optionLabel = $flavor?->option_type === ProductFlavor::TYPE_COLOR ? 'battery color' : 'flavor';
+                    $optionLabel = $flavor?->option_type === ProductFlavor::TYPE_COLOR ? 'battery color' : $this->selectableOptionLabel($product);
                     $stock = $flavor?->stock ?? 0;
 
                     throw ValidationException::withMessages([
@@ -297,7 +299,7 @@ class CheckoutService
                 }
 
                 if ($item->flavor->stock < $item->quantity) {
-                    $optionLabel = $item->product_type === Product::TYPE_BATTERY ? 'battery color' : 'flavor';
+                    $optionLabel = $this->selectableOptionLabel($item->product);
 
                     return "{$item->product->name} ({$item->flavor->name}) only has {$item->flavor->stock} {$optionLabel} item(s) left.";
                 }
@@ -308,5 +310,24 @@ class CheckoutService
             ->unique()
             ->values()
             ->all();
+    }
+
+    private function selectableOptionLabel(?Product $product): string
+    {
+        if (!$product) {
+            return 'flavor';
+        }
+
+        if (($product->product_type ?: Product::TYPE_OTHER) === Product::TYPE_BATTERY) {
+            return 'battery color';
+        }
+
+        $category = strtolower((string) $product->category_name);
+
+        if ($product->product_type === Product::TYPE_PODS || (str_contains($category, 'coils') && str_contains($category, 'pods'))) {
+            return 'ohm';
+        }
+
+        return 'flavor';
     }
 }

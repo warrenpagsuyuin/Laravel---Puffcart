@@ -6017,3 +6017,50 @@ Content-Transfer-Encoding: quoted-printable
 #69 C:/Users/PLPASIG/Downloads/puffcart-laravel/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://Users//PLPASI...')
 #70 {main}
 "} 
+[2026-05-14 11:56:02] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 11:56:02] local.ERROR: PayMongo checkout creation failed {"order_id":10,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 11:56:08] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 11:56:08] local.ERROR: PayMongo checkout creation failed {"order_id":10,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 11:58:25] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 11:58:25] local.ERROR: PayMongo checkout creation failed {"order_id":10,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 11:59:45] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 11:59:45] local.ERROR: PayMongo checkout creation failed {"order_id":11,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 11:59:49] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 11:59:49] local.ERROR: PayMongo checkout creation failed {"order_id":11,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 12:03:07] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 12:03:07] local.ERROR: PayMongo checkout creation failed {"order_id":12,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 12:03:10] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 12:03:10] local.ERROR: PayMongo checkout creation failed {"order_id":12,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 12:03:15] local.ERROR: PayMongo service error: PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file.  
+[2026-05-14 12:03:15] local.ERROR: PayMongo checkout creation failed {"order_id":12,"error":"PayMongo secret key is not configured. Set PAYMONGO_SECRET_KEY in your .env file."} 
+[2026-05-14 12:13:54] local.ERROR: Writing to C:/Users/PLPASIG/AppData/Roaming/PsySH/psysh_history is not allowed. {"exception":"[object] (ErrorException(code: 0): Writing to C:/Users/PLPASIG/AppData/Roaming/PsySH/psysh_history is not allowed. at C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/psy/psysh/src/ConfigPaths.php:480)
+[stacktrace]
+#0 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(258): Illuminate/Foundation/Bootstrap/HandleExceptions->handleError(1024, 'Writing to C:/U...', 'C://Users//PLPASI...', 480)
+#1 [internal function]: Illuminate/Foundation/Bootstrap/HandleExceptions->Illuminate/Foundation/Bootstrap/{closure}(1024, 'Writing to C:/U...', 'C://Users//PLPASI...', 480)
+#2 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/psy/psysh/src/ConfigPaths.php(480): trigger_error('Writing to C:/U...', 1024)
+#3 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/psy/psysh/src/Configuration.php(1076): Psy/ConfigPaths::touchFileWithMkdir('C:/Users/PLPASI...')
+#4 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/psy/psysh/src/Configuration.php(1114): Psy/Configuration->setHistoryFile('C:/Users/PLPASI...')
+#5 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/psy/psysh/src/Configuration.php(1293): Psy/Configuration->getHistoryFile()
+#6 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/psy/psysh/src/Shell.php(191): Psy/Configuration->getReadline()
+#7 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/psy/psysh/src/Shell.php(2171): Psy/Shell->boot()
+#8 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/tinker/src/Console/TinkerCommand.php(77): Psy/Shell->execute('App////Models////Pr...')
+#9 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Laravel/Tinker/Console/TinkerCommand->handle()
+#10 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#11 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#12 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#13 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#14 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate/Container/Container->call(Array)
+#15 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#16 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#17 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#18 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Laravel/Tinker/Console/TinkerCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#19 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#20 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#21 C:/Users/PLPASIG/Desktop/vapevault/Laravel---Puffcart/artisan(14): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#22 {main}
+"} 
+[2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
+[2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
+[2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
+[2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
+[2026-05-14 17:16:19] testing.INFO: Password reset requested for non-existent or inactive account. {"email_hash":"4e0b55d655556f699b3be2c5cd0a29e9acb12547786ab1f507715010bcf6e910"} 
