@@ -324,8 +324,12 @@ class CheckoutService
 
         $category = strtolower((string) $product->category_name);
 
-        if ($product->product_type === Product::TYPE_PODS || (str_contains($category, 'coils') && str_contains($category, 'pods'))) {
+        if (str_contains($category, 'coils') && str_contains($category, 'pods')) {
             return 'ohm';
+        }
+
+        if (str_contains($category, 'accessories') || str_contains($category, 'devices')) {
+            return 'color';
         }
 
         return 'flavor';

@@ -12,8 +12,16 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    private const ACCOUNT_PENDING_MESSAGE = 'Please wait for the admin to verify your account before placing an order.';
+
     public function checkout(Request $request, CheckoutService $checkoutService)
     {
+        if (!auth()->user()->canPlaceOrders()) {
+            return redirect()
+                ->route('cart')
+                ->with('error', self::ACCOUNT_PENDING_MESSAGE);
+        }
+
         $cartItemIds = $request->input('cart_item_ids');
         $cartItemIds = is_array($cartItemIds) ? $cartItemIds : null;
         $summary = $checkoutService->preview(auth()->user(), $request->get('promo_code'), $cartItemIds);
@@ -31,6 +39,12 @@ class OrderController extends Controller
 
     public function placeOrder(CheckoutRequest $request, CheckoutService $checkoutService)
     {
+        if (!auth()->user()->canPlaceOrders()) {
+            return redirect()
+                ->route('cart')
+                ->with('error', self::ACCOUNT_PENDING_MESSAGE);
+        }
+
         $order = $checkoutService->placeOrder(auth()->user(), $request->validated(), $request);
 
         if ($order->requiresOnlinePayment()) {

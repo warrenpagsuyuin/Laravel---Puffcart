@@ -224,32 +224,41 @@
     .hero-stats {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: 24px;
+        gap: 30px;
+        width: min(100vw - 116px, 850px);
     }
 
     .stat-item {
-        padding: 18px 16px;
-        background: rgba(255, 255, 255, 0.88);
-        border: 1px solid #E4ECF7;
-        border-radius: var(--radius);
+        align-items: center;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid #DCE7F5;
+        border-radius: 8px;
+        box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 136px;
+        padding: 26px 24px;
         text-align: center;
-        box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
     }
 
     .stat-value {
-        font-size: 26px;
-        font-weight: 800;
         color: #0B63F6;
         display: block;
-        margin-bottom: 4px;
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: 0;
+        line-height: 1;
+        margin-bottom: 24px;
     }
 
     .stat-label {
-        font-size: 12px;
-        color: #6B7280;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: #667085;
+        font-size: 15px;
         font-weight: 700;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        text-transform: uppercase;
     }
 
     .hero-visual {
@@ -1183,6 +1192,7 @@
 
         .hero-stats {
             grid-template-columns: 1fr;
+            width: 100%;
         }
 
         .hero-visual {
@@ -1296,17 +1306,17 @@
             <div class="hero-stats">
                 <div class="stat-item">
                     <span class="stat-value">200+</span>
-                    <span class="stat-label">Products</span>
+                    <span class="stat-label">PRODUCTS</span>
                 </div>
 
                 <div class="stat-item">
                     <span class="stat-value">1,250+</span>
-                    <span class="stat-label">Customers</span>
+                    <span class="stat-label">CUSTOMERS</span>
                 </div>
 
                 <div class="stat-item">
                     <span class="stat-value">4.9★</span>
-                    <span class="stat-label">Rating</span>
+                    <span class="stat-label">RATING</span>
                 </div>
             </div>
         </div>

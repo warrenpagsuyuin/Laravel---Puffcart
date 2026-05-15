@@ -382,6 +382,39 @@
             font-size: 18px;
         }
 
+        .product-admin-actions {
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            padding: 12px;
+        }
+
+        .product-admin-actions span {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .btn-danger-soft {
+            background: #ffffff;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            font-weight: 800;
+            padding: 0 14px;
+            white-space: nowrap;
+        }
+
+        .btn-danger-soft:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            color: #991b1b;
+        }
+
         .variant-panel {
             background: #ffffff;
             border: 1px solid #d9e2ec;
@@ -618,6 +651,15 @@
                 grid-template-columns: 1fr;
             }
 
+            .product-admin-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .product-admin-actions .btn {
+                width: 100%;
+            }
+
             .product-cell {
                 grid-template-columns: 52px minmax(0, 1fr);
             }
@@ -763,6 +805,15 @@
                                         {{ $product->is_low_stock ? 'Restock' : 'Healthy' }}
                                     </span>
                                 </div>
+                            </div>
+
+                            <div class="product-admin-actions">
+                                <span>Remove this product from inventory and the active catalog.</span>
+                                <form method="POST" action="{{ route('admin.products.destroy', $product) }}" onsubmit="return confirm('Delete this product from inventory? Products with order history will be removed from the active catalog instead.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger-soft" type="submit">Delete Product</button>
+                                </form>
                             </div>
                         </div>
 

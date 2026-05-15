@@ -752,6 +752,10 @@
         <div class="notice notice-success">{{ session('success') }}</div>
     @endif
 
+    @if(session('error'))
+        <div class="notice notice-error">{{ session('error') }}</div>
+    @endif
+
     @if($errors->any())
         <div class="notice notice-error">
             @foreach($errors->all() as $error)

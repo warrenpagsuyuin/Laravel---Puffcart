@@ -36,7 +36,10 @@ class HomeController extends Controller
             ->orderByDesc('rating')
             ->first();
         $categories = Schema::hasTable('categories')
-            ? Category::withCount('products')->active()->get()
+            ? Category::withCount(['products' => fn ($query) => $query->active()])
+                ->whereHas('products', fn ($query) => $query->active())
+                ->active()
+                ->get()
             : collect();
         $newArrivals = Product::active()->where('badge', 'new')->with('availableFlavorOptions', 'availableColorOptions')->take(4)->get();
         $recommendedProducts = $recommendationService->personalized(auth()->user(), 4);

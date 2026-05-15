@@ -3,12 +3,26 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 class CheckoutRequest extends FormRequest
 {
+    private const ACCOUNT_PENDING_MESSAGE = 'Please wait for the admin to verify your account before placing an order.';
+
     public function authorize(): bool
     {
-        return auth()->check();
+        return auth()->check() && auth()->user()->canPlaceOrders();
+    }
+
+    protected function failedAuthorization(): void
+    {
+        $exception = ValidationException::withMessages([
+            'account' => self::ACCOUNT_PENDING_MESSAGE,
+        ]);
+
+        $exception->redirectTo(route('cart'));
+
+        throw $exception;
     }
 
     public function rules(): array

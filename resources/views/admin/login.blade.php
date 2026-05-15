@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Puffcart</title>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('puffcart-theme');
+                document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+            } catch (error) {
+                document.documentElement.dataset.theme = 'dark';
+            }
+
+            if (document.documentElement.dataset.theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#0A0A0A';
+            }
+        })();
+    </script>
+    <meta name="color-scheme" content="light dark">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,6 +34,20 @@
             --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
             --radius: 8px;
             --radius-lg: 12px;
+        }
+
+        :root[data-theme="dark"] {
+            --primary: #66A9FF;
+            --primary-light: #1F1F1F;
+            --primary-hover: #9B7CFF;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --text-muted: #808080;
+            --border: #2A2A2A;
+            --bg-light: #0A0A0A;
+            --bg-white: #181818;
+            --shadow-md: 0 24px 70px rgba(0, 0, 0, 0.48);
+            color-scheme: dark;
         }
 
         * {
@@ -184,5 +213,6 @@
 
         <a href="{{ route('home') }}" class="back-link">Back to store</a>
     </main>
+    @include('partials.dark-mode-overrides')
 </body>
 </html>

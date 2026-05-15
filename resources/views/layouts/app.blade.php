@@ -17,8 +17,13 @@
             } catch (error) {
                 document.documentElement.dataset.theme = 'light';
             }
+
+            if (document.documentElement.dataset.theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#0A0A0A';
+            }
         })();
     </script>
+    <meta name="color-scheme" content="light dark">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -51,15 +56,16 @@
         }
 
         :root[data-theme="dark"] {
-            --primary: #7db7ff;
-            --primary-light: #112b4f;
-            --primary-hover: #a9ceff;
-            --text-primary: #eef5ff;
-            --text-secondary: #b7c6da;
-            --text-muted: #8ea2bc;
-            --border: #26384f;
-            --bg-light: #0b1220;
-            --bg-white: #121b2b;
+            --primary: #66A9FF;
+            --primary-light: #111111;
+            --primary-hover: #9B7CFF;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --text-muted: #808080;
+            --border: #2A2A2A;
+            --bg-light: #111111;
+            --bg-white: #181818;
+            --surface: #1F1F1F;
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
             --shadow-md: 0 14px 30px rgba(0, 0, 0, 0.34);
             --shadow-lg: 0 24px 46px rgba(0, 0, 0, 0.4);
@@ -75,8 +81,8 @@
         }
 
         :root[data-theme="dark"] body {
-            background-color: #0b1220;
-            color: #dbe7f5;
+            background-color: #0A0A0A;
+            color: #FFFFFF;
         }
 
         :root[data-theme="dark"] .nav,
@@ -276,5 +282,6 @@
 </head>
 <body>
     @yield('content')
+    @include('partials.dark-mode-overrides')
 </body>
 </html>

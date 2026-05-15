@@ -516,6 +516,204 @@
         width: 18px;
     }
 
+    :root[data-theme="dark"] .shop-shell {
+        background:
+            radial-gradient(circle at 78% 0%, rgba(47, 124, 246, 0.1), transparent 28%),
+            linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
+    }
+
+    :root[data-theme="dark"] .store-nav {
+        background: rgba(8, 14, 26, 0.96);
+        border-bottom-color: #26384f;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    :root[data-theme="dark"] .logo {
+        color: #66a9ff;
+    }
+
+    :root[data-theme="dark"] .nav-links a {
+        color: #d7e4f5;
+    }
+
+    :root[data-theme="dark"] .nav-links a:hover {
+        background: #112b4f;
+        color: #ffffff;
+    }
+
+    :root[data-theme="dark"] .filters {
+        background: #101a2b;
+        border-right-color: #26384f;
+        box-shadow: 12px 0 34px rgba(0, 0, 0, 0.28);
+    }
+
+    :root[data-theme="dark"] .filter-group label,
+    :root[data-theme="dark"] .flavor-picker label,
+    :root[data-theme="dark"] .sort-label {
+        color: #b9c8dc;
+    }
+
+    :root[data-theme="dark"] .filters input,
+    :root[data-theme="dark"] .filters select,
+    :root[data-theme="dark"] .flavor-picker select,
+    :root[data-theme="dark"] .sort-select {
+        background: #0b1220 !important;
+        border-color: #30445f !important;
+        color: #eef5ff !important;
+    }
+
+    :root[data-theme="dark"] .filters input::placeholder {
+        color: #7f91aa;
+    }
+
+    :root[data-theme="dark"] .filters input:focus,
+    :root[data-theme="dark"] .filters select:focus,
+    :root[data-theme="dark"] .flavor-picker select:focus,
+    :root[data-theme="dark"] .sort-select:focus {
+        border-color: #66a9ff;
+        box-shadow: 0 0 0 3px rgba(102, 169, 255, 0.18);
+    }
+
+    :root[data-theme="dark"] .shop-main {
+        background: transparent;
+    }
+
+    :root[data-theme="dark"] .shop-heading h1,
+    :root[data-theme="dark"] .shop-heading h2 {
+        color: #f4f8ff;
+    }
+
+    :root[data-theme="dark"] .muted,
+    :root[data-theme="dark"] .stock,
+    :root[data-theme="dark"] .product-detail-line,
+    :root[data-theme="dark"] .pagination p,
+    :root[data-theme="dark"] .pagination span {
+        color: #a9bad0;
+    }
+
+    :root[data-theme="dark"] .shop-sortbar {
+        background: rgba(16, 26, 43, 0.88);
+        border-color: #26384f;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    :root[data-theme="dark"] .sort-pill {
+        background: #0b1220;
+        border-color: #30445f;
+        color: #e7eef9;
+    }
+
+    :root[data-theme="dark"] .sort-pill:hover {
+        border-color: #66a9ff;
+        color: #9ec8ff;
+    }
+
+    :root[data-theme="dark"] .sort-pill.active {
+        background: #2f7cf6;
+        border-color: #2f7cf6;
+        color: #ffffff;
+    }
+
+    :root[data-theme="dark"] .product-card {
+        background: #101a2b;
+        border-color: #26384f !important;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.2);
+    }
+
+    :root[data-theme="dark"] .product-card:hover {
+        border-color: #66a9ff;
+        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(102, 169, 255, 0.08);
+    }
+
+    :root[data-theme="dark"] .product-media {
+        background: linear-gradient(180deg, #172236 0%, #0d1525 100%);
+        border-bottom: 1px solid #26384f;
+    }
+
+    :root[data-theme="dark"] .product-meta {
+        color: #8fbfff;
+    }
+
+    :root[data-theme="dark"] .product-title {
+        color: #ffffff !important;
+    }
+
+    :root[data-theme="dark"] .price {
+        color: #66a9ff;
+    }
+
+    :root[data-theme="dark"] .old-price {
+        color: #7f91aa;
+    }
+
+    :root[data-theme="dark"] .btn-secondary,
+    :root[data-theme="dark"] .pagination a {
+        background: #0b1220;
+        border-color: #30445f;
+        color: #e7eef9;
+    }
+
+    :root[data-theme="dark"] .btn-secondary:hover,
+    :root[data-theme="dark"] .pagination a:hover {
+        border-color: #66a9ff;
+        color: #9ec8ff;
+    }
+
+    :root[data-theme="dark"] .pagination {
+        border-top-color: #26384f;
+    }
+
+    :root[data-theme="dark"] .puff-pagination {
+        background: #101a2b;
+        border-color: #26384f;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__button,
+    :root[data-theme="dark"] .puff-pagination__page {
+        background: #0b1220;
+        border-color: #30445f;
+        color: #e7eef9;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__button:hover,
+    :root[data-theme="dark"] .puff-pagination__page:hover {
+        background: #112b4f;
+        border-color: #66a9ff;
+        color: #9ec8ff;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__page.is-active {
+        background: #2f7cf6;
+        border-color: #2f7cf6;
+        color: #ffffff;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__button.is-disabled,
+    :root[data-theme="dark"] .puff-pagination__ellipsis,
+    :root[data-theme="dark"] .puff-pagination__summary {
+        color: #a9bad0;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__summary strong {
+        color: #f4f8ff;
+    }
+
+    :root[data-theme="dark"] .recommendations {
+        border-top-color: #26384f;
+    }
+
+    :root[data-theme="dark"] .notice-success {
+        background: rgba(22, 101, 52, 0.22);
+        border-color: rgba(74, 222, 128, 0.32);
+        color: #bbf7d0;
+    }
+
+    :root[data-theme="dark"] .notice-error {
+        background: rgba(127, 29, 29, 0.24);
+        border-color: rgba(248, 113, 113, 0.32);
+        color: #fecaca;
+    }
+
     @media (max-width: 1100px) {
         .shop-shell {
             grid-template-columns: 300px minmax(0, 1fr);

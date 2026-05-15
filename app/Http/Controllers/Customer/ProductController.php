@@ -22,7 +22,11 @@ class ProductController extends Controller
     {
         $products = $searchService->search($request, 6);
         $categories = Schema::hasTable('categories')
-            ? Category::withCount('products')->active()->orderBy('name')->get()
+            ? Category::withCount(['products' => fn ($query) => $query->active()])
+                ->whereHas('products', fn ($query) => $query->active())
+                ->active()
+                ->orderBy('name')
+                ->get()
             : collect();
         $brands = Product::active()
             ->whereNotNull('brand')

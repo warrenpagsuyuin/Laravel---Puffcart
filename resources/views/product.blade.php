@@ -550,10 +550,11 @@
         $isBattery = ($product->product_type ?? null) === \App\Models\Product::TYPE_BATTERY;
         $isBundle = ($product->product_type ?? null) === \App\Models\Product::TYPE_BUNDLE;
         $categoryText = strtolower((string) $product->category_name);
-        $isPods = ($product->product_type ?? null) === \App\Models\Product::TYPE_PODS
-            || (str_contains($categoryText, 'coils') && str_contains($categoryText, 'pods'));
-        $optionLabel = $isPods ? 'Ohm' : 'Flavor';
-        $optionPluralLabel = $isPods ? 'Ohms' : 'Flavors';
+        $usesOhmOptions = str_contains($categoryText, 'coils') && str_contains($categoryText, 'pods');
+        $usesColorOptions = str_contains($categoryText, 'accessories')
+            || str_contains($categoryText, 'devices');
+        $optionLabel = $usesOhmOptions ? 'Ohm' : ($usesColorOptions ? 'Color' : 'Flavor');
+        $optionPluralLabel = $usesOhmOptions ? 'Ohms' : ($usesColorOptions ? 'Colors' : 'Flavors');
         $availableFlavors = $isBattery ? collect() : ($product->availableFlavorOptions ?? collect());
         $availableColors = ($isBattery || $isBundle) ? ($product->availableColorOptions ?? collect()) : collect();
 

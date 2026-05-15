@@ -3,6 +3,11 @@
 @section('title', 'Cart')
 
 @section('content')
+@php
+    $canPlaceOrders = auth()->user()->canPlaceOrders();
+    $pendingVerificationMessage = 'Please wait for the admin to verify your account before placing an order.';
+@endphp
+
 <style>
     body {
         background: #f6f8fb;
@@ -297,6 +302,12 @@
         color: #991b1b;
     }
 
+    .notice-warning {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #92400e;
+    }
+
     .empty {
         align-items: center;
         display: grid;
@@ -376,6 +387,10 @@
             @endforeach
         </div>
     @endif
+
+    @unless($canPlaceOrders)
+        <div class="notice notice-warning">{{ $pendingVerificationMessage }}</div>
+    @endunless
 
     @if($items->isEmpty())
         <section class="panel empty">
@@ -481,11 +496,13 @@
                         <strong id="selectedTotal">PHP {{ number_format($total, 2) }}</strong>
                     </div>
                     <div class="checkout-note">
-                        <div class="muted" id="checkoutNote">Only selected items will move to checkout. Unselected items stay in your cart.</div>
+                        <div class="muted" id="checkoutNote">
+                            {{ $canPlaceOrders ? 'Only selected items will move to checkout. Unselected items stay in your cart.' : $pendingVerificationMessage }}
+                        </div>
                     </div>
                     <form id="selectedCheckoutForm" method="GET" action="{{ route('checkout') }}">
                         <div id="selectedCheckoutInputs"></div>
-                        <button class="btn-primary" id="checkoutSelectedButton" type="submit" style="width:100%;">Checkout Selected</button>
+                        <button class="btn-primary" id="checkoutSelectedButton" type="submit" style="width:100%;" @disabled(!$canPlaceOrders)>Checkout Selected</button>
                     </form>
                     <a class="btn-secondary" href="{{ route('shop') }}">Continue Shopping</a>
                 </div>
@@ -506,6 +523,8 @@
             const checkoutNote = document.getElementById('checkoutNote');
             const checkoutButton = document.getElementById('checkoutSelectedButton');
             const checkoutInputs = document.getElementById('selectedCheckoutInputs');
+            const canPlaceOrders = @json($canPlaceOrders);
+            const pendingVerificationMessage = @json($pendingVerificationMessage);
 
             function money(amount) {
                 return 'PHP ' + amount.toLocaleString('en-PH', {
@@ -527,11 +546,13 @@
                 selectedDelivery.textContent = delivery > 0 ? money(delivery) : 'Free';
                 selectedTotal.textContent = money(total);
                 selectedCount.textContent = selected.length + ' selected';
-                checkoutButton.disabled = selected.length === 0;
-                checkoutButton.style.opacity = selected.length === 0 ? '0.55' : '1';
-                checkoutNote.textContent = selected.length === 0
-                    ? 'Select at least one item before checkout.'
-                    : 'Only selected items will move to checkout. Unselected items stay in your cart.';
+                checkoutButton.disabled = !canPlaceOrders || selected.length === 0;
+                checkoutButton.style.opacity = !canPlaceOrders || selected.length === 0 ? '0.55' : '1';
+                checkoutNote.textContent = !canPlaceOrders
+                    ? pendingVerificationMessage
+                    : (selected.length === 0
+                        ? 'Select at least one item before checkout.'
+                        : 'Only selected items will move to checkout. Unselected items stay in your cart.');
 
                 selectAll.checked = selected.length === checks.length;
                 selectAll.indeterminate = selected.length > 0 && selected.length < checks.length;

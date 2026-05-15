@@ -3,6 +3,20 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    background: #0A0A0A;
+  }
+
+  :root[data-theme="dark"] body {
+    background: #0A0A0A;
+    color: #FFFFFF;
+  }
+
   * {
     scrollbar-color: #00ffe7 #14172a;
     scrollbar-width: thin;

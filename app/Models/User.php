@@ -80,6 +80,11 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    public function canPlaceOrders(): bool
+    {
+        return $this->isAdmin() || $this->verification_status === 'approved';
+    }
+
     /**
      * Check if account is locked
      */

@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') - PuffCart Admin</title>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('puffcart-theme');
+                document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+            } catch (error) {
+                document.documentElement.dataset.theme = 'dark';
+            }
+
+            if (document.documentElement.dataset.theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#0A0A0A';
+            }
+        })();
+    </script>
+    <meta name="color-scheme" content="light dark">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -29,6 +44,26 @@
             --radius: 8px;
             --radius-lg: 12px;
             --transition: 0.18s ease;
+        }
+
+        :root[data-theme="dark"] {
+            --primary: #66A9FF;
+            --primary-light: #1F1F1F;
+            --primary-hover: #9B7CFF;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B3B3B3;
+            --text-muted: #808080;
+            --border: #2A2A2A;
+            --bg-light: #0A0A0A;
+            --bg-white: #181818;
+            --surface: #1F1F1F;
+            --success: #86EFAC;
+            --warning: #FACC15;
+            --danger: #FCA5A5;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.45);
+            --shadow-md: 0 14px 34px rgba(0,0,0,0.46);
+            --shadow-lg: 0 28px 70px rgba(0,0,0,0.58);
+            color-scheme: dark;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -1010,6 +1045,8 @@
     </div>
 
 </div>
+
+@include('partials.dark-mode-overrides')
 
 <script>
     // Topbar shadow on scroll

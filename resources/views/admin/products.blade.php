@@ -1215,16 +1215,29 @@
                 return text.includes('coils') && text.includes('pods');
             }
 
+            function isAccessoriesCategory() {
+                return categoryText().includes('accessories');
+            }
+
+            function isDevicesCategory() {
+                return categoryText().includes('devices');
+            }
+
             function syncFlavorInventoryLabels() {
                 const flavorBuilder = document.querySelector('[data-option-panel="flavors"] [data-option-builder]');
                 if (!flavorBuilder) return;
 
-                const useOhm = isCoilsPodsCategory() || productType?.value === 'pods';
+                const useOhm = isCoilsPodsCategory();
+                const useColor = !useOhm && (isAccessoriesCategory() || isDevicesCategory());
                 const optionLabel = useOhm
                     ? (flavorBuilder.dataset.ohmOptionLabel || 'Ohm')
+                    : useColor
+                        ? 'Color'
                     : (flavorBuilder.dataset.defaultOptionLabel || 'Flavor');
                 const placeholder = useOhm
                     ? (flavorBuilder.dataset.ohmPlaceholder || '0.6 ohm, 0.8 ohm, 1.2 ohm')
+                    : useColor
+                        ? 'Black, blue, silver'
                     : (flavorBuilder.dataset.defaultPlaceholder || 'Mint, mango, tobacco');
 
                 flavorBuilder.dataset.optionLabel = optionLabel;
@@ -1238,6 +1251,8 @@
                 if (help) {
                     help.textContent = useOhm
                         ? 'Customers can only choose ohm options with stock above zero.'
+                        : useColor
+                            ? 'Customers can only choose colors with stock above zero.'
                         : 'Customers can only choose flavors with stock above zero.';
                 }
                 if (addButton) addButton.textContent = `Add ${optionLabel}`;
