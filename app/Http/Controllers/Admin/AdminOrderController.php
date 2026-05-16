@@ -12,6 +12,10 @@ class AdminOrderController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = in_array((int) $request->input('per_page', 5), [5, 10], true)
+            ? (int) $request->input('per_page', 5)
+            : 5;
+
         $orders = Order::with('user', 'payment')
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->status))
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -26,7 +30,7 @@ class AdminOrderController extends Controller
                 });
             })
             ->latest()
-            ->paginate(15)
+            ->paginate($perPage)
             ->withQueryString();
 
         return view('admin.orders', compact('orders'));
@@ -34,7 +38,7 @@ class AdminOrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load('user', 'items.product', 'payment', 'tracking');
+        $order->load('user', 'items.product', 'items.flavor', 'items.batteryColor', 'payment', 'tracking');
 
         return view('admin.order-show', compact('order'));
     }

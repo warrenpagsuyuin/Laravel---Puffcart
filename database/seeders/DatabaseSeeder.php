@@ -63,16 +63,49 @@ class DatabaseSeeder extends Seeder
         }
 
         foreach ($this->products() as $product) {
+            $flavors = $this->flavorRowsFor($product);
             $product['slug'] = Str::slug($product['name']);
 
             if (Schema::hasTable('categories') && Schema::hasColumn('products', 'category_id')) {
                 $product['category_id'] = Category::where('name', $product['category'])->value('id');
             }
 
-            Product::updateOrCreate(
+            $productModel = Product::updateOrCreate(
                 ['name' => $product['name']],
                 $this->onlyExistingColumns('products', $product)
             );
+
+            if (Schema::hasTable('product_flavors')) {
+                $flavorNames = [];
+
+                foreach ($flavors as $flavor) {
+                    $flavorNames[] = $flavor['name'];
+
+                    $productModel->flavors()->updateOrCreate(
+                        ['name' => $flavor['name']],
+                        [
+                            'stock' => $flavor['stock'],
+                            'reorder_level' => $flavor['reorder_level'],
+                            'option_type' => $flavor['option_type'] ?? 'flavor',
+                            'is_active' => true,
+                        ]
+                    );
+                }
+
+                $productModel->flavors()->whereNotIn('name', $flavorNames)->delete();
+
+                if (Schema::hasColumn('products', 'flavor')) {
+                    $productModel->forceFill(['flavor' => implode(', ', $flavorNames)])->save();
+                }
+
+                $productModel->syncStockFromFlavors();
+            }
+        }
+
+        if (class_exists(ProductSeeder::class)) {
+            $this->call(ProductSeeder::class);
+        } elseif (class_exists(SharedProductsSeeder::class)) {
+            $this->call(SharedProductsSeeder::class);
         }
 
         if (Schema::hasTable('promo_codes')) {
@@ -113,6 +146,10 @@ class DatabaseSeeder extends Seeder
                 'sku' => 'NK-LF-3MG',
                 'category' => 'E-Liquids',
                 'brand' => 'Naked 100',
+                'product_type' => Product::TYPE_E_LIQUID,
+                'nicotine_type' => 'freebase',
+                'nicotine_strengths' => ['3'],
+                'volume_ml' => 60,
                 'price' => 450,
                 'stock' => 12,
                 'reorder_level' => 8,
@@ -191,6 +228,10 @@ class DatabaseSeeder extends Seeder
                 'sku' => 'RV-VCT-60',
                 'category' => 'E-Liquids',
                 'brand' => 'Ripe Vapes',
+                'product_type' => Product::TYPE_E_LIQUID,
+                'nicotine_type' => 'freebase',
+                'nicotine_strengths' => ['3', '6'],
+                'volume_ml' => 60,
                 'price' => 520,
                 'stock' => 18,
                 'reorder_level' => 8,
@@ -206,6 +247,10 @@ class DatabaseSeeder extends Seeder
                 'sku' => 'TK-LYC-ICE',
                 'category' => 'E-Liquids',
                 'brand' => 'Tokyo',
+                'product_type' => Product::TYPE_E_LIQUID,
+                'nicotine_type' => 'saltnic',
+                'nicotine_strengths' => ['30'],
+                'volume_ml' => 30,
                 'price' => 390,
                 'stock' => 26,
                 'reorder_level' => 10,
@@ -283,6 +328,30 @@ class DatabaseSeeder extends Seeder
     {
         return collect($data)
             ->filter(fn ($value, string $column) => Schema::hasColumn($table, $column))
+            ->all();
+    }
+
+    private function flavorRowsFor(array $product): array
+    {
+        $stock = max(0, (int) ($product['stock'] ?? 0));
+        $reorderLevel = max(0, (int) ($product['reorder_level'] ?? 5));
+        $names = match ($product['category'] ?? '') {
+            'Devices' => ['Black', 'Silver', 'Blue'],
+            'E-Liquids' => ['Original', 'Mango Ice', 'Grape Ice'],
+            'Coils & Pods' => ['Mint', 'Mango', 'Tobacco'],
+            'Accessories' => ['Black', 'Blue'],
+            default => ['Original'],
+        };
+
+        $baseStock = intdiv($stock, count($names));
+        $remainder = $stock % count($names);
+
+        return collect($names)
+            ->map(fn (string $name, int $index) => [
+                'name' => $name,
+                'stock' => $baseStock + ($index < $remainder ? 1 : 0),
+                'reorder_level' => $reorderLevel,
+            ])
             ->all();
     }
 }

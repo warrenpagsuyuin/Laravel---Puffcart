@@ -13,21 +13,21 @@ class SecurityHeaders
         $response = $next($request);
 
         // Prevent clickjacking attacks
-        $response->header('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
 
         // Prevent MIME type sniffing
-        $response->header('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
 
         // Referrer policy
-        $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
+        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Permissions policy (formerly Feature-Policy)
-        $response->header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+        $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
         // Cache control for authenticated pages
         if (auth()->check()) {
-            $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-            $response->header('Pragma', 'no-cache');
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            $response->headers->set('Pragma', 'no-cache');
         }
 
         return $response;

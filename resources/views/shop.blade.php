@@ -10,60 +10,127 @@
         border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-        padding: 16px 40px;
+        min-height: 72px;
+        padding: 0 48px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
 
     .logo {
         color: var(--primary);
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 700;
+        letter-spacing: 0;
     }
 
     .nav-links {
         display: flex;
-        flex-wrap: wrap;
-        gap: 22px;
+        align-items: center;
+        gap: 8px;
     }
 
     .nav-links a {
-        color: var(--text-secondary);
+        color: #475569;
         font-size: 14px;
         font-weight: 600;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: #eff6ff;
+        color: #0b66ff;
     }
 
     .shop-shell {
         display: grid;
-        grid-template-columns: 280px minmax(0, 1fr);
-        min-height: calc(100vh - 65px);
+        grid-template-columns: 300px minmax(0, 1fr);
+        min-height: calc(100vh - 72px);
+        background: #f6f8fb;
     }
 
     .filters {
-        background: var(--bg-light);
+        background: var(--bg-white);
         border-right: 1px solid var(--border);
-        padding: 28px 24px;
+        padding: 18px 22px;
+        position: sticky;
+        top: 72px;
+        align-self: start;
+        height: calc(100vh - 72px);
+        overflow: hidden;
+        box-shadow: 8px 0 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .filters form {
+        display: grid;
+        gap: 9px;
     }
 
     .filter-group {
         display: grid;
-        gap: 8px;
-        margin-bottom: 18px;
+        gap: 5px;
+        margin-bottom: 0;
     }
 
     .filter-group label {
-        color: var(--text-primary);
-        font-size: 13px;
+        color: #111827;
+        font-size: 11px;
         font-weight: 700;
+        letter-spacing: 0;
+    }
+
+    .filters input,
+    .filters select {
+        width: 100%;
+        min-height: 38px;
+        padding: 7px 12px;
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 13px;
+        color: #1f2937;
+        box-sizing: border-box;
+    }
+
+    .filters input:focus,
+    .filters select:focus {
+        border-color: #0b66ff;
+        box-shadow: 0 0 0 3px rgba(11, 102, 255, 0.12);
+        outline: none;
+    }
+
+    .price-filter-row {
+        display: grid;
+        gap: 9px;
     }
 
     .filter-actions {
         display: grid;
-        gap: 10px;
-        margin-top: 22px;
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    .filter-actions .btn-primary {
+        width: 100%;
+        min-height: 38px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: none;
+    }
+
+    .filter-actions .btn-secondary {
+        width: 100%;
+        min-height: 38px;
+        padding: 8px 14px;
+        border-radius: 8px;
     }
 
     .shop-main {
-        padding: 36px 40px;
+        padding: 24px 32px 36px;
+        min-width: 0;
     }
 
     .shop-heading {
@@ -79,6 +146,63 @@
         margin-bottom: 6px;
     }
 
+    .shop-sortbar {
+        align-items: center;
+        background: #eef0f3;
+        border: 1px solid #e1e5eb;
+        border-radius: 4px;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        padding: 12px 16px;
+    }
+
+    .sort-group {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .sort-label {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 700;
+        margin-right: 2px;
+    }
+
+    .sort-pill,
+    .sort-select {
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 3px;
+        color: #111827;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 700;
+        min-height: 40px;
+        min-width: 110px;
+        padding: 9px 18px;
+    }
+
+    .sort-pill:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .sort-pill.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #ffffff;
+    }
+
+    .sort-select {
+        min-width: 210px;
+        padding: 9px 14px;
+    }
+
     .muted {
         color: var(--text-muted);
         font-size: 14px;
@@ -86,7 +210,7 @@
 
     .products-grid {
         display: grid;
-        gap: 20px;
+        gap: 18px;
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -98,12 +222,20 @@
         flex-direction: column;
         min-height: 100%;
         overflow: hidden;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    /* Improve mobile card spacing and button layout */
+    .product-body {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
     }
 
     .product-card:hover {
         border-color: var(--primary);
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+        transform: translateY(-1px);
     }
 
     .product-media {
@@ -119,6 +251,11 @@
         height: 100%;
         object-fit: cover;
         width: 100%;
+    }
+
+    .product-media {
+        background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+        min-height: 168px;
     }
 
     .product-placeholder {
@@ -137,7 +274,7 @@
 
     .product-meta {
         color: var(--text-muted);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
         letter-spacing: 0;
         text-transform: uppercase;
@@ -145,7 +282,7 @@
 
     .product-title {
         color: var(--text-primary);
-        font-size: 17px;
+        font-size: 15px;
         font-weight: 700;
         line-height: 1.35;
     }
@@ -158,19 +295,45 @@
 
     .price {
         color: var(--primary);
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
     }
 
     .old-price {
         color: var(--text-muted);
-        font-size: 13px;
+        font-size: 12px;
         text-decoration: line-through;
     }
 
     .stock {
         color: var(--text-secondary);
+        font-size: 12px;
+    }
+
+    .product-detail-line {
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+
+    .flavor-picker {
+        display: grid;
+        gap: 5px;
+    }
+
+    .flavor-picker label {
+        color: var(--text-primary);
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .flavor-picker select {
+        width: 100%;
+        min-height: 38px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
         font-size: 13px;
+        background: #fff;
     }
 
     .card-actions {
@@ -179,16 +342,49 @@
         margin-top: auto;
     }
 
+    .card-actions form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-height: 158px;
+    }
+
+    .card-actions form .btn-primary {
+        margin-top: auto;
+    }
+
+    .card-actions .btn-primary {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(11,102,255,0.08);
+    }
+
+    .card-actions .btn-secondary {
+        width: 100%;
+        padding: 9px 12px;
+        border-radius: 8px;
+    }
+
+    /* corporate look: stronger primary color */
+    .btn-primary {
+        background: #0b66ff;
+        color: #ffffff;
+        border: none;
+    }
+
+    .btn-primary:hover { background: #0954d6; }
+
     .btn-primary,
     .btn-secondary {
         align-items: center;
         border-radius: var(--radius);
         display: inline-flex;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         justify-content: center;
-        min-height: 42px;
-        padding: 10px 14px;
+        min-height: 40px;
+        padding: 9px 12px;
         text-align: center;
     }
 
@@ -239,34 +435,368 @@
     }
 
     .pagination {
-        margin-top: 24px;
+        margin-top: 28px;
+        border-top: 1px solid #e3e8f0;
+        padding-top: 22px;
+    }
+
+    .pagination nav {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+    }
+
+    .pagination nav > div:first-child {
+        display: none;
+    }
+
+    .pagination nav > div:last-child {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .pagination p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .pagination a,
+    .pagination span {
+        align-items: center;
+        border-radius: 7px;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 700;
+        gap: 6px;
+        line-height: 1;
+        min-height: 40px;
+        padding: 10px 13px;
+        text-decoration: none;
+    }
+
+    .pagination a {
+        background: var(--bg-white);
+        border: 1px solid #d9dee8;
+        color: var(--text-primary);
+    }
+
+    .pagination a:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .pagination span {
+        color: var(--text-secondary);
+    }
+
+    .pagination span[aria-disabled="true"],
+    .pagination [aria-disabled="true"] span {
+        opacity: 0.55;
+    }
+
+    .pagination [aria-current="page"] span,
+    .pagination .active span {
+        background: var(--primary);
+        border: 1px solid var(--primary);
+        color: #fff;
+    }
+
+    .pagination svg {
+        display: block;
+        flex: 0 0 18px;
+        height: 18px;
+        max-height: 18px;
+        max-width: 18px;
+        width: 18px;
+    }
+
+    :root[data-theme="dark"] .shop-shell {
+        background:
+            radial-gradient(circle at 78% 0%, rgba(47, 124, 246, 0.1), transparent 28%),
+            linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
+    }
+
+    :root[data-theme="dark"] .store-nav {
+        background: rgba(8, 14, 26, 0.96);
+        border-bottom-color: #26384f;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    :root[data-theme="dark"] .logo {
+        color: #66a9ff;
+    }
+
+    :root[data-theme="dark"] .nav-links a {
+        color: #d7e4f5;
+    }
+
+    :root[data-theme="dark"] .nav-links a:hover {
+        background: #112b4f;
+        color: #ffffff;
+    }
+
+    :root[data-theme="dark"] .filters {
+        background: #101a2b;
+        border-right-color: #26384f;
+        box-shadow: 12px 0 34px rgba(0, 0, 0, 0.28);
+    }
+
+    :root[data-theme="dark"] .filter-group label,
+    :root[data-theme="dark"] .flavor-picker label,
+    :root[data-theme="dark"] .sort-label {
+        color: #b9c8dc;
+    }
+
+    :root[data-theme="dark"] .filters input,
+    :root[data-theme="dark"] .filters select,
+    :root[data-theme="dark"] .flavor-picker select,
+    :root[data-theme="dark"] .sort-select {
+        background: #0b1220 !important;
+        border-color: #30445f !important;
+        color: #eef5ff !important;
+    }
+
+    :root[data-theme="dark"] .filters input::placeholder {
+        color: #7f91aa;
+    }
+
+    :root[data-theme="dark"] .filters input:focus,
+    :root[data-theme="dark"] .filters select:focus,
+    :root[data-theme="dark"] .flavor-picker select:focus,
+    :root[data-theme="dark"] .sort-select:focus {
+        border-color: #66a9ff;
+        box-shadow: 0 0 0 3px rgba(102, 169, 255, 0.18);
+    }
+
+    :root[data-theme="dark"] .shop-main {
+        background: transparent;
+    }
+
+    :root[data-theme="dark"] .shop-heading h1,
+    :root[data-theme="dark"] .shop-heading h2 {
+        color: #f4f8ff;
+    }
+
+    :root[data-theme="dark"] .muted,
+    :root[data-theme="dark"] .stock,
+    :root[data-theme="dark"] .product-detail-line,
+    :root[data-theme="dark"] .pagination p,
+    :root[data-theme="dark"] .pagination span {
+        color: #a9bad0;
+    }
+
+    :root[data-theme="dark"] .shop-sortbar {
+        background: rgba(16, 26, 43, 0.88);
+        border-color: #26384f;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    :root[data-theme="dark"] .sort-pill {
+        background: #0b1220;
+        border-color: #30445f;
+        color: #e7eef9;
+    }
+
+    :root[data-theme="dark"] .sort-pill:hover {
+        border-color: #66a9ff;
+        color: #9ec8ff;
+    }
+
+    :root[data-theme="dark"] .sort-pill.active {
+        background: #2f7cf6;
+        border-color: #2f7cf6;
+        color: #ffffff;
+    }
+
+    :root[data-theme="dark"] .product-card {
+        background: #101a2b;
+        border-color: #26384f !important;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.2);
+    }
+
+    :root[data-theme="dark"] .product-card:hover {
+        border-color: #66a9ff;
+        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(102, 169, 255, 0.08);
+    }
+
+    :root[data-theme="dark"] .product-media {
+        background: linear-gradient(180deg, #172236 0%, #0d1525 100%);
+        border-bottom: 1px solid #26384f;
+    }
+
+    :root[data-theme="dark"] .product-meta {
+        color: #8fbfff;
+    }
+
+    :root[data-theme="dark"] .product-title {
+        color: #ffffff !important;
+    }
+
+    :root[data-theme="dark"] .price {
+        color: #66a9ff;
+    }
+
+    :root[data-theme="dark"] .old-price {
+        color: #7f91aa;
+    }
+
+    :root[data-theme="dark"] .btn-secondary,
+    :root[data-theme="dark"] .pagination a {
+        background: #0b1220;
+        border-color: #30445f;
+        color: #e7eef9;
+    }
+
+    :root[data-theme="dark"] .btn-secondary:hover,
+    :root[data-theme="dark"] .pagination a:hover {
+        border-color: #66a9ff;
+        color: #9ec8ff;
+    }
+
+    :root[data-theme="dark"] .pagination {
+        border-top-color: #26384f;
+    }
+
+    :root[data-theme="dark"] .puff-pagination {
+        background: #101a2b;
+        border-color: #26384f;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__button,
+    :root[data-theme="dark"] .puff-pagination__page {
+        background: #0b1220;
+        border-color: #30445f;
+        color: #e7eef9;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__button:hover,
+    :root[data-theme="dark"] .puff-pagination__page:hover {
+        background: #112b4f;
+        border-color: #66a9ff;
+        color: #9ec8ff;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__page.is-active {
+        background: #2f7cf6;
+        border-color: #2f7cf6;
+        color: #ffffff;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__button.is-disabled,
+    :root[data-theme="dark"] .puff-pagination__ellipsis,
+    :root[data-theme="dark"] .puff-pagination__summary {
+        color: #a9bad0;
+    }
+
+    :root[data-theme="dark"] .puff-pagination__summary strong {
+        color: #f4f8ff;
+    }
+
+    :root[data-theme="dark"] .recommendations {
+        border-top-color: #26384f;
+    }
+
+    :root[data-theme="dark"] .notice-success {
+        background: rgba(22, 101, 52, 0.22);
+        border-color: rgba(74, 222, 128, 0.32);
+        color: #bbf7d0;
+    }
+
+    :root[data-theme="dark"] .notice-error {
+        background: rgba(127, 29, 29, 0.24);
+        border-color: rgba(248, 113, 113, 0.32);
+        color: #fecaca;
     }
 
     @media (max-width: 1100px) {
+        .shop-shell {
+            grid-template-columns: 300px minmax(0, 1fr);
+        }
+
+        .shop-main {
+            padding: 30px;
+        }
+
         .products-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
     }
 
     @media (max-width: 760px) {
         .store-nav {
-            align-items: flex-start;
-            flex-direction: column;
-            gap: 14px;
-            padding: 16px 20px;
+            align-items: center;
+            flex-direction: row;
+            gap: 12px;
+            min-height: 56px;
+            padding: 10px 18px;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-links {
+            gap: 12px;
+            justify-content: flex-end;
         }
 
         .shop-shell {
             grid-template-columns: 1fr;
+            min-height: calc(100vh - 56px);
         }
 
         .filters {
             border-right: 0;
             border-bottom: 1px solid var(--border);
+            height: auto;
+            min-height: 0;
+            position: static;
+            padding: 12px 18px;
+        }
+
+        .filters form {
+            display: grid;
+            gap: 8px;
+        }
+
+        .filter-group {
+            margin-bottom: 0;
+        }
+
+        .filter-group label {
+            font-size: 10px;
+            line-height: 1.2;
+        }
+
+        .filters input,
+        .filters select {
+            font-size: 12px;
+            min-height: 34px;
+            padding: 5px 10px;
+        }
+
+        .price-filter-row {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-actions {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-top: 0;
+        }
+
+        .filter-actions .btn-primary,
+        .filter-actions .btn-secondary {
+            min-height: 34px;
+            padding: 6px 10px;
         }
 
         .shop-main {
-            padding: 26px 20px;
+            padding: 24px 20px 32px;
         }
 
         .shop-heading {
@@ -274,6 +804,28 @@
             flex-direction: column;
         }
 
+        .shop-sortbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .sort-pill,
+        .sort-select {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .products-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .pagination nav > div:last-child {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 520px) {
         .products-grid {
             grid-template-columns: 1fr;
         }
@@ -288,7 +840,7 @@
         <a href="{{ route('cart') }}">Cart</a>
         <a href="{{ route('tracking') }}">Tracking</a>
         @auth
-            <a href="{{ route('profile') }}">Profile</a>
+            <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
         @else
             <a href="{{ route('login') }}">Login</a>
         @endauth
@@ -308,7 +860,7 @@
                 <select id="category" name="category">
                     <option value="">All categories</option>
                     @foreach($categories as $category)
-                        <option value="{{ $category->slug }}" @selected(request('category') === $category->slug)>
+                        <option value="{{ $category->slug }}" data-name="{{ $category->name }}" @selected(request('category') === $category->slug)>
                             {{ $category->name }}
                         </option>
                     @endforeach
@@ -325,14 +877,26 @@
                 </select>
             </div>
 
-            <div class="filter-group">
-                <label for="min_price">Min Price</label>
-                <input id="min_price" type="number" min="0" step="0.01" name="min_price" value="{{ request('min_price') }}">
+            <div class="filter-group" id="nicotine-type-filter">
+                <label for="nicotine_type">Nicotine Type</label>
+                <select id="nicotine_type" name="nicotine_type">
+                    <option value="">All nicotine types</option>
+                    @foreach(\App\Models\Product::NICOTINE_TYPE_LABELS as $value => $label)
+                        <option value="{{ $value }}" @selected(request('nicotine_type') === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
             </div>
 
-            <div class="filter-group">
-                <label for="max_price">Max Price</label>
-                <input id="max_price" type="number" min="0" step="0.01" name="max_price" value="{{ request('max_price') }}">
+            <div class="price-filter-row">
+                <div class="filter-group">
+                    <label for="min_price">Min Price</label>
+                    <input id="min_price" type="number" min="0" step="0.01" name="min_price" value="{{ request('min_price') }}">
+                </div>
+
+                <div class="filter-group">
+                    <label for="max_price">Max Price</label>
+                    <input id="max_price" type="number" min="0" step="0.01" name="max_price" value="{{ request('max_price') }}">
+                </div>
             </div>
 
             <div class="filter-group">
@@ -370,8 +934,29 @@
             </div>
         </div>
 
-        <div class="products-grid">
-            @forelse($products as $product)
+        @php
+            $activeSort = request('sort', 'recommended');
+            $sortUrl = fn (string $sort) => request()->fullUrlWithQuery(['sort' => $sort, 'page' => 1]);
+        @endphp
+
+        <div class="shop-sortbar">
+            <div class="sort-group">
+                <span class="sort-label">Sort by</span>
+                <a class="sort-pill {{ $activeSort === 'popular' ? 'active' : '' }}" href="{{ $sortUrl('popular') }}">Popular</a>
+                <a class="sort-pill {{ $activeSort === 'newest' ? 'active' : '' }}" href="{{ $sortUrl('newest') }}">Latest</a>
+                <a class="sort-pill {{ $activeSort === 'top_sales' ? 'active' : '' }}" href="{{ $sortUrl('top_sales') }}">Top Sales</a>
+                <select class="sort-select" onchange="if (this.value) window.location.href = this.value;">
+                    <option value="{{ $sortUrl('recommended') }}" @selected($activeSort === 'recommended')>Price</option>
+                    <option value="{{ $sortUrl('price_asc') }}" @selected($activeSort === 'price_asc')>Price: Low to High</option>
+                    <option value="{{ $sortUrl('price_desc') }}" @selected($activeSort === 'price_desc')>Price: High to Low</option>
+                </select>
+            </div>
+
+        </div>
+
+        @if($products->isNotEmpty())
+            <div class="products-grid">
+                @foreach($products as $product)
                 <article class="product-card">
                     <a class="product-media" href="{{ route('product.show', $product) }}">
                         @if($product->image_url)
@@ -390,31 +975,31 @@
                                 <span class="old-price">PHP {{ number_format($product->original_price, 2) }}</span>
                             @endif
                         </div>
-                        <div class="stock">{{ $product->stock > 0 ? $product->stock . ' in stock' : 'Out of stock' }}</div>
+                        <div class="stock">{{ $product->available_stock > 0 ? $product->available_stock . ' in stock' : 'Out of stock' }}</div>
+                        <div class="product-detail-line">Type: {{ $product->product_type_label }}</div>
+                        @if($product->nicotine_profile)
+                            <div class="product-detail-line">Nicotine: {{ $product->nicotine_profile }}</div>
+                        @endif
+                        @if($product->volume_label)
+                            <div class="product-detail-line">Size: {{ $product->volume_label }}</div>
+                        @endif
 
                         <div class="card-actions">
                             <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
-                            @auth
-                                <form method="POST" action="{{ route('cart.add') }}">
-                                    @csrf
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                    <input type="hidden" name="quantity" value="1">
-                                    <button class="btn-primary" type="submit" @disabled($product->stock < 1)>Add to Cart</button>
-                                </form>
-                            @else
-                                <a class="btn-primary" href="{{ route('login') }}">Login to Buy</a>
-                            @endauth
                         </div>
                     </div>
                 </article>
-            @empty
-                <p class="muted">No products match your filters.</p>
-            @endforelse
-        </div>
+                @endforeach
+            </div>
 
-        <div class="pagination">
-            {{ $products->links() }}
-        </div>
+            @if($products->hasPages())
+                <div class="pagination">
+                    {{ $products->links() }}
+                </div>
+            @endif
+        @else
+            <p class="muted">No products match your filters.</p>
+        @endif
 
         @if($recommendedProducts->isNotEmpty())
             <section class="recommendations">
@@ -439,6 +1024,12 @@
                                 <div class="product-meta">{{ $product->category_name }}</div>
                                 <a class="product-title" href="{{ route('product.show', $product) }}">{{ $product->name }}</a>
                                 <div class="price">PHP {{ number_format($product->price, 2) }}</div>
+                                @if($product->nicotine_profile)
+                                    <div class="product-detail-line">Nicotine: {{ $product->nicotine_profile }}</div>
+                                @endif
+                                @if($product->volume_label)
+                                    <div class="product-detail-line">Size: {{ $product->volume_label }}</div>
+                                @endif
                                 <a class="btn-secondary" href="{{ route('product.show', $product) }}">View</a>
                             </div>
                         </article>
@@ -448,4 +1039,26 @@
         @endif
     </main>
 </div>
+<script>
+    const categorySelect = document.getElementById('category');
+    const nicotineFilter = document.getElementById('nicotine-type-filter');
+    const nicotineSelect = document.getElementById('nicotine_type');
+
+    function syncNicotineFilter() {
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        const categoryName = (selectedOption?.dataset.name || selectedOption?.text || '').toLowerCase();
+        const categoryValue = (categorySelect.value || '').toLowerCase();
+        const isELiquid = categoryName.includes('e-liquid') || categoryValue.includes('e-liquid');
+
+        nicotineFilter.style.display = isELiquid ? '' : 'none';
+        nicotineSelect.disabled = !isELiquid;
+
+        if (!isELiquid) {
+            nicotineSelect.value = '';
+        }
+    }
+
+    categorySelect?.addEventListener('change', syncNicotineFilter);
+    syncNicotineFilter();
+</script>
 @endsection

@@ -10,26 +10,38 @@
         border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-        padding: 16px 40px;
+        min-height: 72px;
+        padding: 0 48px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
 
     .logo {
         color: var(--primary);
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 700;
+        letter-spacing: 0;
     }
 
     .nav-links {
         display: flex;
-        flex-wrap: wrap;
-        gap: 22px;
+        align-items: center;
+        gap: 8px;
     }
 
     .nav-links a {
-        color: var(--text-secondary);
+        color: #475569;
         font-size: 14px;
         font-weight: 600;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: #eff6ff;
+        color: #0b66ff;
     }
 
     .orders-shell {
@@ -115,7 +127,7 @@
         <a href="{{ route('shop') }}">Shop</a>
         <a href="{{ route('cart') }}">Cart</a>
         <a href="{{ route('tracking') }}">Tracking</a>
-        <a href="{{ route('profile') }}">Profile</a>
+        <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
     </div>
 </nav>
 
@@ -142,7 +154,11 @@
                         <td>{{ strtoupper(str_replace('_', ' ', $order->payment_method)) }}</td>
                         <td>PHP {{ number_format($order->total, 2) }}</td>
                         <td>{{ $order->created_at?->format('M d, Y') }}</td>
-                        <td><a class="btn-secondary" href="{{ route('orders.show', $order) }}">View</a></td>
+                        <td>
+                            <a class="btn-secondary" href="{{ route('orders.show', $order) }}">
+                                {{ in_array($order->status, ['completed', 'delivered'], true) ? 'Review' : 'View' }}
+                            </a>
+                        </td>
                     </tr>
                 @empty
                     <tr>

@@ -20,9 +20,13 @@ class ProductController extends Controller
         ProductRecommendationService $recommendationService
     )
     {
-        $products = $searchService->search($request);
+        $products = $searchService->search($request, 6);
         $categories = Schema::hasTable('categories')
-            ? Category::withCount('products')->active()->orderBy('name')->get()
+            ? Category::withCount(['products' => fn ($query) => $query->active()])
+                ->whereHas('products', fn ($query) => $query->active())
+                ->active()
+                ->orderBy('name')
+                ->get()
             : collect();
         $brands = Product::active()
             ->whereNotNull('brand')
@@ -48,7 +52,7 @@ class ProductController extends Controller
     {
         abort_if(!$product->is_active, 404);
 
-        $product->load('reviews.user');
+        $product->load('reviews.user', 'availableFlavorOptions', 'availableColorOptions', 'flavors');
         $behaviorService->productViewed($product, $request);
 
         $related = $recommendationService->relatedProducts($product, $request->user(), 4);

@@ -1,24 +1,28 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Events\ChatbotMessage;
 use App\Events\TestNotification;
 use App\Http\Controllers\Admin\AdminAuditLogController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminMLInsightController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminWalkInController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminVerificationController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
+use App\Mail\PasswordResetMail;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,10 +46,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::get('/checkout', [CustomerOrderController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout', [CustomerOrderController::class, 'placeOrder'])->name('checkout.place');
+    Route::post('/checkout', [CustomerOrderController::class, 'placeOrder'])->middleware('throttle:checkout')->name('checkout.place');
 
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/reviews', [CustomerOrderController::class, 'storeReview'])->name('orders.reviews.store');
     Route::get('/orders/{order}/tracking', [CustomerOrderController::class, 'track'])->name('orders.track');
     Route::get('/tracking', [CustomerOrderController::class, 'trackingIndex'])->name('tracking');
 });
@@ -56,11 +61,13 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/test-websocket', function () {
-    broadcast(new TestNotification('WebSocket is working on Puffcart!'));
+if (app()->environment('local')) {
+    Route::get('/test-websocket', function () {
+        broadcast(new TestNotification('WebSocket is working on PuffCart!'));
 
-    return 'WebSocket event sent!';
-})->name('test.websocket');
+        return 'WebSocket event sent!';
+    })->middleware('throttle:mail-tests')->name('test.websocket');
+}
 
 Route::post('/chatbot/send', function (Request $request) {
     $request->validate([
@@ -71,7 +78,7 @@ Route::post('/chatbot/send', function (Request $request) {
     $reply = "I'm sorry, I don't understand yet. You can ask about delivery, payment, products, tracking, age verification, returns, or support.";
 
     if (str_contains($message, 'hello') || str_contains($message, 'hi')) {
-        $reply = 'Hello! Welcome to Puffcart. How can I help you today?';
+        $reply = 'Hello! Welcome to PuffCart. How can I help you today?';
     } elseif (str_contains($message, 'delivery') || str_contains($message, 'shipping')) {
         $reply = 'We offer same-day delivery in Metro Manila. Shipping time may vary depending on your location.';
     } elseif (str_contains($message, 'payment') || str_contains($message, 'pay')) {
@@ -81,15 +88,15 @@ Route::post('/chatbot/send', function (Request $request) {
     } elseif (str_contains($message, 'tracking') || str_contains($message, 'track')) {
         $reply = 'You can track your order by clicking the Tracking link in the navigation menu.';
     } elseif (str_contains($message, 'age') || str_contains($message, '18') || str_contains($message, 'verify')) {
-        $reply = 'Puffcart requires 18+ age verification before account approval and purchasing.';
+        $reply = 'PuffCart requires 18+ age verification before account approval and purchasing.';
     } elseif (str_contains($message, 'return') || str_contains($message, 'refund')) {
         $reply = 'Returns and refunds are reviewed based on product condition and order details. Please contact support for assistance.';
     } elseif (str_contains($message, 'support') || str_contains($message, 'contact')) {
-        $reply = 'You can contact Puffcart support through the Support or Login page.';
+        $reply = 'You can contact PuffCart support through the Support or Login page.';
     } elseif (str_contains($message, 'cart')) {
         $reply = 'You can view your selected products by clicking Cart in the navigation menu.';
     } elseif (str_contains($message, 'shop')) {
-        $reply = 'Click Shop in the navigation menu to browse all available Puffcart products.';
+        $reply = 'Click Shop in the navigation menu to browse all available PuffCart products.';
     }
 
     broadcast(new ChatbotMessage($reply, 'bot'));
@@ -98,7 +105,7 @@ Route::post('/chatbot/send', function (Request $request) {
         'status' => 'sent',
         'reply' => $reply,
     ]);
-})->name('chatbot.send');
+})->middleware('throttle:chatbot')->name('chatbot.send');
 
 /*
 |--------------------------------------------------------------------------
@@ -107,7 +114,7 @@ Route::post('/chatbot/send', function (Request $request) {
 */
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:registration')->name('register.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -116,7 +123,7 @@ Route::post('/register', [AuthController::class, 'register']);
 */
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login.submit');
 
 Route::get('/profile', function () {
     return view('profile');
@@ -126,20 +133,42 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
+| Password Reset Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])->name('password.forgot');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->middleware('throttle:password-reset')->name('password.send-reset-link');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset-form');
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->middleware('throttle:password-reset')->name('password.update');
+
+/*
+|--------------------------------------------------------------------------
 | Payment Routes (PayMongo)
 |--------------------------------------------------------------------------
 */
 
 Route::prefix('payment')->name('payment.')->group(function () {
-    Route::post('checkout/{order}', [PaymentController::class, 'initiateCheckout'])
+    Route::get('{order}', [PaymentController::class, 'show'])
         ->middleware('auth')
+        ->name('show');
+
+    Route::post('checkout/{order}', [PaymentController::class, 'initiateCheckout'])
+        ->middleware(['auth', 'throttle:checkout'])
         ->name('checkout');
+
     Route::get('success/{order}', [PaymentController::class, 'paymentSuccess'])
         ->middleware('auth')
         ->name('success');
+
+    Route::get('failed/{order}', [PaymentController::class, 'paymentFailed'])
+        ->middleware('auth')
+        ->name('failed');
+
     Route::get('cancel/{order}', [PaymentController::class, 'paymentCancel'])
         ->middleware('auth')
         ->name('cancel');
+
     Route::post('webhook', [PaymentController::class, 'webhook'])
         ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
         ->name('webhook');
@@ -153,12 +182,13 @@ Route::prefix('payment')->name('payment.')->group(function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
+
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('throttle:admin-login')->name('login.submit');
 
     // MFA Routes
     Route::get('/mfa', [AdminAuthController::class, 'showMFA'])->name('mfa.show');
-    Route::post('/mfa/verify', [AdminAuthController::class, 'verifyMFA'])->name('mfa.verify');
+    Route::post('/mfa/verify', [AdminAuthController::class, 'verifyMFA'])->middleware('throttle:admin-login')->name('mfa.verify');
 
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
@@ -166,6 +196,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
         Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
         Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
@@ -178,6 +209,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
 
+        Route::get('/walk-in', [AdminWalkInController::class, 'index'])->name('walk-in.index');
+        Route::post('/walk-in/checkout', [AdminWalkInController::class, 'checkout'])->name('walk-in.checkout');
+
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
         Route::post('/users/{user}/approve', [AdminUserController::class, 'approve'])->name('users.approve');
@@ -185,6 +219,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{user}/unlock', [AdminUserController::class, 'unlock'])->name('users.unlock');
 
         Route::get('/verifications', [AdminVerificationController::class, 'index'])->name('verifications.index');
+        Route::get('/verifications/{user}', [AdminVerificationController::class, 'show'])->name('verifications.show');
+        Route::get('/verifications/{user}/document', [AdminVerificationController::class, 'document'])->name('verifications.document');
         Route::post('/verifications/{user}/approve', [AdminVerificationController::class, 'approve'])->name('verifications.approve');
         Route::post('/verifications/{user}/reject', [AdminVerificationController::class, 'reject'])->name('verifications.reject');
 
@@ -192,6 +228,30 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/audit-logs/{auditLog}', [AdminAuditLogController::class, 'show'])->name('audit-logs.show');
 
         Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
-        Route::get('/ml-insights', [AdminMLInsightController::class, 'index'])->name('ml-insights.index');
+        Route::get('/reports/export/pdf', [AdminReportController::class, 'exportPdf'])->name('reports.export-pdf');
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Test Email Route (Development Only)
+|--------------------------------------------------------------------------
+*/
+
+if (app()->environment('local')) {
+    Route::get('/test-email', function () {
+        $user = \App\Models\User::first();
+
+        if (!$user) {
+            return 'No users found in database';
+        }
+
+        try {
+            Mail::send(new PasswordResetMail($user, 'test-token-12345'));
+
+            return 'Email sent successfully to ' . $user->email;
+        } catch (\Exception $e) {
+            return 'Error: ' . $e->getMessage();
+        }
+    })->middleware('throttle:mail-tests');
+}

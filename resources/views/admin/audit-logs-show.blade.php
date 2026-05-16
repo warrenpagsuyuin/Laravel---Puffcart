@@ -1,57 +1,103 @@
 @extends('layouts.admin')
 
+@section('title', 'Audit Log Details')
+@section('page-title', 'Audit Log Details')
+
+@section('actions')
+    <a href="{{ route('admin.audit-logs.index') }}" class="btn btn-secondary">
+        Back to Audit Logs
+    </a>
+@endsection
+
 @section('content')
-<div class="p-8">
-    <div class="mb-6">
-        <a href="{{ route('admin.audit-logs.index') }}" class="text-[#0066ff] hover:underline font-medium">
-            ← Back to Audit Logs
-        </a>
-    </div>
 
-    <div class="bg-white rounded-lg shadow-lg p-8">
-        <h1 class="text-3xl font-bold text-[#1a1a1a] mb-8">Audit Log Details</h1>
+    {{-- Log Information --}}
+    <section class="panel">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-                <h3 class="text-sm font-semibold text-[#1a1a1a] mb-2">Action</h3>
-                <p class="text-[#666666] mb-6">{{ str_replace('_', ' ', ucfirst($log->action)) }}</p>
-
-                <h3 class="text-sm font-semibold text-[#1a1a1a] mb-2">User</h3>
-                <p class="text-[#666666] mb-6">
-                    @if ($log->user)
-                        <a href="{{ route('admin.users.show', $log->user) }}" class="text-[#0066ff] hover:underline">
-                            {{ $log->user->email }}
-                        </a>
-                    @else
-                        <span>System</span>
-                    @endif
-                </p>
-
-                <h3 class="text-sm font-semibold text-[#1a1a1a] mb-2">Date & Time</h3>
-                <p class="text-[#666666] mb-6">{{ $log->created_at->format('F d, Y H:i:s') }}</p>
-
-                <h3 class="text-sm font-semibold text-[#1a1a1a] mb-2">IP Address</h3>
-                <p class="text-[#666666] mb-6">{{ $log->ip_address ?? 'N/A' }}</p>
-            </div>
-
-            <div>
-                <h3 class="text-sm font-semibold text-[#1a1a1a] mb-2">User Agent</h3>
-                <p class="text-[#666666] mb-6 text-xs break-all bg-[#f9f9f9] p-3 rounded border border-[#e0e0e0]">
-                    {{ $log->user_agent ?? 'N/A' }}
-                </p>
-
-                <h3 class="text-sm font-semibold text-[#1a1a1a] mb-2">Description</h3>
-                <p class="text-[#666666] bg-[#f9f9f9] p-3 rounded border border-[#e0e0e0]">
-                    {{ $log->description ?? 'No additional details' }}
-                </p>
-            </div>
+        <div class="section-title">
+            <h2>Log Information</h2>
         </div>
 
-        <div class="mt-8 pt-8 border-t border-[#e0e0e0]">
-            <a href="{{ route('admin.audit-logs.index') }}" class="px-6 py-2 bg-[#0066ff] hover:bg-[#0052cc] text-white font-semibold rounded-lg transition">
-                Back to Logs
-            </a>
+        <table class="admin-table" style="min-width:0;">
+            <tbody>
+
+                <tr>
+                    <td><strong>Action</strong></td>
+
+                    <td>
+                        @php
+                            $badgeClass = match($log->action) {
+                                'create', 'created' => 'badge-green',
+                                'update', 'updated' => 'badge-blue',
+                                'delete', 'deleted' => 'badge-red',
+                                default => 'badge-gray'
+                            };
+                        @endphp
+
+                        <span class="badge {{ $badgeClass }}">
+                            {{ ucfirst(str_replace('_', ' ', $log->action)) }}
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>User</strong></td>
+
+                    <td>
+                        @if ($log->user)
+                            <a href="{{ route('admin.users.show', $log->user) }}">
+                                {{ $log->user->email }}
+                            </a>
+                        @else
+                            <span class="muted">System</span>
+                        @endif
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>Date & Time</strong></td>
+
+                    <td>
+                        {{ $log->created_at->format('F d, Y h:i:s A') }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>IP Address</strong></td>
+
+                    <td>
+                        {{ $log->ip_address ?: 'N/A' }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>User Agent</strong></td>
+
+                    <td style="word-break:break-word;">
+                        {{ $log->user_agent ?: 'N/A' }}
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </section>
+
+    {{-- Description --}}
+    <section class="panel" style="margin-top:16px;">
+
+        <div class="section-title">
+            <h2>Description</h2>
         </div>
-    </div>
-</div>
+
+        <div style="
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 14px;
+        ">
+            {{ $log->description ?: 'No additional details available.' }}
+        </div>
+
+    </section>
+
 @endsection

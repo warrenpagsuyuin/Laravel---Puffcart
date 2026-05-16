@@ -39,7 +39,7 @@ class AdminAuditLogController extends Controller
             $query->whereDate('created_at', '<=', $request->input('date_to'));
         }
 
-        $logs = $query->latest('created_at')->paginate(50);
+        $logs = $query->latest('created_at')->paginate(10);
 
         // Get action types for filter dropdown
         $actions = AuditLog::distinct('action')

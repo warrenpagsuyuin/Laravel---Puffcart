@@ -1,75 +1,191 @@
 @extends('layouts.app')
 
-@section('title', 'Reset Password')
+@section('title', 'Forgot Password')
 
 @section('content')
-<div class="min-h-screen grid grid-cols-2"
-     style="background-image:linear-gradient(#00ffe708 1px,transparent 1px),linear-gradient(90deg,#00ffe708 1px,transparent 1px);background-size:32px 32px">
+<style>
+    .auth-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+        padding: 20px;
+    }
 
-    {{-- Left brand panel --}}
-    <div class="bg-[#070a14] border-r border-[#00ffe730] flex flex-col items-center justify-center p-10">
-        <div class="text-center mb-8">
-            <div class="w-14 h-14 bg-[#001f1c] border border-[#007a6e] rounded-sm flex items-center justify-center mx-auto mb-4">
-                <svg class="w-7 h-7" viewBox="0 0 16 16" fill="#00ffe7">
-                    <rect x="5" y="1" width="6" height="10" rx="2"/>
-                    <rect x="6" y="11" width="4" height="3" rx="1"/>
-                    <circle cx="8" cy="3.5" r="1.2"/>
-                </svg>
-            </div>
-            <div class="font-['Orbitron'] text-2xl text-[#00ffe7] tracking-widest" style="text-shadow:0 0 14px #00ffe7">PUFFCART</div>
-            <div class="text-[9px] text-[#1e3d52] tracking-widest mt-1">// CLOUDPUFFS ONLINE SHOP</div>
+    .auth-box {
+        background: var(--bg-white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .auth-header h1 {
+        font-size: 24px;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .auth-header p {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 11px 12px;
+        background: var(--bg-white);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 14px;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .form-group input::placeholder {
+        color: var(--text-muted);
+    }
+
+    .auth-submit {
+        width: 100%;
+        padding: 11px 12px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 8px;
+    }
+
+    .auth-submit:hover {
+        background: var(--primary-hover);
+        box-shadow: var(--shadow-md);
+    }
+
+    .auth-submit:active {
+        transform: translateY(1px);
+    }
+
+    .alert {
+        padding: 12px 14px;
+        border-radius: var(--radius);
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    .alert-success {
+        background: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #bbf7d0;
+    }
+
+    .alert-error {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .auth-footer p {
+        color: var(--text-secondary);
+        margin: 12px 0;
+    }
+
+    .auth-footer a {
+        color: var(--primary);
+        font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+        color: var(--primary-hover);
+    }
+
+    .info-text {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        font-size: 13px;
+        color: #1e40af;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="auth-header">
+            <h1>Forgot Password?</h1>
+            <p>Enter your email address and we'll send you a link to reset your password.</p>
         </div>
-        <div class="space-y-3 w-full max-w-xs">
-            @foreach(['Browse 200+ vape products' => '#00ffe7', 'Same-day Metro Manila delivery' => '#00ffe7', 'GCash, Maya & COD accepted' => '#ff003c', 'Real-time order tracking' => '#ffe600', 'AI-powered VaultBot assistant' => '#bf00ff'] as $feat => $color)
-                <div class="flex items-center gap-3 text-[11px] text-[#5a8fa8]">
-                    <span style="color:{{ $color }}">■</span> {{ $feat }}
-                </div>
-            @endforeach
-        </div>
-    </div>
 
-    {{-- Right auth panel --}}
-    <div class="flex items-center justify-center p-10">
-        <div class="bg-[#0a0e1c] border border-[#00ffe730] rounded-sm p-7 w-full max-w-sm relative">
-            <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#00ffe7]"></div>
-            <div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#00ffe7]"></div>
-            <div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#00ffe7]"></div>
-            <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00ffe7]"></div>
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
 
-            <h2 class="font-['Orbitron'] text-[13px] text-[#00ffe7] tracking-widest mb-1">RESET_PASSWORD</h2>
-            <p class="text-[9px] text-[#5a8fa8] mb-6">Enter your email to receive a password reset link.</p>
+        @if(session('error'))
+            <div class="alert alert-error">{{ session('error') }}</div>
+        @endif
 
-            @if(session('status'))
-                <div class="bg-[#001a09] border border-[#00ffe755] text-[#00ffe7] text-[10px] p-3 mb-4 rounded-sm">
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="bg-[#1a0009] border border-[#ff003c55] text-[#ff003c] text-[10px] p-3 mb-4 rounded-sm">
-                    @foreach($errors->all() as $error)
-                        <div>• {{ $error }}</div>
-                    @endforeach
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('password.email') }}">
-                @csrf
-                <div class="mb-4">
-                    <div class="text-[8px] text-[#1e3d52] tracking-widest uppercase mb-1">// Email Address</div>
-                    <input type="email" name="email" value="{{ old('email') }}" placeholder="your@email.com"
-                           class="w-full bg-[#14172a] border border-[#00ffe718] text-[#c8f0ff] text-[12px] px-3 py-2 rounded-sm outline-none font-mono focus:border-[#00ffe7] @error('email') border-[#ff003c] @enderror">
-                </div>
-                <button type="submit"
-                        class="w-full font-['Orbitron'] text-[10px] py-3 bg-[#00ffe7] text-[#04050d] font-bold tracking-widest hover:bg-[#00ccb8] transition-colors"
-                        style="clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)">
-                    SEND_RESET_LINK →
-                </button>
-            </form>
-
-            <div class="text-center mt-4">
-                <a href="{{ route('login') }}" class="text-[9px] text-[#00ffe7] hover:underline">Back to Sign In →</a>
+        @if($errors->any())
+            <div class="alert alert-error">
+                @foreach($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
             </div>
+        @endif
+
+        <div class="info-text">
+            💡 Please enter the email address associated with your Puffcart account.
+        </div>
+
+        <form method="POST" action="{{ route('password.send-reset-link') }}">
+            @csrf
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" value="{{ old('email') }}" placeholder="your@email.com" required autofocus>
+            </div>
+
+            <button type="submit" class="auth-submit">Send Reset Link</button>
+        </form>
+
+        <div class="auth-footer">
+            <p><a href="{{ route('login') }}">← Back to Login</a></p>
+            <p>Don't have an account? <a href="{{ route('register') }}">Create one</a></p>
         </div>
     </div>
 </div>

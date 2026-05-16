@@ -62,4 +62,14 @@ class Order extends Model
             default => ucfirst(str_replace('_', ' ', $this->status)),
         };
     }
+
+    public function requiresOnlinePayment(): bool
+    {
+        return in_array($this->payment_method, ['gcash', 'maya', 'bank_transfer'], true);
+    }
+
+    public function isPaymentComplete(): bool
+    {
+        return !$this->requiresOnlinePayment() || (bool) $this->payment?->isPaid();
+    }
 }

@@ -7,6 +7,7 @@
 /bootstrap/cache/*.php
 /storage/framework/cache/data
 /storage/framework/sessions
+/storage/framework/testing
 /storage/framework/views
 /storage/logs
 /storage/*.key
@@ -23,3 +24,10 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+/storage/app/public/valid-ids/*
+!/storage/app/public/valid-ids/.gitkeep
+!/storage/app/public/products/
+!/storage/app/public/products/.gitkeep
+/storage/logs/*.log
+.phpunit.result.cache

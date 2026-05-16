@@ -22,18 +22,27 @@ class AuthController extends Controller
 
     public function verifyAgePost(Request $request)
     {
-        $request->validate(['confirmed' => 'required|accepted']);
+        $request->validate([
+            'confirmed' => 'required|accepted',
+        ]);
+
         session(['age_verified' => true]);
+
         return redirect()->intended(route('home'));
     }
 
     public function showLogin()
     {
-        if (Auth::check()) {
-            return auth()->user()->role === 'admin'
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if ($user) {
+            return $user->role === 'admin'
                 ? redirect()->route('admin.dashboard')
-                : redirect()->route('profile');
+                : redirect()->route('home');
         }
+
+        $this->prepareRegistrationCaptcha();
 
         return view('login');
     }
@@ -41,18 +50,22 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        $key = Str::lower($credentials['login']) . '|' . $request->ip();
+        $login = Str::lower(trim($credentials['login']));
+
+        $key = $login . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
 
-            return back()->with('error', "Too many login attempts. Try again in {$seconds} seconds.");
+            return back()
+                ->with('error', "Too many login attempts. Try again in {$seconds} seconds.")
+                ->withInput($request->only('login'));
         }
 
-        $query = User::where('email', $credentials['login']);
+        $query = User::whereRaw('lower(email) = ?', [$login]);
 
         if (Schema::hasColumn('users', 'username')) {
-            $query->orWhere('username', $credentials['login']);
+            $query->orWhereRaw('lower(username) = ?', [$login]);
         }
 
         $user = $query->first();
@@ -63,50 +76,57 @@ class AuthController extends Controller
             (!Schema::hasColumn('users', 'is_active') || $user->is_active)
         ) {
             Auth::login($user, $request->boolean('remember'));
+
             RateLimiter::clear($key);
+
             $request->session()->regenerate();
 
             return $user->role === 'admin'
                 ? redirect()->route('admin.dashboard')
-                : redirect()->route('profile');
+                : redirect()->route('home');
         }
 
         RateLimiter::hit($key, 300);
 
         return back()
             ->with('error', 'Invalid username/email or password.')
-            ->onlyInput('login');
+            ->withInput($request->only('login'));
     }
 
     public function showRegister()
     {
-        $captchaA = rand(1, 9);
-        $captchaB = rand(1, 9);
-
-        session([
-            'captcha_answer' => $captchaA + $captchaB,
-            'captcha_question' => "{$captchaA} + {$captchaB}",
-        ]);
-
-        return view('register');
+        return redirect()->route('login', ['register' => 1]);
     }
 
     public function register(RegisterRequest $request)
     {
         $data = $request->validated();
 
-        if ((int) $data['captcha'] !== (int) session('captcha_answer')) {
+        $submittedCaptchaAnswer = $this->normalizeCaptchaAnswer($request->input('captcha'));
+
+        if (!$this->captchaIsValid($submittedCaptchaAnswer)) {
+            $this->prepareRegistrationCaptcha(true);
+
             return back()
-                ->withErrors(['captcha' => 'Captcha answer is incorrect.'])
-                ->withInput();
+                ->withErrors([
+                    'captcha' => 'Captcha is incorrect or expired. Please answer the new captcha.',
+                ])
+                ->withInput($request->except([
+                    'password',
+                    'password_confirmation',
+                    'valid_id',
+                    'captcha',
+                ]));
         }
 
-        $idPath = $request->file('valid_id')->store('valid-ids', 'public');
+        $idPath = $request->file('valid_id')->store('valid-ids', 'local');
 
         User::create([
             'name' => $data['name'],
-            'username' => $data['username'] ?? null,
+            'username' => $data['username'],
             'email' => $data['email'],
+            'phone' => $data['contact_number'],
+            'address' => $data['address'],
             'date_of_birth' => $data['date_of_birth'],
             'valid_id_path' => $idPath,
             'age_verified' => false,
@@ -118,6 +138,12 @@ class AuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
+        session()->forget([
+            'captcha_answer_hash',
+            'captcha_expires_at',
+            'captcha_question',
+        ]);
+
         return redirect()
             ->route('login')
             ->with('success', 'Account created. Your ID is pending verification.');
@@ -126,8 +152,63 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
+    }
+
+    private function prepareRegistrationCaptcha(bool $force = false): void
+    {
+        if (!$force && $this->captchaSessionIsFresh()) {
+            return;
+        }
+
+        $answer = $this->generateCaptchaAnswer();
+
+        session([
+            'captcha_answer_hash' => $this->captchaHash($answer),
+            'captcha_expires_at' => now()->addMinutes(10)->timestamp,
+            'captcha_question' => $answer,
+        ]);
+    }
+
+    private function captchaIsValid(string $answer): bool
+    {
+        if ($answer === '' || !$this->captchaSessionIsFresh()) {
+            return false;
+        }
+
+        return hash_equals((string) session('captcha_answer_hash'), $this->captchaHash($answer));
+    }
+
+    private function captchaSessionIsFresh(): bool
+    {
+        return session()->has('captcha_answer_hash')
+            && session()->has('captcha_question')
+            && (int) session('captcha_expires_at') >= now()->timestamp;
+    }
+
+    private function captchaHash(string $answer): string
+    {
+        return hash_hmac('sha256', $this->normalizeCaptchaAnswer($answer), (string) config('app.key'));
+    }
+
+    private function generateCaptchaAnswer(): string
+    {
+        $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $answer = '';
+
+        for ($i = 0; $i < 6; $i++) {
+            $answer .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+        }
+
+        return $answer;
+    }
+
+    private function normalizeCaptchaAnswer(mixed $answer): string
+    {
+        return Str::upper(preg_replace('/\s+/', '', trim((string) $answer)));
     }
 }

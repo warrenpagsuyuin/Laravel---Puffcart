@@ -7,13 +7,14 @@ use App\Http\Requests\Cart\AddToCartRequest;
 use App\Http\Requests\Cart\UpdateCartItemRequest;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\ProductFlavor;
 use App\Services\CustomerBehaviorService;
 
 class CartController extends Controller
 {
     public function index()
     {
-        $items = auth()->user()->cartItems()->with('product')->get();
+        $items = auth()->user()->cartItems()->with('product', 'flavor', 'batteryColor')->get();
         $subtotal = $items->sum(fn ($item) => (float) $item->product->price * $item->quantity);
         $deliveryFee = $subtotal >= 500 ? 0 : 50;
         $total = $subtotal + $deliveryFee;
@@ -23,25 +24,110 @@ class CartController extends Controller
 
     public function add(AddToCartRequest $request, CustomerBehaviorService $behaviorService)
     {
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::with('availableFlavorOptions', 'availableColorOptions')->findOrFail($request->product_id);
         $quantity = (int) $request->quantity;
+        $productType = $product->product_type ?: Product::TYPE_OTHER;
+        $isBattery = $productType === Product::TYPE_BATTERY;
+        $isBundle = $productType === Product::TYPE_BUNDLE;
+        $optionLabel = $this->selectableOptionLabel($product);
+
+        $flavor = ProductFlavor::inStock()
+            ->where('product_id', $product->id)
+            ->whereKey($request->integer('product_flavor_id'))
+            ->first();
+        $batteryColor = null;
+
+        if (!$product->is_active) {
+            return back()->with('error', 'This product is no longer available.');
+        }
+
+        if ($isBattery) {
+            if (!$flavor || $flavor->option_type !== ProductFlavor::TYPE_COLOR) {
+                return back()->with('error', 'Please select an available battery color.');
+            }
+        } else {
+            if (!$flavor || $flavor->option_type !== ProductFlavor::TYPE_FLAVOR) {
+                return back()->with('error', "Please select an available {$optionLabel}.");
+            }
+        }
+
+        if ($isBundle) {
+            $batteryColor = ProductFlavor::inStock()
+                ->where('product_id', $product->id)
+                ->where('option_type', ProductFlavor::TYPE_COLOR)
+                ->whereKey($request->integer('battery_color_id'))
+                ->first();
+
+            if (!$batteryColor) {
+                return back()->with('error', 'Please select an available battery color.');
+            }
+        }
+
+        $selectedFlavor = $isBattery ? null : $flavor->name;
+        $selectedBatteryColor = $isBattery ? $flavor->name : $batteryColor?->name;
+
         $existingQuantity = CartItem::where('user_id', auth()->id())
             ->where('product_id', $product->id)
+            ->where('product_flavor_id', $flavor->id)
+            ->where('battery_color_id', $batteryColor?->id)
             ->value('quantity') ?? 0;
+        $existingFlavorQuantity = CartItem::where('user_id', auth()->id())
+            ->where('product_id', $product->id)
+            ->where('product_flavor_id', $flavor->id)
+            ->sum('quantity');
+        $existingColorQuantity = $batteryColor
+            ? CartItem::where('user_id', auth()->id())
+                ->where('product_id', $product->id)
+                ->where('battery_color_id', $batteryColor->id)
+                ->sum('quantity')
+            : 0;
 
-        if (!$product->is_active || $product->stock < ($existingQuantity + $quantity)) {
-            return back()->with('error', 'Insufficient stock.');
+        if ($isBundle && $batteryColor && $batteryColor->stock < ($existingColorQuantity + $quantity)) {
+            return back()->with('error', "{$product->name} ({$batteryColor->name}) only has {$batteryColor->stock} battery color item(s) left.");
+        }
+
+        $neededFlavorQuantity = $isBundle ? $existingFlavorQuantity + $quantity : $existingQuantity + $quantity;
+
+        if ($flavor->stock < $neededFlavorQuantity) {
+            return back()->with('error', "{$product->name} ({$flavor->name}) only has {$flavor->stock} {$optionLabel} item(s) left.");
         }
 
         $cartItem = CartItem::firstOrCreate(
-            ['user_id' => auth()->id(), 'product_id' => $product->id],
-            ['quantity' => 0]
+            [
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+                'product_flavor_id' => $flavor->id,
+                'battery_color_id' => $batteryColor?->id,
+                'product_type' => $productType,
+            ],
+            [
+                'quantity' => 0,
+                'selected_flavor' => $selectedFlavor,
+                'selected_battery_color' => $selectedBatteryColor,
+                'bundle_pods' => $product->bundle_pods,
+                'bundle_battery' => $product->bundle_battery,
+            ]
         );
+
+        $cartItem->fill([
+            'selected_flavor' => $selectedFlavor,
+            'selected_battery_color' => $selectedBatteryColor,
+            'bundle_pods' => $product->bundle_pods,
+            'bundle_battery' => $product->bundle_battery,
+        ])->save();
 
         $cartItem->increment('quantity', $quantity);
         $behaviorService->cartAdded($product, $quantity, $request);
 
-        return back()->with('success', "{$product->name} added to cart!");
+        $messageDetail = $selectedBatteryColor && $selectedFlavor
+            ? " ({$selectedFlavor}, {$selectedBatteryColor})"
+            : ' (' . ($selectedBatteryColor ?: $selectedFlavor) . ')';
+
+        if ($request->input('intent') === 'buy_now') {
+            return redirect()->route('checkout')->with('success', "{$product->name}{$messageDetail} is ready for checkout.");
+        }
+
+        return back()->with('success', "{$product->name}{$messageDetail} added to cart!");
     }
 
     public function update(UpdateCartItemRequest $request, CartItem $item)
@@ -50,8 +136,40 @@ class CartController extends Controller
 
         $quantity = (int) $request->quantity;
 
-        if ($item->product->stock < $quantity) {
-            return back()->with('error', "{$item->product->name} only has {$item->product->stock} item(s) left.");
+        $item->loadMissing('product', 'flavor', 'batteryColor');
+
+        if (!$item->product?->is_active || !$item->flavor?->is_active || ($item->battery_color_id && !$item->batteryColor?->is_active)) {
+            $productName = $item->product?->name ?? 'This item';
+
+            return back()->with('error', "{$productName} is no longer available in the selected option.");
+        }
+
+        if ($item->product_type === Product::TYPE_BUNDLE) {
+            $optionLabel = $this->selectableOptionLabel($item->product);
+            $otherFlavorQuantity = CartItem::where('user_id', auth()->id())
+                ->where('id', '!=', $item->id)
+                ->where('product_id', $item->product_id)
+                ->where('product_flavor_id', $item->product_flavor_id)
+                ->sum('quantity');
+            $otherColorQuantity = CartItem::where('user_id', auth()->id())
+                ->where('id', '!=', $item->id)
+                ->where('product_id', $item->product_id)
+                ->where('battery_color_id', $item->battery_color_id)
+                ->sum('quantity');
+
+            if ($item->batteryColor->stock < ($otherColorQuantity + $quantity)) {
+                return back()->with('error', "{$item->product->name} ({$item->batteryColor->name}) only has {$item->batteryColor->stock} battery color item(s) left.");
+            }
+
+            if ($item->flavor->stock < ($otherFlavorQuantity + $quantity)) {
+                return back()->with('error', "{$item->product->name} ({$item->flavor->name}) only has {$item->flavor->stock} {$optionLabel} item(s) left.");
+            }
+        } elseif ($item->battery_color_id && $item->batteryColor->stock < $quantity) {
+            return back()->with('error', "{$item->product->name} ({$item->batteryColor->name}) only has {$item->batteryColor->stock} battery color item(s) left.");
+        } elseif ($item->flavor->stock < $quantity) {
+            $optionLabel = $this->selectableOptionLabel($item->product);
+
+            return back()->with('error', "{$item->product->name} ({$item->flavor->name}) only has {$item->flavor->stock} {$optionLabel} item(s) left.");
         }
 
         $item->update(['quantity' => $quantity]);
@@ -66,5 +184,24 @@ class CartController extends Controller
         $item->delete();
 
         return back()->with('success', 'Item removed from cart.');
+    }
+
+    private function selectableOptionLabel(Product $product): string
+    {
+        if (($product->product_type ?: Product::TYPE_OTHER) === Product::TYPE_BATTERY) {
+            return 'battery color';
+        }
+
+        $category = strtolower((string) $product->category_name);
+
+        if (str_contains($category, 'coils') && str_contains($category, 'pods')) {
+            return 'ohm';
+        }
+
+        if (str_contains($category, 'accessories') || str_contains($category, 'devices')) {
+            return 'color';
+        }
+
+        return 'flavor';
     }
 }

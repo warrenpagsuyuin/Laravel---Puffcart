@@ -57,8 +57,14 @@
                 </div>
                 <div class="mb-2">
                     <div class="text-[8px] text-[#1e3d52] tracking-widest uppercase mb-1">// Password</div>
-                    <input type="password" name="password" placeholder="••••••••"
-                           class="w-full bg-[#14172a] border border-[#00ffe718] text-[#c8f0ff] text-[12px] px-3 py-2 rounded-sm outline-none font-mono focus:border-[#00ffe7]">
+                    <div class="relative">
+                        <input id="auth_login_password" type="password" name="password" placeholder="••••••••"
+                               class="w-full bg-[#14172a] border border-[#00ffe718] text-[#c8f0ff] text-[12px] pl-3 pr-10 py-2 rounded-sm outline-none font-mono focus:border-[#00ffe7]">
+                        <button type="button" data-password-toggle="auth_login_password" aria-label="Show password" aria-pressed="false" class="absolute right-1 top-1/2 -translate-y-1/2 grid place-items-center w-8 h-8 text-[#5a8fa8] hover:text-[#00ffe7]">
+                            <svg class="icon-eye w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <svg class="icon-eye-off hidden w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6A3 3 0 0 0 13.4 13.4"/><path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18.8 18.8 0 0 1-3.2 4.4"/><path d="M6.6 6.6A18.3 18.3 0 0 0 2 12s3.5 8 10 8a10.7 10.7 0 0 0 4.1-.8"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="text-right mb-4">
                     <span class="text-[9px] text-[#00ffe7] cursor-pointer hover:underline">Forgot_password?</span>
@@ -76,4 +82,23 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+            button.addEventListener('click', function () {
+                const input = document.getElementById(this.dataset.passwordToggle);
+                if (!input) {
+                    return;
+                }
+
+                const shouldShow = input.type === 'password';
+                input.type = shouldShow ? 'text' : 'password';
+                this.querySelector('.icon-eye')?.classList.toggle('hidden', shouldShow);
+                this.querySelector('.icon-eye-off')?.classList.toggle('hidden', !shouldShow);
+                this.setAttribute('aria-label', shouldShow ? 'Hide password' : 'Show password');
+                this.setAttribute('aria-pressed', shouldShow ? 'true' : 'false');
+            });
+        });
+    });
+</script>
 @endsection

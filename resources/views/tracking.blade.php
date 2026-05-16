@@ -10,26 +10,38 @@
         border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-        padding: 16px 40px;
+        min-height: 72px;
+        padding: 0 48px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
     }
 
     .logo {
         color: var(--primary);
         font-family: 'Poppins', sans-serif;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 700;
+        letter-spacing: 0;
     }
 
     .nav-links {
         display: flex;
-        flex-wrap: wrap;
-        gap: 22px;
+        align-items: center;
+        gap: 8px;
     }
 
     .nav-links a {
-        color: var(--text-secondary);
+        color: #475569;
         font-size: 14px;
         font-weight: 600;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .nav-links a:hover {
+        background: #eff6ff;
+        color: #0b66ff;
     }
 
     .tracking-shell {
@@ -105,6 +117,20 @@
         padding: 9px 13px;
     }
 
+    .btn-primary {
+        align-items: center;
+        background: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: var(--radius);
+        color: white;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 800;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 13px;
+    }
+
     .empty {
         border: 1px solid var(--border);
         border-radius: var(--radius);
@@ -136,7 +162,7 @@
         <a href="{{ route('shop') }}">Shop</a>
         <a href="{{ route('cart') }}">Cart</a>
         <a href="{{ route('orders.index') }}">Orders</a>
-        <a href="{{ route('profile') }}">Profile</a>
+        <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
     </div>
 </nav>
 
@@ -167,7 +193,11 @@
                     </div>
                     <span class="badge {{ $statusClass }}">{{ $order->status_label }}</span>
                     <strong>PHP {{ number_format($order->total, 2) }}</strong>
-                    <a class="btn-secondary" href="{{ route('orders.track', $order) }}">Track</a>
+                    @if($order->isPaymentComplete())
+                        <a class="btn-secondary" href="{{ route('orders.track', $order) }}">Track</a>
+                    @else
+                        <a class="btn-primary" href="{{ route('payment.show', $order) }}">Pay Now</a>
+                    @endif
                 </div>
             @endforeach
         </div>

@@ -17,9 +17,17 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'username' => 'nullable|string|max:255|unique:users,username',
+            'username' => 'required|string|max:255|unique:users,username',
+            'contact_number' => 'required|digits:11',
+            'address' => 'required|string|max:1000',
             'date_of_birth' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
-            'valid_id' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'valid_id' => [
+                'required',
+                'file',
+                'mimes:jpg,jpeg,png,pdf',
+                'mimetypes:image/jpeg,image/png,application/pdf',
+                'max:5120',
+            ],
             'password' => [
                 'required',
                 'confirmed',
@@ -31,7 +39,7 @@ class RegisterRequest extends FormRequest
             'password_confirmation' => 'required|same:password',
             'age_confirmed' => 'required|accepted',
             'privacy_consent' => 'required|accepted',
-            'captcha' => 'required|numeric',
+            'captcha' => 'required|string|size:6',
         ];
     }
 
@@ -40,6 +48,9 @@ class RegisterRequest extends FormRequest
         return [
             'date_of_birth.before_or_equal' => 'You must be at least 18 years old to register.',
             'valid_id.required' => 'A valid ID is required for age verification.',
+            'valid_id.mimes' => 'Valid ID must be a JPG, PNG, or PDF file.',
+            'valid_id.mimetypes' => 'Valid ID must be a real JPG, PNG, or PDF file.',
+            'contact_number.digits' => 'Contact number must be exactly 11 digits.',
             'age_confirmed.accepted' => 'You must confirm your age to register.',
             'privacy_consent.accepted' => 'You must accept the privacy policy to register.',
         ];
