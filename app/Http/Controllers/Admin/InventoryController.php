@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Services\ProductInventoryService;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
@@ -53,7 +54,7 @@ class InventoryController extends Controller
         return view('admin.inventory', compact('products', 'lowStockCount'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product, ProductInventoryService $inventory)
     {
         $data = $request->validate([
             'reorder_level' => 'required|integer|min:0',
@@ -63,18 +64,7 @@ class InventoryController extends Controller
             'flavors.*.reorder_level' => 'required|integer|min:0',
         ]);
 
-        $product->update(['reorder_level' => $data['reorder_level']]);
-
-        foreach ($data['flavors'] as $flavorData) {
-            $product->flavors()
-                ->whereKey($flavorData['id'])
-                ->update([
-                    'stock' => $flavorData['stock'],
-                    'reorder_level' => $flavorData['reorder_level'],
-                ]);
-        }
-
-        $product->syncStockFromFlavors();
+        $inventory->updateInventory($product, $data);
 
         return back()->with('success', 'Inventory updated.');
     }

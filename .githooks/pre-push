@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+php artisan products:export-seeder --class=ProductSeeder --json
+php artisan storage:link >/dev/null 2>&1 || true
+
+git add database/seeders/ProductSeeder.php database/seeders/data/products.json storage/app/public/products
+
+if ! git diff --cached --quiet -- database/seeders/ProductSeeder.php database/seeders/data/products.json storage/app/public/products; then
+    echo "Product seed/upload files changed and were staged."
+    echo "Commit them first, then push again so deployment receives the inventory snapshot and images."
+    exit 1
+fi
+
+echo "Product seed snapshot and uploaded product images are committed."

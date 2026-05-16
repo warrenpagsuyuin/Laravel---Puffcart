@@ -376,7 +376,7 @@
         <div class="notice notice-success">{{ session('success') }}</div>
     @endif
 
-    @if(session('error'))
+    @if(session('error') && session('error') !== $pendingVerificationMessage)
         <div class="notice notice-error">{{ session('error') }}</div>
     @endif
 

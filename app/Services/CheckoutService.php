@@ -18,7 +18,10 @@ use Illuminate\Validation\ValidationException;
 
 class CheckoutService
 {
-    public function __construct(private CustomerBehaviorService $behaviorService)
+    public function __construct(
+        private CustomerBehaviorService $behaviorService,
+        private InventoryLogService $inventoryLogs,
+    )
     {
     }
 
@@ -208,7 +211,13 @@ class CheckoutService
             }
 
             foreach ($requiredByFlavor as $flavorId => $requiredQuantity) {
-                $flavors->get($flavorId)->decrement('stock', $requiredQuantity);
+                $flavor = $flavors->get($flavorId);
+                $before = (int) $flavor->stock;
+                $flavor->decrement('stock', $requiredQuantity);
+                $this->inventoryLogs->flavorStockChanged($flavor->fresh(), $before, $before - $requiredQuantity, 'stock_changed', [
+                    'source' => 'checkout',
+                    'order_id' => $order->id,
+                ]);
             }
 
             foreach ($requiredByProduct as $productId => $quantitySold) {

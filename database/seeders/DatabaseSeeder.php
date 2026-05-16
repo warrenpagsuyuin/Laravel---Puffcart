@@ -102,7 +102,9 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        if (class_exists(SharedProductsSeeder::class)) {
+        if (class_exists(ProductSeeder::class)) {
+            $this->call(ProductSeeder::class);
+        } elseif (class_exists(SharedProductsSeeder::class)) {
             $this->call(SharedProductsSeeder::class);
         }
 

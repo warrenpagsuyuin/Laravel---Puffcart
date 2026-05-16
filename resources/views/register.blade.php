@@ -404,22 +404,41 @@
     }
 
     .password-toggle {
+        align-items: center;
         position: absolute;
         right: 10px;
         top: 50%;
         transform: translateY(-50%);
+        display: inline-flex;
+        justify-content: center;
         height: 32px;
-        padding: 0 10px;
+        width: 32px;
+        padding: 0;
         border: 1px solid #D8E4F2;
         background: #FFFFFF;
         color: #0B63F6;
-        font-size: 12px;
-        font-weight: 800;
         border-radius: 10px;
     }
 
     .input-wrap.has-toggle input {
-        padding-right: 68px;
+        padding-right: 56px;
+    }
+
+    .password-toggle svg {
+        height: 17px;
+        width: 17px;
+    }
+
+    .password-toggle .icon-eye-off {
+        display: none;
+    }
+
+    .password-toggle.is-visible .icon-eye {
+        display: none;
+    }
+
+    .password-toggle.is-visible .icon-eye-off {
+        display: block;
     }
 
     .strength {
@@ -856,7 +875,10 @@
                             <div class="input-wrap has-toggle">
                                 <span class="input-icon">@include('partials.icons.lock')</span>
                                 <input id="password" type="password" name="password" placeholder="Create strong password" autocomplete="new-password" required>
-                                <button class="password-toggle" type="button" data-toggle-password="password">Show</button>
+                                <button class="password-toggle" type="button" data-toggle-password="password" aria-label="Show password" aria-pressed="false">
+                                    <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6A3 3 0 0 0 13.4 13.4"/><path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18.8 18.8 0 0 1-3.2 4.4"/><path d="M6.6 6.6A18.3 18.3 0 0 0 2 12s3.5 8 10 8a10.7 10.7 0 0 0 4.1-.8"/></svg>
+                                </button>
                             </div>
                             <div class="strength" aria-live="polite">
                                 <span class="strength-track"><span class="strength-bar" id="strengthBar"></span></span>
@@ -869,7 +891,10 @@
                             <div class="input-wrap has-toggle">
                                 <span class="input-icon">@include('partials.icons.lock')</span>
                                 <input id="password_confirmation" type="password" name="password_confirmation" placeholder="Confirm password" autocomplete="new-password" required>
-                                <button class="password-toggle" type="button" data-toggle-password="password_confirmation">Show</button>
+                                <button class="password-toggle" type="button" data-toggle-password="password_confirmation" aria-label="Show password" aria-pressed="false">
+                                    <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6A3 3 0 0 0 13.4 13.4"/><path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18.8 18.8 0 0 1-3.2 4.4"/><path d="M6.6 6.6A18.3 18.3 0 0 0 2 12s3.5 8 10 8a10.7 10.7 0 0 0 4.1-.8"/></svg>
+                                </button>
                             </div>
                         </div>
 
@@ -946,7 +971,9 @@
 
                 const showing = input.type === 'text';
                 input.type = showing ? 'password' : 'text';
-                button.textContent = showing ? 'Show' : 'Hide';
+                button.classList.toggle('is-visible', !showing);
+                button.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+                button.setAttribute('aria-pressed', showing ? 'false' : 'true');
             });
         });
 

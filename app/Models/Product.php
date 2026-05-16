@@ -13,6 +13,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'product_name',
         'slug',
         'sku',
         'category_id',
@@ -54,6 +55,15 @@ class Product extends Model
         'nicotine_strengths' => 'array',
         'volume_ml' => 'integer',
     ];
+
+    public function setNameAttribute($value): void
+    {
+        $this->attributes['name'] = $value;
+
+        if (Schema::hasColumn('products', 'product_name')) {
+            $this->attributes['product_name'] = $value;
+        }
+    }
 
     public const TYPE_PODS = 'pods';
     public const TYPE_BATTERY = 'battery';
@@ -210,7 +220,15 @@ class Product extends Model
 
     public function getImageUrlAttribute(): ?string
     {
-        if (!$this->image || !Storage::disk('public')->exists($this->image)) {
+        if (!$this->image) {
+            return null;
+        }
+
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+
+        if (!Storage::disk('public')->exists($this->image)) {
             return null;
         }
 

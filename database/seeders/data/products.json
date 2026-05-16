@@ -1,0 +1,1662 @@
+[
+    {
+        "attributes": {
+            "name": "Naked 100 Lava Flow 60ml"
+        },
+        "data": {
+            "name": "Naked 100 Lava Flow 60ml",
+            "category": "E-Liquids",
+            "brand": "Naked 100",
+            "price": 450,
+            "description": "Fruit-forward e-liquid for adult customers.",
+            "stock": 48,
+            "sku": "NK-LF-3MG",
+            "original_price": null,
+            "image": "products/25rmh8cilr6H6Bucznhgqh1fKvJrZGxhtCehmalj.jpg",
+            "badge": "hot",
+            "reorder_level": 8,
+            "is_featured": 1,
+            "is_active": 1,
+            "rating": 4.6,
+            "slug": "naked-100-lava-flow-60ml",
+            "tags": [
+                "e-liquid",
+                "fruit",
+                "strawberry",
+                "pineapple"
+            ],
+            "sales_count": 2,
+            "views_count": 3,
+            "product_type": "e_liquid",
+            "flavor": "Grape Ice, Mango Ice, Original",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": "freebase",
+            "nicotine_strengths": [
+                "8"
+            ],
+            "volume_ml": 60,
+            "product_name": "Naked 100 Lava Flow 60ml"
+        },
+        "flavors": [
+            {
+                "name": "Grape Ice",
+                "stock": 9,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Grape Ice"
+            },
+            {
+                "name": "Mango Ice",
+                "stock": 18,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Mango Ice"
+            },
+            {
+                "name": "Original",
+                "stock": 21,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Original"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Uwell Caliburn A3S Pod Kit"
+        },
+        "data": {
+            "name": "Uwell Caliburn A3S Pod Kit",
+            "category": "Devices",
+            "brand": "Uwell",
+            "price": 1650,
+            "description": "Slim pod system with reliable flavor output and simple operation.",
+            "stock": 70,
+            "sku": "UW-A3S-SLV",
+            "original_price": 1890,
+            "image": "products/UfshI4neA96MvwxRoyzSqJPDUR0QU977YvPSlvrL.webp",
+            "badge": "sale",
+            "reorder_level": 8,
+            "is_featured": 1,
+            "is_active": 1,
+            "rating": 4.7,
+            "slug": "uwell-caliburn-a3s-pod-kit",
+            "tags": [
+                "pod",
+                "starter",
+                "refillable"
+            ],
+            "sales_count": 1,
+            "views_count": 8,
+            "product_type": "other",
+            "flavor": "Moonlight Silver, Space Gray, Midnight Black, Lake Green, Iris Purple, Ocean Flame",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "Uwell Caliburn A3S Pod Kit"
+        },
+        "flavors": [
+            {
+                "name": "Iris Purple",
+                "stock": 2,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Iris Purple"
+            },
+            {
+                "name": "Lake Green",
+                "stock": 22,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Lake Green"
+            },
+            {
+                "name": "Midnight Black",
+                "stock": 18,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Midnight Black"
+            },
+            {
+                "name": "Moonlight Silver",
+                "stock": 7,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Moonlight Silver"
+            },
+            {
+                "name": "Ocean Flame",
+                "stock": 9,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Ocean Flame"
+            },
+            {
+                "name": "Space Gray",
+                "stock": 12,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Space Gray"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Geekvape Wenax Q Mini"
+        },
+        "data": {
+            "name": "Geekvape Wenax Q Mini",
+            "category": "Devices",
+            "brand": "Geekvape",
+            "price": 1190,
+            "description": "Pocket-friendly pod kit with smooth draw activation.",
+            "stock": 39,
+            "sku": "GV-WQ-MINI",
+            "original_price": 1390,
+            "image": "products/8oq4J6P6ERc0XsZ2RYtOgDRbUSDHdpM9vvLcVz91.jpg",
+            "badge": "new",
+            "reorder_level": 10,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 4.5,
+            "slug": "geekvape-wenax-q-mini",
+            "tags": [
+                "pod",
+                "compact",
+                "starter"
+            ],
+            "sales_count": 0,
+            "views_count": 2,
+            "product_type": "other",
+            "flavor": "Black, Blue, Silver",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "Geekvape Wenax Q Mini"
+        },
+        "flavors": [
+            {
+                "name": "Black",
+                "stock": 11,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Black"
+            },
+            {
+                "name": "Blue",
+                "stock": 11,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Blue"
+            },
+            {
+                "name": "Silver",
+                "stock": 17,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Silver"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Ripe Vapes VCT "
+        },
+        "data": {
+            "name": "Ripe Vapes VCT ",
+            "category": "E-Liquids",
+            "brand": "Ripe Vapes",
+            "price": 520,
+            "description": "Creamy custard tobacco profile for adult customers.",
+            "stock": 40,
+            "sku": "RV-VCT-60",
+            "original_price": null,
+            "image": "products/LWzOzvfedZ0An9LLGiJMEsk7UyjHN4i3vzEMECRj.jpg",
+            "badge": "none",
+            "reorder_level": 8,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 4.4,
+            "slug": "ripe-vapes-vct",
+            "tags": [
+                "e-liquid",
+                "dessert",
+                "vanilla"
+            ],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "e_liquid",
+            "flavor": "Grape Ice, Mango Ice, Original",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": "freebase",
+            "nicotine_strengths": [
+                "8"
+            ],
+            "volume_ml": 60,
+            "product_name": "Ripe Vapes VCT "
+        },
+        "flavors": [
+            {
+                "name": "Grape Ice",
+                "stock": 13,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Grape Ice"
+            },
+            {
+                "name": "Mango Ice",
+                "stock": 21,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Mango Ice"
+            },
+            {
+                "name": "Original",
+                "stock": 6,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Original"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Tokyo Salt Lychee Ice "
+        },
+        "data": {
+            "name": "Tokyo Salt Lychee Ice ",
+            "category": "E-Liquids",
+            "brand": "Tokyo",
+            "price": 390,
+            "description": "Lychee menthol salt nicotine blend for compatible low-wattage devices.",
+            "stock": 26,
+            "sku": "TK-LYC-ICE",
+            "original_price": null,
+            "image": "products/21eApga7ZAQoKlO9R3zT5tRtryszWW04jbn56g8Z.webp",
+            "badge": "new",
+            "reorder_level": 10,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 4.2,
+            "slug": "tokyo-salt-lychee-ice",
+            "tags": [
+                "e-liquid",
+                "salt-nic",
+                "lychee",
+                "ice"
+            ],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "e_liquid",
+            "flavor": "Grape Ice, Mango Ice, Original",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": "saltnic",
+            "nicotine_strengths": [
+                "30"
+            ],
+            "volume_ml": 30,
+            "product_name": "Tokyo Salt Lychee Ice "
+        },
+        "flavors": [
+            {
+                "name": "Grape Ice",
+                "stock": 8,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Grape Ice"
+            },
+            {
+                "name": "Mango Ice",
+                "stock": 9,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Mango Ice"
+            },
+            {
+                "name": "Original",
+                "stock": 9,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Original"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Oxva Xlim V2 Replacement Pod"
+        },
+        "data": {
+            "name": "Oxva Xlim V2 Replacement Pod",
+            "category": "Coils & Pods",
+            "brand": "Oxva",
+            "price": 220,
+            "description": "Replacement pod cartridge for compatible Oxva Xlim devices.",
+            "stock": 84,
+            "sku": "OX-XLIM-V2POD",
+            "original_price": null,
+            "image": "products/bRI6Yab44MWlYZLcxOVXqfFNWb3sfgEye9jrzyPR.webp",
+            "badge": "none",
+            "reorder_level": 10,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 4.6,
+            "slug": "oxva-xlim-v2-replacement-pod",
+            "tags": [
+                "pod",
+                "replacement",
+                "oxva"
+            ],
+            "sales_count": 0,
+            "views_count": 1,
+            "product_type": "other",
+            "flavor": "0.8, 0.6, 1.2",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "Oxva Xlim V2 Replacement Pod"
+        },
+        "flavors": [
+            {
+                "name": "0.6",
+                "stock": 25,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "0.6"
+            },
+            {
+                "name": "0.8",
+                "stock": 30,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "0.8"
+            },
+            {
+                "name": "1.2",
+                "stock": 29,
+                "reorder_level": 10,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "1.2"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Vaporesso XROS Replacement Pod "
+        },
+        "data": {
+            "name": "Vaporesso XROS Replacement Pod ",
+            "category": "Coils & Pods",
+            "brand": "Vaporesso",
+            "price": 240,
+            "description": "Refillable replacement pod for XROS series devices.",
+            "stock": 23,
+            "sku": "VP-XROS-POD08",
+            "original_price": null,
+            "image": "products/FHX8azD0x8Y9PqSqOWpSW5UCY75eESBbuewEqswF.webp",
+            "badge": "hot",
+            "reorder_level": 12,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 4.8,
+            "slug": "vaporesso-xros-replacement-pod",
+            "tags": [
+                "pod",
+                "replacement",
+                "xros"
+            ],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "other",
+            "flavor": "Mango, 0.8, 0.6",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "Vaporesso XROS Replacement Pod "
+        },
+        "flavors": [
+            {
+                "name": "0.6",
+                "stock": 18,
+                "reorder_level": 12,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "0.6"
+            },
+            {
+                "name": "0.8",
+                "stock": 3,
+                "reorder_level": 12,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "0.8"
+            },
+            {
+                "name": "Mango",
+                "stock": 2,
+                "reorder_level": 12,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Mango"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Travel Vape Case"
+        },
+        "data": {
+            "name": "Travel Vape Case",
+            "category": "Accessories",
+            "brand": "Puffcart",
+            "price": 300,
+            "description": "Compact travel case for carrying devices, pods, and small accessories.",
+            "stock": 17,
+            "sku": "ACC-CASE-BLK",
+            "original_price": 400,
+            "image": "products/MqKdKytb2IVKMYiZTX0gJVrEOYdITHeq8eeK0bJN.jpg",
+            "badge": "sale",
+            "reorder_level": 8,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 4,
+            "slug": "travel-vape-case",
+            "tags": [
+                "accessory",
+                "case",
+                "storage"
+            ],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "other",
+            "flavor": "Black, Blue",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "Travel Vape Case"
+        },
+        "flavors": [
+            {
+                "name": "Black",
+                "stock": 10,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Black"
+            },
+            {
+                "name": "Blue",
+                "stock": 7,
+                "reorder_level": 8,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Blue"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "CHILLAX INFINITE KIT ( POD & BATTERY)"
+        },
+        "data": {
+            "name": "CHILLAX INFINITE KIT ( POD & BATTERY)",
+            "category": "Devices",
+            "brand": "CHILLAX",
+            "price": 650,
+            "description": "CHILLAX INFINITE KIT (POD & BATTERY) is a sleek and powerful pod vape device designed for smooth flavor delivery and long-lasting performance. Featuring an ultra-thin body, dual mesh coil technology, and a clear e-liquid viewing pod, it delivers rich flavor and satisfying vapor from the first puff to the last. The device includes a rechargeable 600mAh battery, Type-C charging, and up to 25,000 puffs for extended use. Its compact and stylish design makes it perfect for everyday vaping convenience and portability.",
+            "stock": 24,
+            "sku": "CHLX",
+            "original_price": null,
+            "image": "products/BjK6QHmekdl9vV4DehROyydLeshsKVJFshL4lx20.jpg",
+            "badge": "new",
+            "reorder_level": 5,
+            "is_featured": 1,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "chillax-infinite-kit-pod-battery",
+            "tags": [
+                "Disposable pods"
+            ],
+            "sales_count": 0,
+            "views_count": 25,
+            "product_type": "bundle",
+            "flavor": "COSMIC CRUSH - GRAPES, CRYSTAL WINK - BUBBLEGUM, HAPPY BUDDIES - YAKULT, IVORY SYMPHONY - LYCHEE, PINK HARMONY - JUICE STRAWBERRY, RUSTIC HAZE - CLASSIC TOBACCO, SILVER DYNASTY - MENTHOL ICE, SLICK KICK - SOUR APPLE, THUNDER BLAZED - GATORADE, TWILIG",
+            "bundle_pods": "Any Flavors",
+            "bundle_battery": "Battery/Device included",
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "CHILLAX INFINITE KIT ( POD & BATTERY)"
+        },
+        "flavors": [
+            {
+                "name": "Black",
+                "stock": 24,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Black"
+            },
+            {
+                "name": "COSMIC CRUSH - GRAPES",
+                "stock": 19,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "COSMIC CRUSH - GRAPES"
+            },
+            {
+                "name": "CRYSTAL WINK - BUBBLEGUM",
+                "stock": 16,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "CRYSTAL WINK - BUBBLEGUM"
+            },
+            {
+                "name": "HAPPY BUDDIES - YAKULT",
+                "stock": 7,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "HAPPY BUDDIES - YAKULT"
+            },
+            {
+                "name": "IVORY SYMPHONY - LYCHEE",
+                "stock": 17,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "IVORY SYMPHONY - LYCHEE"
+            },
+            {
+                "name": "PINK HARMONY - JUICE STRAWBERRY",
+                "stock": 24,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "PINK HARMONY - JUICE STRAWBERRY"
+            },
+            {
+                "name": "RUSTIC HAZE - CLASSIC TOBACCO",
+                "stock": 13,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "RUSTIC HAZE - CLASSIC TOBACCO"
+            },
+            {
+                "name": "SILVER DYNASTY - MENTHOL ICE",
+                "stock": 1,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SILVER DYNASTY - MENTHOL ICE"
+            },
+            {
+                "name": "SLICK KICK - SOUR APPLE",
+                "stock": 22,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SLICK KICK - SOUR APPLE"
+            },
+            {
+                "name": "THUNDER BLAZED - GATORADE",
+                "stock": 1,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "THUNDER BLAZED - GATORADE"
+            },
+            {
+                "name": "TWILIGHT WILLOW - BLACKCURRANT",
+                "stock": 13,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "TWILIGHT WILLOW - BLACKCURRANT"
+            },
+            {
+                "name": "VERY MELLOW - WATERMELON",
+                "stock": 7,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "VERY MELLOW - WATERMELON"
+            },
+            {
+                "name": "VIOLET FUSION - TARO ICE CREAM",
+                "stock": 14,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "VIOLET FUSION - TARO ICE CREAM"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "CHILLAX INFINITE  ( POD ONLY )"
+        },
+        "data": {
+            "name": "CHILLAX INFINITE  ( POD ONLY )",
+            "category": "Devices",
+            "brand": "CHILLAX",
+            "price": 450,
+            "description": "CHILLAX INFINITE KIT (PODS ONLY) delivers a smooth, flavorful, and hassle-free vaping experience with its advanced dual mesh coil technology and leak-resistant pod design. Made for the Chillax Infinite device, these prefilled pods provide rich flavor, satisfying vapor production, and consistent performance from the first puff to the last. Its transparent pod design allows easy e-liquid visibility, while the compact and lightweight build makes it perfect for daily use and portability.",
+            "stock": 98,
+            "sku": "CHLXPDS",
+            "original_price": 550,
+            "image": "products/hkAL1TqGm3t9M4t2nxv15mzDIgRZFnW3WJ5hnzaL.jpg",
+            "badge": "sale",
+            "reorder_level": 5,
+            "is_featured": 1,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "chillax-infinite-pod-only",
+            "tags": [
+                "PODS"
+            ],
+            "sales_count": 0,
+            "views_count": 12,
+            "product_type": "pods",
+            "flavor": "SLICK KICK - SOUR APPLE, COSMIC CRUSH - GRAPES, VERY MELLOW - WATERMELON, PINK HARMONY - JUICE STRAWBERRY, TWILIGHT WILLOW - BLACKCURRANT, SILVER DYNASTY - MENTHOL ICE, SILKY CLOUDS - VANILLA ICE CREAM, CRYSTAL WINK - BUBBLEGUM, MIDORI ZEN - MATCHA",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "CHILLAX INFINITE  ( POD ONLY )"
+        },
+        "flavors": [
+            {
+                "name": "COSMIC CRUSH - GRAPES",
+                "stock": 5,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "COSMIC CRUSH - GRAPES"
+            },
+            {
+                "name": "CRYSTAL WINK - BUBBLEGUM",
+                "stock": 8,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "CRYSTAL WINK - BUBBLEGUM"
+            },
+            {
+                "name": "MIDORI ZEN - MATCHA",
+                "stock": 2,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "MIDORI ZEN - MATCHA"
+            },
+            {
+                "name": "PINK HARMONY - JUICE STRAWBERRY",
+                "stock": 13,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "PINK HARMONY - JUICE STRAWBERRY"
+            },
+            {
+                "name": "SILKY CLOUDS - VANILLA ICE CREAM",
+                "stock": 13,
+                "reorder_level": 4,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SILKY CLOUDS - VANILLA ICE CREAM"
+            },
+            {
+                "name": "SILVER DYNASTY - MENTHOL ICE",
+                "stock": 16,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SILVER DYNASTY - MENTHOL ICE"
+            },
+            {
+                "name": "SLICK KICK - SOUR APPLE",
+                "stock": 12,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SLICK KICK - SOUR APPLE"
+            },
+            {
+                "name": "TWILIGHT WILLOW - BLACKCURRANT",
+                "stock": 21,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "TWILIGHT WILLOW - BLACKCURRANT"
+            },
+            {
+                "name": "VERY MELLOW - WATERMELON",
+                "stock": 8,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "VERY MELLOW - WATERMELON"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "RYUU BOOST 12000"
+        },
+        "data": {
+            "name": "RYUU BOOST 12000",
+            "category": "Devices",
+            "brand": "RYUU",
+            "price": 300,
+            "description": "RYUU BOOST 12000 is a rechargeable pod vape that delivers smooth flavor, strong vapor, and up to 12,000 puffs. It features mesh coil technology, Type-C charging, and a sleek portable design for everyday vaping convenience.",
+            "stock": 53,
+            "sku": "RYU",
+            "original_price": 0,
+            "image": "products/4ZW2GaksC19yWPY4A4ay175WvDf0JC66kceoiVJ3.jpg",
+            "badge": "new",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "ryuu-boost-12000",
+            "tags": [
+                "PODS"
+            ],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "pods",
+            "flavor": "PASSION RED - STRAWBERRY, JITTER MUD - CARAMEL MACCHIATO, BLUE FREEZE - BLUEBERRY, BUBBLE BLOWER - BUBBLEGUM, CHEER BLAST - LYCHEE",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "RYUU BOOST 12000"
+        },
+        "flavors": [
+            {
+                "name": "BLUE FREEZE - BLUEBERRY",
+                "stock": 7,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BLUE FREEZE - BLUEBERRY"
+            },
+            {
+                "name": "BUBBLE BLOWER - BUBBLEGUM",
+                "stock": 8,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BUBBLE BLOWER - BUBBLEGUM"
+            },
+            {
+                "name": "CHEER BLAST - LYCHEE",
+                "stock": 10,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "CHEER BLAST - LYCHEE"
+            },
+            {
+                "name": "JITTER MUD - CARAMEL MACCHIATO",
+                "stock": 12,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "JITTER MUD - CARAMEL MACCHIATO"
+            },
+            {
+                "name": "PASSION RED - STRAWBERRY",
+                "stock": 16,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "PASSION RED - STRAWBERRY"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "RYUU BOOST 12000 (Battery)"
+        },
+        "data": {
+            "name": "RYUU BOOST 12000 (Battery)",
+            "category": "Devices",
+            "brand": "RYUU",
+            "price": 350,
+            "description": "RYUU BOOST 12000 BATTERY is a rechargeable vape device with a sleek and portable design, built for reliable performance and smooth power delivery. It features a long-lasting battery, Type-C charging, and compatibility with RYUU BOOST pods for convenient everyday use.",
+            "stock": 14,
+            "sku": "RYUBT",
+            "original_price": null,
+            "image": "products/Tf4Loxw5hY0Y1Ip0IlCIf9YiSLo6NZ57RwztoxKy.jpg",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "ryuu-boost-12000-battery",
+            "tags": [
+                "Battery"
+            ],
+            "sales_count": 0,
+            "views_count": 2,
+            "product_type": "battery",
+            "flavor": null,
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "RYUU BOOST 12000 (Battery)"
+        },
+        "flavors": [
+            {
+                "name": "Black",
+                "stock": 14,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Black"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "KAIZER CLEAR"
+        },
+        "data": {
+            "name": "KAIZER CLEAR",
+            "category": "Devices",
+            "brand": "Kaizer",
+            "price": 430,
+            "description": "KAIZER CLEAR is a sleek and rechargeable pod vape designed for smooth flavor delivery and reliable everyday performance. It features a transparent pod design, mesh coil technology, adjustable airflow, and a long-lasting battery for a clean and satisfying vaping experience.",
+            "stock": 24,
+            "sku": "KZR",
+            "original_price": null,
+            "image": "products/ls0mT4REERm7w3nCFF1f3KL3lYOY3xZWtR4Bviww.jpg",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "kaizer-clear",
+            "tags": [
+                "Pods"
+            ],
+            "sales_count": 0,
+            "views_count": 9,
+            "product_type": "pods",
+            "flavor": "SHIROTA ICE - YAKULT  ",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "KAIZER CLEAR"
+        },
+        "flavors": [
+            {
+                "name": "SHIROTA ICE - YAKULT",
+                "stock": 12,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SHIROTA ICE - YAKULT"
+            },
+            {
+                "name": "TOKYO JADE ICE - MATCHA",
+                "stock": 12,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "TOKYO JADE ICE - MATCHA"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "KAIZER CLEAR (Battery)"
+        },
+        "data": {
+            "name": "KAIZER CLEAR (Battery)",
+            "category": "Devices",
+            "brand": "Kaizer",
+            "price": 350,
+            "description": "KAIZER CLEAR BATTERY is a rechargeable vape device with a compact and stylish transparent design, built for smooth and reliable performance. It features a long-lasting battery, Type-C charging, and compatibility with Kaizer pods for convenient daily vaping.",
+            "stock": 20,
+            "sku": "KZRBT",
+            "original_price": null,
+            "image": "products/UrTASz6qm7eqhVGQa29uNrBXoRp4DZ9z0IZPNeEZ.jpg",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "kaizer-clear-battery",
+            "tags": [
+                "Battery"
+            ],
+            "sales_count": 0,
+            "views_count": 21,
+            "product_type": "battery",
+            "flavor": null,
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "KAIZER CLEAR (Battery)"
+        },
+        "flavors": [
+            {
+                "name": "Black",
+                "stock": 11,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Black"
+            },
+            {
+                "name": "Gold",
+                "stock": 4,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Gold"
+            },
+            {
+                "name": "Rose Gold",
+                "stock": 3,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Rose Gold"
+            },
+            {
+                "name": "Titanium Grey",
+                "stock": 2,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Titanium Grey"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "FUNKY MONKEY RUSH 10K PODS"
+        },
+        "data": {
+            "name": "FUNKY MONKEY RUSH 10K PODS",
+            "category": "Devices",
+            "brand": "FUNKY MONKEY",
+            "price": 550,
+            "description": "FUNKY MONKEY RUSH 10K PODS are prefilled vape pods designed to deliver rich flavor, smooth vapor, and up to 10,000 puffs of satisfying performance. Featuring mesh coil technology and a leak-resistant design, these pods provide consistent flavor and are compatible with the Funky Monkey Rush device for convenient everyday vaping.",
+            "stock": 27,
+            "sku": "FKY",
+            "original_price": 650,
+            "image": "products/m2nXMW5XYoDgzDP80ETDOSb1bsv2GYaNNkIEizWd.png",
+            "badge": "sale",
+            "reorder_level": 5,
+            "is_featured": 1,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "funky-monkey-rush-10k-pods",
+            "tags": [
+                "Disposable pods"
+            ],
+            "sales_count": 0,
+            "views_count": 10,
+            "product_type": "bundle",
+            "flavor": "SEA ZEST - SEASALT LEMON, BURST MELLOW - LYCHEE MELON, GARDEN'S HEART - STRAWBERRY, FRESH MINT - FRESH MINT, RED FROST - STRAWBERRY ICE CREAM, BUBBLE BOMB - BUBBLE GUM, CONTIS - CHEESE CAKE, BLACK GEMS - BLACK CURRANT, FRESH RED - WATERMELON, TANGY P",
+            "bundle_pods": "bundle",
+            "bundle_battery": "Battery/Device Included",
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "FUNKY MONKEY RUSH 10K PODS"
+        },
+        "flavors": [
+            {
+                "name": "AZURE",
+                "stock": 7,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "AZURE"
+            },
+            {
+                "name": "BLACK",
+                "stock": 0,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "BLACK"
+            },
+            {
+                "name": "BLACK GEMS - BLACK CURRANT",
+                "stock": 18,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BLACK GEMS - BLACK CURRANT"
+            },
+            {
+                "name": "BUBBLE BOMB - BUBBLE GUM",
+                "stock": 9,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BUBBLE BOMB - BUBBLE GUM"
+            },
+            {
+                "name": "BURST MELLOW - LYCHEE MELON",
+                "stock": 6,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BURST MELLOW - LYCHEE MELON"
+            },
+            {
+                "name": "CONTIS - CHEESE CAKE",
+                "stock": 2,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "CONTIS - CHEESE CAKE"
+            },
+            {
+                "name": "FRESH MINT - FRESH MINT",
+                "stock": 13,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "FRESH MINT - FRESH MINT"
+            },
+            {
+                "name": "FRESH RED - WATERMELON",
+                "stock": 4,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "FRESH RED - WATERMELON"
+            },
+            {
+                "name": "GARDEN'S HEART - STRAWBERRY",
+                "stock": 13,
+                "reorder_level": 2,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "GARDEN'S HEART - STRAWBERRY"
+            },
+            {
+                "name": "GOLD",
+                "stock": 6,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "GOLD"
+            },
+            {
+                "name": "OLIVE",
+                "stock": 6,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "OLIVE"
+            },
+            {
+                "name": "RED FROST - STRAWBERRY ICE CREAM",
+                "stock": 12,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "RED FROST - STRAWBERRY ICE CREAM"
+            },
+            {
+                "name": "ROSE GOLD",
+                "stock": 3,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "ROSE GOLD"
+            },
+            {
+                "name": "SEA ZEST - SEASALT LEMON",
+                "stock": 9,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SEA ZEST - SEASALT LEMON"
+            },
+            {
+                "name": "SPACE GRAY",
+                "stock": 5,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "SPACE GRAY"
+            },
+            {
+                "name": "TANGY PURPLE - GRAPE",
+                "stock": 10,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "TANGY PURPLE - GRAPE"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "TOMORO T1 PODS"
+        },
+        "data": {
+            "name": "TOMORO T1 PODS",
+            "category": "Devices",
+            "brand": "TOMORO",
+            "price": 300,
+            "description": "TOMORO T1 Pods\r\nCompact, easy-to-use pods designed for the TOMORO T1, delivering smooth performance, consistent output, and convenient replacement for everyday use.",
+            "stock": 80,
+            "sku": "TMRT",
+            "original_price": 250,
+            "image": "products/h8Rue0O5FOTUCAPkKiIIhbtyv5wRidsIKpe5bYeN.jpg",
+            "badge": "sale",
+            "reorder_level": 5,
+            "is_featured": 1,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "tomoro-t1-pods",
+            "tags": [],
+            "sales_count": 0,
+            "views_count": 2,
+            "product_type": "pods",
+            "flavor": "APPOLO 13 - WATERMELON ICE, BIG BANG - BUBBLEGUM, DOUBLE YELLOW - DOUBLE MANGO, FATTY BOOM - YUMMY BEAR, FREEZING FUSION - FRUITY PUNCH, FROZEN PURPLE - TARO ICE CREAM, LAZZY RABBIT - LYCHEE RASPBERRY, RUBY KW - STRAWBERRY KIWI, TWINKLE STAR - STRAWB",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "TOMORO T1 PODS"
+        },
+        "flavors": [
+            {
+                "name": "APPOLO 13 - WATERMELON ICE",
+                "stock": 4,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "APPOLO 13 - WATERMELON ICE"
+            },
+            {
+                "name": "BIG BANG - BUBBLEGUM",
+                "stock": 1,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BIG BANG - BUBBLEGUM"
+            },
+            {
+                "name": "DOUBLE YELLOW - DOUBLE MANGO",
+                "stock": 14,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "DOUBLE YELLOW - DOUBLE MANGO"
+            },
+            {
+                "name": "FATTY BOOM - YUMMY BEAR",
+                "stock": 5,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "FATTY BOOM - YUMMY BEAR"
+            },
+            {
+                "name": "FREEZING FUSION - FRUITY PUNCH",
+                "stock": 5,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "FREEZING FUSION - FRUITY PUNCH"
+            },
+            {
+                "name": "FROZEN PURPLE - TARO ICE CREAM",
+                "stock": 6,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "FROZEN PURPLE - TARO ICE CREAM"
+            },
+            {
+                "name": "LAZZY RABBIT - LYCHEE RASPBERRY",
+                "stock": 11,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "LAZZY RABBIT - LYCHEE RASPBERRY"
+            },
+            {
+                "name": "RUBY KW - STRAWBERRY KIWI",
+                "stock": 19,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "RUBY KW - STRAWBERRY KIWI"
+            },
+            {
+                "name": "TWINKLE STAR - STRAWBERRY ICE CREAM",
+                "stock": 15,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "TWINKLE STAR - STRAWBERRY ICE CREAM"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "TOMORO T1  BATTERY"
+        },
+        "data": {
+            "name": "TOMORO T1  BATTERY",
+            "category": "Devices",
+            "brand": "TOMORO",
+            "price": 229.99,
+            "description": "TOMORO T1 Battery\r\nA reliable, long-lasting battery designed to deliver steady power and efficient performance for the TOMORO T1. Built for daily use, it supports smooth operation, dependable range, and easy recharging for a convenient riding experience.",
+            "stock": 23,
+            "sku": "TMBT",
+            "original_price": null,
+            "image": "products/2kUOxkVCCas73jnaafbaIKi0F3bh66zrSfLon9W4.jpg",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "tomoro-t1-battery",
+            "tags": [],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "battery",
+            "flavor": null,
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "TOMORO T1  BATTERY"
+        },
+        "flavors": [
+            {
+                "name": "Black",
+                "stock": 23,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Black"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "XVAPE X-AROMA DELIGHT JUICE"
+        },
+        "data": {
+            "name": "XVAPE X-AROMA DELIGHT JUICE",
+            "category": "E-Liquids",
+            "brand": "XVAPE",
+            "price": 590,
+            "description": "XVAPE X-AROMA Delight Juice 30ml delivers a smooth, flavorful vape experience in a compact bottle, perfect for everyday use. Crafted for consistent taste and satisfying vapor, it\u2019s a convenient choice for users looking for a reliable e-liquid option.",
+            "stock": 37,
+            "sku": "XVP",
+            "original_price": null,
+            "image": "products/WsE4mEEWcH8HnEW3djegf0RIcRNY6u3f7SMaWCC9.png",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 1,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "xvape-x-aroma-delight-juice",
+            "tags": [
+                "Menthol"
+            ],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "e_liquid",
+            "flavor": "COLD BREEZE - MINT, BUBBLE DREAM - BUBBLE GUM",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": "freebase",
+            "nicotine_strengths": [
+                "10"
+            ],
+            "volume_ml": 30,
+            "product_name": "XVAPE X-AROMA DELIGHT JUICE"
+        },
+        "flavors": [
+            {
+                "name": "BUBBLE DREAM - BUBBLE GUM",
+                "stock": 18,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BUBBLE DREAM - BUBBLE GUM"
+            },
+            {
+                "name": "COLD BREEZE - MINT",
+                "stock": 19,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "COLD BREEZE - MINT"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "XVAPE X-AROMA FREEZE  JUICE  "
+        },
+        "data": {
+            "name": "XVAPE X-AROMA FREEZE  JUICE  ",
+            "category": "E-Liquids",
+            "brand": "XVAPE",
+            "price": 600,
+            "description": "XVAPE X-AROMA Delight Juice delivers a smooth, flavorful vape experience in a compact bottle, perfect for everyday use. Crafted for consistent taste and satisfying vapor, it\u2019s a convenient choice for users looking for a reliable e-liquid option.",
+            "stock": 13,
+            "sku": "XVPA",
+            "original_price": null,
+            "image": "products/hygWEFhovJLctsas2GEuZLgG3oInuYKFNkvcEoLz.jpg",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "xvape-x-aroma-freeze-juice",
+            "tags": [],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "e_liquid",
+            "flavor": "POLAR GLACIER - LYCHEE",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": "freebase",
+            "nicotine_strengths": [
+                "18"
+            ],
+            "volume_ml": 30,
+            "product_name": "XVAPE X-AROMA FREEZE  JUICE  "
+        },
+        "flavors": [
+            {
+                "name": "POLAR GLACIER - LYCHEE",
+                "stock": 13,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "POLAR GLACIER - LYCHEE"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "THE POD FORMULA FREEBASE - MR ONURBS "
+        },
+        "data": {
+            "name": "THE POD FORMULA FREEBASE - MR ONURBS ",
+            "category": "E-Liquids",
+            "brand": "POD FORMULA",
+            "price": 280,
+            "description": "Non-mentholated flavors offer a smooth, full-bodied vape experience without the icy cooling effect. Ideal for adult vapers who prefer rich, clean flavor profiles with a warm and satisfying finish.",
+            "stock": 27,
+            "sku": "TPFN",
+            "original_price": null,
+            "image": "products/E9LdVf8mHdIvGO5BVYDmFwDen9u60LJErz6MCfCC.webp",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "the-pod-formula-freebase-mr-onurbs-2",
+            "tags": [
+                "NON MENTHOLATED FLAVORS"
+            ],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "e_liquid",
+            "flavor": "BELGIAN DELIGHT - CHOCO MOUSSE",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": "freebase",
+            "nicotine_strengths": [
+                "12"
+            ],
+            "volume_ml": 58,
+            "product_name": "THE POD FORMULA FREEBASE - MR ONURBS "
+        },
+        "flavors": [
+            {
+                "name": "BELGIAN DELIGHT - CHOCO MOUSSE",
+                "stock": 27,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BELGIAN DELIGHT - CHOCO MOUSSE"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "BLISS LITE "
+        },
+        "data": {
+            "name": "BLISS LITE ",
+            "category": "E-Liquids",
+            "brand": "BLISS LITE",
+            "price": 150,
+            "description": "BLISS Lite 30ml offers a smooth and flavorful vape experience in a compact bottle. Designed for everyday use, it delivers satisfying taste and consistent vapor without an overpowering finish.",
+            "stock": 48,
+            "sku": "BLS",
+            "original_price": null,
+            "image": "products/HXD0qXncoEDf7QWiNkC02PlvJxIqFy1FdwxWNqus.png",
+            "badge": "none",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "bliss-lite",
+            "tags": [],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "e_liquid",
+            "flavor": "ERY4 - EXTREME RY4, NRY4 - NUTTY RY4, SRY4 - STRAWBERRY RY4, BCC - BLUEBERRY CHEESECAKE",
+            "bundle_pods": null,
+            "bundle_battery": null,
+            "nicotine_type": "freebase",
+            "nicotine_strengths": [
+                "3"
+            ],
+            "volume_ml": 30,
+            "product_name": "BLISS LITE "
+        },
+        "flavors": [
+            {
+                "name": "BCC - BLUEBERRY CHEESECAKE",
+                "stock": 8,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "BCC - BLUEBERRY CHEESECAKE"
+            },
+            {
+                "name": "ERY4 - EXTREME RY4",
+                "stock": 12,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "ERY4 - EXTREME RY4"
+            },
+            {
+                "name": "NRY4 - NUTTY RY4",
+                "stock": 9,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "NRY4 - NUTTY RY4"
+            },
+            {
+                "name": "SRY4 - STRAWBERRY RY4",
+                "stock": 19,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "SRY4 - STRAWBERRY RY4"
+            }
+        ]
+    },
+    {
+        "attributes": {
+            "name": "Black Elite V2"
+        },
+        "data": {
+            "name": "Black Elite V2",
+            "category": "Pod System",
+            "brand": "BLack",
+            "price": 550,
+            "description": "Black Elite is a popular disposable vape and pod system brand that became widely known in the Philippines for its strong icy flavors, long-lasting puff count, and affordable devices. The brand first gained popularity through the original Black Elite V1, then later released the upgraded Black Elite V2 with improved mesh coils, rechargeable Type-C charging, LED indicators, and up to 12,000 puffs.",
+            "stock": 123,
+            "sku": "BLK-V2",
+            "original_price": null,
+            "image": "products/Ty3fN8kd2WcsKHZ7pvMzcTHOAXT323r18QC8OK3t.webp",
+            "badge": "new",
+            "reorder_level": 5,
+            "is_featured": 0,
+            "is_active": 1,
+            "rating": 0,
+            "slug": "black-elite-v2",
+            "tags": [],
+            "sales_count": 0,
+            "views_count": 0,
+            "product_type": "bundle",
+            "flavor": "Red Pulp (Watermelon), Very More (Mixed Berries), Trouble Purple (Grapes), Very Baguio (Strawberry), Black Wave (Blackcurrant), Yellow Summer (Mango)",
+            "bundle_pods": "Any Flavors",
+            "bundle_battery": "Battery/Pods Included",
+            "nicotine_type": null,
+            "nicotine_strengths": null,
+            "volume_ml": null,
+            "product_name": "Black Elite V2"
+        },
+        "flavors": [
+            {
+                "name": "Black",
+                "stock": 40,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Black"
+            },
+            {
+                "name": "Black Wave (Blackcurrant)",
+                "stock": 30,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Black Wave (Blackcurrant)"
+            },
+            {
+                "name": "Gold",
+                "stock": 33,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Gold"
+            },
+            {
+                "name": "Orange",
+                "stock": 50,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "color",
+                "flavor": "Orange"
+            },
+            {
+                "name": "Red Pulp (Watermelon)",
+                "stock": 29,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Red Pulp (Watermelon)"
+            },
+            {
+                "name": "Trouble Purple (Grapes)",
+                "stock": 30,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Trouble Purple (Grapes)"
+            },
+            {
+                "name": "Very Baguio (Strawberry)",
+                "stock": 30,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Very Baguio (Strawberry)"
+            },
+            {
+                "name": "Very More (Mixed Berries)",
+                "stock": 31,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Very More (Mixed Berries)"
+            },
+            {
+                "name": "Yellow Summer (Mango)",
+                "stock": 30,
+                "reorder_level": 5,
+                "is_active": 1,
+                "option_type": "flavor",
+                "flavor": "Yellow Summer (Mango)"
+            }
+        ]
+    }
+]

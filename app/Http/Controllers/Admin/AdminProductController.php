@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductFlavor;
+use App\Services\ProductInventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -78,66 +79,26 @@ class AdminProductController extends Controller
         return view('admin.products', compact('products', 'editingProduct', 'categories'));
     }
 
-    public function store(ProductRequest $request)
+    public function store(ProductRequest $request, ProductInventoryService $inventory)
     {
-        DB::transaction(function () use ($request): void {
-            [$data, $flavors, $batteryColors] = $this->prepareData($request);
-            $data['reorder_level'] = $data['reorder_level'] ?? 5;
-            $data['badge'] = $data['badge'] ?? 'none';
-            $data['is_featured'] = $request->boolean('is_featured');
-            $data['is_active'] = $request->boolean('is_active');
-            $data['slug'] = $this->uniqueSlug($data['name']);
-            $data['stock'] = 0;
-            $data['flavor'] = $this->flavorSummary($flavors);
-
-            if ($request->hasFile('image')) {
-                $data['image'] = $request->file('image')->store('products', 'public');
-            }
-
-            $product = Product::create($data);
-            $this->syncOptions($product, $flavors, ProductFlavor::TYPE_FLAVOR);
-            $this->syncOptions($product, $batteryColors, ProductFlavor::TYPE_COLOR);
-            $product->syncStockFromFlavors();
-        });
+        $inventory->create($request);
 
         return redirect()->route('admin.products.index')->with('success', 'Product added.');
     }
 
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductRequest $request, Product $product, ProductInventoryService $inventory)
     {
-        DB::transaction(function () use ($request, $product): void {
-            [$data, $flavors, $batteryColors] = $this->prepareData($request);
-            $data['reorder_level'] = $data['reorder_level'] ?? 5;
-            $data['badge'] = $data['badge'] ?? 'none';
-            $data['is_featured'] = $request->boolean('is_featured');
-            $data['is_active'] = $request->boolean('is_active');
-            $data['slug'] = $this->uniqueSlug($data['name'], $product);
-            $data['flavor'] = $this->flavorSummary($flavors);
-
-            if ($request->hasFile('image')) {
-                $data['image'] = $request->file('image')->store('products', 'public');
-            }
-
-            $product->update($data);
-            $this->syncOptions($product, $flavors, ProductFlavor::TYPE_FLAVOR);
-            $this->syncOptions($product, $batteryColors, ProductFlavor::TYPE_COLOR);
-            $product->syncStockFromFlavors();
-        });
+        $inventory->update($request, $product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated.');
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product, ProductInventoryService $inventory)
     {
-        if ($product->orderItems()->exists() && Schema::hasColumn('products', 'is_active')) {
-            $product->update(['is_active' => false]);
+        $hadOrders = $product->orderItems()->exists() && Schema::hasColumn('products', 'is_active');
+        $inventory->delete($product);
 
-            return back()->with('success', 'Product removed from the active catalog.');
-        }
-
-        $product->delete();
-
-        return back()->with('success', 'Product deleted.');
+        return back()->with('success', $hadOrders ? 'Product removed from the active catalog.' : 'Product deleted.');
     }
 
     private function prepareData(ProductRequest $request): array

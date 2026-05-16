@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class ExportProductsSeeder extends Command
 {
-    protected $signature = 'products:export-seeder {--class=SharedProductsSeeder : Seeder class name to generate}';
+    protected $signature = 'products:export-seeder {--class=ProductSeeder : Seeder class name to generate} {--json : Also export database/seeders/data/products.json}';
 
     protected $description = 'Export the current products and product options into a shareable Laravel seeder.';
 
@@ -69,6 +69,13 @@ class ExportProductsSeeder extends Command
 
         File::put($path, $contents);
 
+        if ($this->option('json')) {
+            $jsonPath = database_path('seeders/data/products.json');
+            File::ensureDirectoryExists(dirname($jsonPath));
+            File::put($jsonPath, json_encode($products, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $this->info('Exported product snapshot to database/seeders/data/products.json');
+        }
+
         $this->info("Exported " . count($products) . " products to database/seeders/{$class}.php");
         $this->line("Commit that seeder file, then your groupmates can run: php artisan db:seed --class={$class}");
 
@@ -123,8 +130,14 @@ class {$class} extends Seeder
                     }
 
                     \$names[] = \$flavor['name'];
+                    \$lookup = ['name' => \$flavor['name']];
+
+                    if (Schema::hasColumn('product_flavors', 'option_type') && isset(\$flavor['option_type'])) {
+                        \$lookup['option_type'] = \$flavor['option_type'];
+                    }
+
                     \$product->flavors()->updateOrCreate(
-                        ['name' => \$flavor['name']],
+                        \$lookup,
                         \$flavor
                     );
                 }

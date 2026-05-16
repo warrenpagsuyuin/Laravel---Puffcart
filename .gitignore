@@ -26,5 +26,8 @@ yarn-error.log
 /.vscode
 
 /storage/app/public/valid-ids/*
+!/storage/app/public/valid-ids/.gitkeep
+!/storage/app/public/products/
+!/storage/app/public/products/.gitkeep
 /storage/logs/*.log
 .phpunit.result.cache

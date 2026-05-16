@@ -72,6 +72,56 @@
         color: var(--text-muted);
     }
 
+    .password-field {
+        position: relative;
+    }
+
+    .password-field input {
+        padding-right: 46px;
+    }
+
+    .password-toggle {
+        align-items: center;
+        background: transparent;
+        border: 0;
+        border-radius: 8px;
+        color: var(--text-muted);
+        cursor: pointer;
+        display: inline-flex;
+        height: 34px;
+        justify-content: center;
+        padding: 0;
+        position: absolute;
+        right: 7px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 34px;
+    }
+
+    .password-toggle:hover,
+    .password-toggle:focus {
+        background: var(--primary-light);
+        color: var(--primary);
+        outline: none;
+    }
+
+    .password-toggle svg {
+        height: 18px;
+        width: 18px;
+    }
+
+    .password-toggle .icon-eye-off {
+        display: none;
+    }
+
+    .password-toggle.is-visible .icon-eye {
+        display: none;
+    }
+
+    .password-toggle.is-visible .icon-eye-off {
+        display: block;
+    }
+
     .password-requirement {
         font-size: 12px;
         color: var(--text-muted);
@@ -172,13 +222,25 @@
 
             <div class="form-group">
                 <label>New Password</label>
-                <input type="password" name="password" placeholder="Enter new password" required>
+                <div class="password-field">
+                    <input id="reset_password" type="password" name="password" placeholder="Enter new password" autocomplete="new-password" required>
+                    <button class="password-toggle" type="button" data-password-toggle="reset_password" aria-label="Show password" aria-pressed="false">
+                        <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6A3 3 0 0 0 13.4 13.4"/><path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18.8 18.8 0 0 1-3.2 4.4"/><path d="M6.6 6.6A18.3 18.3 0 0 0 2 12s3.5 8 10 8a10.7 10.7 0 0 0 4.1-.8"/></svg>
+                    </button>
+                </div>
                 <div class="password-requirement">At least 8 characters</div>
             </div>
 
             <div class="form-group">
                 <label>Confirm Password</label>
-                <input type="password" name="password_confirmation" placeholder="Confirm password" required>
+                <div class="password-field">
+                    <input id="reset_password_confirmation" type="password" name="password_confirmation" placeholder="Confirm password" autocomplete="new-password" required>
+                    <button class="password-toggle" type="button" data-password-toggle="reset_password_confirmation" aria-label="Show password" aria-pressed="false">
+                        <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 10.6A3 3 0 0 0 13.4 13.4"/><path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c6.5 0 10 8 10 8a18.8 18.8 0 0 1-3.2 4.4"/><path d="M6.6 6.6A18.3 18.3 0 0 0 2 12s3.5 8 10 8a10.7 10.7 0 0 0 4.1-.8"/></svg>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="auth-submit">Reset Password</button>
@@ -189,4 +251,22 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+            button.addEventListener('click', function () {
+                const input = document.getElementById(this.dataset.passwordToggle);
+                if (!input) {
+                    return;
+                }
+
+                const shouldShow = input.type === 'password';
+                input.type = shouldShow ? 'text' : 'password';
+                this.classList.toggle('is-visible', shouldShow);
+                this.setAttribute('aria-label', shouldShow ? 'Hide password' : 'Show password');
+                this.setAttribute('aria-pressed', shouldShow ? 'true' : 'false');
+            });
+        });
+    });
+</script>
 @endsection

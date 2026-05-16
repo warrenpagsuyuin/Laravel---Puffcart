@@ -12,6 +12,7 @@ class ProductFlavor extends Model
     protected $fillable = [
         'product_id',
         'name',
+        'flavor',
         'option_type',
         'stock',
         'reorder_level',
@@ -30,6 +31,12 @@ class ProductFlavor extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function setNameAttribute($value): void
+    {
+        $this->attributes['name'] = $value;
+        $this->attributes['flavor'] = $value;
     }
 
     public function cartItems()

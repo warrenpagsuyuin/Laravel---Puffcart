@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductFlavor;
 use App\Models\WalkinOrder;
+use App\Services\InventoryLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -131,11 +132,19 @@ class AdminWalkInController extends Controller
 
         $order = DB::transaction(function () use ($request, $lines, $subtotal, $requiredByOption, $requiredByProduct, $options, $products) {
             foreach ($requiredByOption as $optionId => $requiredQty) {
+                $before = (int) $options[$optionId]->stock;
                 $options[$optionId]->decrement('stock', $requiredQty);
+                app(InventoryLogService::class)->flavorStockChanged($options[$optionId]->fresh(), $before, $before - $requiredQty, 'stock_changed', [
+                    'source' => 'walk_in',
+                ]);
             }
 
             foreach ($requiredByProduct as $productId => $requiredQty) {
+                $before = (int) $products[$productId]->stock;
                 $products[$productId]->decrement('stock', $requiredQty);
+                app(InventoryLogService::class)->productEvent('stock_changed', $products[$productId]->fresh(), [
+                    'source' => 'walk_in',
+                ], $before, $before - $requiredQty);
             }
 
             foreach ($lines as $line) {

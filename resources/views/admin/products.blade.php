@@ -292,6 +292,68 @@
             padding: 12px;
         }
 
+        .image-preview {
+            align-items: center;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            gap: 12px;
+            min-height: 88px;
+            padding: 10px;
+        }
+
+        .image-preview img {
+            border-radius: 8px;
+            height: 68px;
+            object-fit: contain;
+            width: 68px;
+        }
+
+        .stock-total {
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .btn.is-loading {
+            opacity: 0.68;
+            pointer-events: none;
+        }
+
+        :root[data-theme="dark"] body,
+        :root[data-theme="dark"] .content {
+            background: #0b1220;
+        }
+
+        :root[data-theme="dark"] .summary-tile,
+        :root[data-theme="dark"] .admin-toolbar,
+        :root[data-theme="dark"] #product-form-section,
+        :root[data-theme="dark"] .catalog-panel,
+        :root[data-theme="dark"] .catalog-head,
+        :root[data-theme="dark"] .flavor-row {
+            background: #111827;
+            border-color: #263244;
+        }
+
+        :root[data-theme="dark"] .flavor-inventory,
+        :root[data-theme="dark"] .image-preview,
+        :root[data-theme="dark"] .catalog-grid-head,
+        :root[data-theme="dark"] .catalog-image {
+            background: #0f172a;
+            border-color: #263244;
+        }
+
+        :root[data-theme="dark"] .summary-tile strong,
+        :root[data-theme="dark"] .catalog-name,
+        :root[data-theme="dark"] .catalog-value,
+        :root[data-theme="dark"] .stock-total,
+        :root[data-theme="dark"] .admin-toolbar-title strong,
+        :root[data-theme="dark"] .catalog-head h2,
+        :root[data-theme="dark"] .section-title h2 {
+            color: #e5eefb;
+        }
+
         .catalog-panel {
             background: #ffffff;
             border: 1px solid #d9e2ec;
@@ -744,7 +806,7 @@
                 }
             @endphp
 
-            <form method="POST" action="{{ $editingProduct ? route('admin.products.update', $editingProduct) : route('admin.products.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ $editingProduct ? route('admin.products.update', $editingProduct) : route('admin.products.store') }}" enctype="multipart/form-data" data-product-form>
                 @csrf
                 @if($editingProduct)
                     @method('PUT')
@@ -853,6 +915,7 @@
                                 <div>
                                     <label data-option-title>Flavor Inventory</label>
                                     <div class="muted" style="font-size:12px;" data-option-help>Customers can only choose flavors with stock above zero.</div>
+                                    <div class="stock-total" data-stock-total>Total stock: 0</div>
                                 </div>
                                 <button type="button" class="btn btn-secondary btn-compact" data-add-flavor>Add Flavor</button>
                             </div>
@@ -886,6 +949,7 @@
                                 <div>
                                     <label>Battery Color Inventory</label>
                                     <div class="muted" style="font-size:12px;">Use this for battery products and pods + battery bundles.</div>
+                                    <div class="stock-total" data-stock-total>Total stock: 0</div>
                                 </div>
                                 <button type="button" class="btn btn-secondary btn-compact" data-add-flavor>Add Color</button>
                             </div>
@@ -925,6 +989,14 @@
                     <div class="form-group">
                         <label for="image">Product Image</label>
                         <input id="image" type="file" name="image" accept="image/*">
+                        <div class="image-preview" id="imagePreview">
+                            @if($editingProduct?->image_url)
+                                <img src="{{ $editingProduct->image_url }}" alt="{{ $editingProduct->name }}">
+                                <span class="muted" style="font-size:12px;">Current uploaded image</span>
+                            @else
+                                <span class="muted" style="font-size:12px;">No image selected</span>
+                            @endif
+                        </div>
                         <div class="muted" style="font-size:12px;">Required for new products. Upload JPG, PNG, WEBP, or GIF up to 2MB.</div>
                     </div>
 
@@ -1077,6 +1149,9 @@
             const bundleBattery = document.getElementById('bundle_battery');
             const categorySelect = document.getElementById('category_id');
             const newCategoryInput = document.getElementById('category');
+            const productForm = document.querySelector('[data-product-form]');
+            const imageInput = document.getElementById('image');
+            const imagePreview = document.getElementById('imagePreview');
 
             if(btn && section) {
                 btn.addEventListener('click', function () {
@@ -1151,6 +1226,19 @@
                     buttons.forEach(function (button) {
                         button.disabled = buttons.length <= 1;
                     });
+                    refreshStockTotal();
+                }
+
+                function refreshStockTotal() {
+                    if (!rows) return;
+
+                    const total = Array.from(rows.querySelectorAll('input[name$="[stock]"]'))
+                        .reduce((sum, input) => sum + Math.max(0, Number(input.value || 0)), 0);
+                    const output = builder.querySelector('[data-stock-total]');
+
+                    if (output) {
+                        output.textContent = `Total stock: ${total}`;
+                    }
                 }
 
                 function addFlavorRow() {
@@ -1197,10 +1285,47 @@
                             refreshRemoveButtons();
                         }
                     });
+
+                    rows.addEventListener('input', function (event) {
+                        if (event.target.matches('input[name$="[stock]"]')) {
+                            refreshStockTotal();
+                        }
+                    });
                 }
 
                 refreshRemoveButtons();
+                refreshStockTotal();
             });
+
+            if (imageInput && imagePreview) {
+                imageInput.addEventListener('change', function () {
+                    const file = this.files && this.files[0];
+
+                    if (!file) {
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.addEventListener('load', function () {
+                        imagePreview.innerHTML = `
+                            <img src="${reader.result}" alt="Selected product image preview">
+                            <span class="muted" style="font-size:12px;">${file.name}</span>
+                        `;
+                    });
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            if (productForm) {
+                productForm.addEventListener('submit', function () {
+                    const submit = productForm.querySelector('button[type="submit"]');
+                    if (submit) {
+                        submit.classList.add('is-loading');
+                        submit.disabled = true;
+                        submit.textContent = 'Saving...';
+                    }
+                });
+            }
 
             function categoryText() {
                 const selectedText = categorySelect?.options[categorySelect.selectedIndex]?.text || '';
