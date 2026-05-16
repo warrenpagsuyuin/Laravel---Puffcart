@@ -50,8 +50,9 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
+        $login = Str::lower(trim($credentials['login']));
 
-        $key = Str::lower($credentials['login']) . '|' . $request->ip();
+        $key = $login . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
@@ -61,10 +62,10 @@ class AuthController extends Controller
                 ->withInput($request->only('login'));
         }
 
-        $query = User::where('email', $credentials['login']);
+        $query = User::whereRaw('lower(email) = ?', [$login]);
 
         if (Schema::hasColumn('users', 'username')) {
-            $query->orWhere('username', $credentials['login']);
+            $query->orWhereRaw('lower(username) = ?', [$login]);
         }
 
         $user = $query->first();
@@ -94,9 +95,7 @@ class AuthController extends Controller
 
     public function showRegister()
     {
-        $this->prepareRegistrationCaptcha();
-
-        return view('register');
+        return redirect()->route('login', ['register' => 1]);
     }
 
     public function register(RegisterRequest $request)

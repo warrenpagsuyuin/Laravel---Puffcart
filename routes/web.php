@@ -114,7 +114,7 @@ Route::post('/chatbot/send', function (Request $request) {
 */
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:registration');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:registration')->name('register.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -123,7 +123,7 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 */
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login')->name('login.submit');
 
 Route::get('/profile', function () {
     return view('profile');

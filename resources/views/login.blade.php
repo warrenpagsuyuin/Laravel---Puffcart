@@ -19,14 +19,18 @@
         'privacy_consent',
     ];
 
+    $showRegister = request()->boolean('register');
     $hasRegisterErrors = old('_form') === 'register';
 
     foreach ($registerFields as $field) {
         if ($errors->has($field)) {
             $hasRegisterErrors = true;
+            $showRegister = true;
             break;
         }
     }
+
+    $showRegister = $showRegister || $hasRegisterErrors;
 @endphp
 
 <style>
@@ -376,9 +380,9 @@
     <div
         class="auth-shell"
         id="authShell"
-        data-register-errors="{{ $hasRegisterErrors ? 'true' : 'false' }}"
+        data-show-register="{{ $showRegister ? 'true' : 'false' }}"
     >
-        <section class="auth-box {{ $hasRegisterErrors ? 'is-hidden' : '' }}" id="loginBox">
+        <section class="auth-box {{ $showRegister ? 'is-hidden' : '' }}" id="loginBox">
             <div class="auth-header">
                 <h1>Welcome Back</h1>
                 <p>Sign in to your Puffcart account</p>
@@ -396,7 +400,7 @@
                 <div class="alert alert-error">{{ $errors->first('login') }}</div>
             @endif
 
-            <form method="POST" action="{{ route('login') }}" autocomplete="off">
+            <form method="POST" action="{{ route('login.submit') }}" autocomplete="off">
                 @csrf
                 <input type="hidden" name="_form" value="login">
 
@@ -459,7 +463,7 @@
             </div>
         </section>
 
-        <section class="register-box {{ $hasRegisterErrors ? 'is-visible' : '' }}" id="register">
+        <section class="register-box {{ $showRegister ? 'is-visible' : '' }}" id="register">
             <div class="auth-header">
                 <span class="verification-badge">18+ ID Verification Required</span>
                 <h1>Create Account</h1>
@@ -472,7 +476,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" autocomplete="off">
+            <form method="POST" action="{{ route('register.store') }}" enctype="multipart/form-data" autocomplete="off">
                 @csrf
                 <input type="hidden" name="_form" value="register">
 
@@ -729,7 +733,7 @@
         const contactNumber = document.getElementById('contact_number');
         const registerUsername = document.getElementById('register_username');
 
-        const hasRegisterErrors = authShell && authShell.dataset.registerErrors === 'true';
+        const shouldShowRegister = authShell && authShell.dataset.showRegister === 'true';
 
         function openRegister() {
             if (!loginBox || !registerBox || !authShell) {
@@ -783,7 +787,7 @@
             });
         }
 
-        if (registerUsername && !hasRegisterErrors) {
+        if (registerUsername && !shouldShowRegister) {
             registerUsername.value = '';
         }
 

@@ -8,9 +8,12 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Models\ProductFlavor;
 use App\Models\User;
+use App\Mail\PasswordResetMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -46,6 +49,47 @@ class SecurityHardeningTest extends TestCase
         Storage::disk('public')->assertMissing($user->valid_id_path);
         $this->assertNull(session('captcha_answer_hash'));
         $this->assertNull(session('captcha_question'));
+    }
+
+    public function test_register_page_uses_login_registration_panel_only(): void
+    {
+        $this->get(route('register'))
+            ->assertRedirect(route('login', ['register' => 1]));
+
+        $this->get(route('login', ['register' => 1]))
+            ->assertOk()
+            ->assertSee('data-show-register="true"', false)
+            ->assertSee('Create Account');
+    }
+
+    public function test_customer_can_login_with_case_insensitive_email_or_username(): void
+    {
+        $emailUser = $this->user([
+            'email' => 'login-customer@example.com',
+            'username' => 'loginCustomer',
+            'password' => Hash::make('StrongerPass123!'),
+        ]);
+
+        $this->post(route('login.submit'), [
+            'login' => ' LOGIN-CUSTOMER@example.com ',
+            'password' => 'StrongerPass123!',
+        ])->assertRedirect(route('home'));
+
+        $this->assertAuthenticatedAs($emailUser);
+        auth()->logout();
+
+        $usernameUser = $this->user([
+            'email' => 'username-login@example.com',
+            'username' => 'CaseUser',
+            'password' => Hash::make('StrongerPass123!'),
+        ]);
+
+        $this->post(route('login.submit'), [
+            'login' => 'caseuser',
+            'password' => 'StrongerPass123!',
+        ])->assertRedirect(route('home'));
+
+        $this->assertAuthenticatedAs($usernameUser);
     }
 
     public function test_registration_rejects_files_with_spoofed_extensions(): void
@@ -99,6 +143,29 @@ class SecurityHardeningTest extends TestCase
         $response->assertHeader('X-Content-Type-Options', 'nosniff');
     }
 
+    public function test_admin_verification_index_links_to_protected_valid_id_document_route(): void
+    {
+        Storage::fake('local');
+        Storage::disk('local')->put('valid-ids/pending-customer.pdf', '%PDF-1.4 test');
+
+        $customer = $this->user([
+            'email' => 'pending-index-customer@example.com',
+            'valid_id_path' => 'valid-ids/pending-customer.pdf',
+            'verification_status' => 'pending',
+        ]);
+
+        $admin = $this->user([
+            'email' => 'admin-index@example.com',
+            'role' => 'admin',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.verifications.index'))
+            ->assertOk()
+            ->assertSee(route('admin.verifications.document', $customer), false)
+            ->assertDontSee(asset('storage/' . $customer->valid_id_path), false);
+    }
+
     public function test_password_reset_requests_are_rate_limited(): void
     {
         $email = 'unknown-' . Str::lower(Str::random(12)) . '@example.com';
@@ -118,6 +185,86 @@ class SecurityHardeningTest extends TestCase
         ])->assertStatus(429);
 
         RateLimiter::clear($key);
+    }
+
+    public function test_password_reset_link_can_be_requested_and_used(): void
+    {
+        Mail::fake();
+
+        $ip = $this->uniqueIp();
+        RateLimiter::clear('password-reset|reset-customer@example.com|' . $ip);
+
+        $user = $this->user([
+            'email' => 'reset-customer@example.com',
+            'password' => Hash::make('OldPassword123!'),
+        ]);
+
+        $response = $this->withServerVariables(['REMOTE_ADDR' => $ip])
+            ->post(route('password.send-reset-link'), [
+                'email' => 'RESET-CUSTOMER@example.com',
+            ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $token = null;
+
+        Mail::assertSent(PasswordResetMail::class, function (PasswordResetMail $mail) use ($user, &$token) {
+            $token = $mail->token;
+
+            return $mail->hasTo($user->email);
+        });
+
+        $this->assertNotNull($token);
+        $this->assertDatabaseHas('password_reset_tokens', [
+            'email' => $user->email,
+        ]);
+
+        $resetResponse = $this->post(route('password.update'), [
+            'email' => 'RESET-CUSTOMER@example.com',
+            'token' => $token,
+            'password' => 'NewPassword123!',
+            'password_confirmation' => 'NewPassword123!',
+        ]);
+
+        $resetResponse->assertRedirect(route('login'));
+
+        $user->refresh();
+        $this->assertTrue(Hash::check('NewPassword123!', $user->password));
+        $this->assertDatabaseMissing('password_reset_tokens', [
+            'email' => $user->email,
+        ]);
+    }
+
+    public function test_password_reset_rejects_weak_passwords(): void
+    {
+        $token = 'valid-token-' . Str::random(12);
+        $user = $this->user([
+            'email' => 'weak-reset@example.com',
+            'password' => Hash::make('OldPassword123!'),
+        ]);
+
+        DB::table('password_reset_tokens')->insert([
+            'email' => $user->email,
+            'token' => Hash::make($token),
+            'created_at' => now(),
+        ]);
+
+        $response = $this->from(route('password.reset-form', $token))->post(route('password.update'), [
+            'email' => $user->email,
+            'token' => $token,
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        $response->assertRedirect(route('password.reset-form', $token));
+        $response->assertSessionHasErrors('password');
+
+        $user->refresh();
+        $this->assertTrue(Hash::check('OldPassword123!', $user->password));
+        $this->assertDatabaseHas('password_reset_tokens', [
+            'email' => $user->email,
+        ]);
     }
 
     public function test_checkout_recalculates_totals_server_side(): void

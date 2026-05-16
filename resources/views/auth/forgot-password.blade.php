@@ -185,7 +185,7 @@
 
         <div class="auth-footer">
             <p><a href="{{ route('login') }}">← Back to Login</a></p>
-            <p>Don't have an account? <a href="/register">Create one</a></p>
+            <p>Don't have an account? <a href="{{ route('register') }}">Create one</a></p>
         </div>
     </div>
 </div>
